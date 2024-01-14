@@ -1,8 +1,8 @@
-# DockLogStream
+# ContainerEchoes
 
 ## Description
 
-DockLogStream is an open-source tool designed for efficient real-time Docker log management. It streamlines the process of streaming, storing, and analyzing logs from Docker containers. Built with developers in mind, it offers a comprehensive solution for debugging and monitoring containerized applications.
+ContainerEchoes is an open-source tool designed for efficient real-time Docker log management. It streamlines the process of streaming, storing, and analyzing logs from Docker containers. Built with developers in mind, it offers a comprehensive solution for debugging and monitoring containerized applications.
 
 ## Features
 
