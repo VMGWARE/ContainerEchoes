@@ -66,7 +66,7 @@ class Config {
       /**
        * Name of the Database database
        */
-      name: process.env.DB_NAME || "automationwatchdog",
+      name: process.env.DB_NAME || "container-echoes",
       /**
        * Username for Database database access
        */
