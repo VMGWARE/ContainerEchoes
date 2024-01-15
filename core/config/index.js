@@ -52,9 +52,9 @@ class Config {
      */
     this.db = {
       /**
-       * Database client: mysql or pg
+       * Database client: mysql2 or pg
        */
-      client: process.env.DB_CLIENT || "mysql",
+      client: process.env.DB_CLIENT || "mysql2",
       /**
        * Host address of the Database server
        */

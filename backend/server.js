@@ -46,13 +46,6 @@ const url = config.app.url;
 	await knex.raw("SELECT 1+1 AS result");
 	log.info("server", "Database connection successful");
 
-	// Perform check to see if DB exists, if not, create it
-	if (!(await knex.schema.hasTable("migration"))) {
-		log.info("server", "Creating database...");
-		await knex.raw("CREATE DATABASE IF NOT EXISTS " + config.mysql.db);
-		log.info("server", "Database created");
-	}
-
 	// Migrate the database using knex
 	log.info("server", "Migrating database...");
 	await new Promise((resolve, reject) => {
@@ -140,6 +133,17 @@ const url = config.app.url;
 	log.debug("server", "Loading routes");
 	const Routes = require("./routes");
 	app.use("/", Routes.authRoutes);
+
+	// Health check
+	log.debug("server", "Loading health check");
+	app.use("/health", (req, res) => {
+		res.status(200).json({
+			status: "success",
+			code: 200,
+			message: "OK",
+			data: null,
+		});
+	});
 
 	// Swagger documentation
 	log.debug("server", "Loading Swagger documentation");

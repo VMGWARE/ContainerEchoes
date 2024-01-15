@@ -3,7 +3,7 @@ const env = require("./config");
 const path = require("path");
 
 const config = {
-  client: env.db.client || "mysql",
+  client: env.db.client || "mysql2",
   connection: {
     host: env.db.host || "localhost",
     port: env.db.port || 3306,
