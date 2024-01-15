@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -52,8 +53,8 @@ func (a *Agent) Initialize() {
 
 		// Store the RSA keys in /etc/echoes/agent
 		os.MkdirAll("/etc/echoes/agent", os.ModePerm)
-		ioutil.WriteFile("/etc/echoes/agent/private_key", x509.MarshalPKCS1PrivateKey(a.PrivateKey), 0644)
-		ioutil.WriteFile("/etc/echoes/agent/public_key", a.PublicKey, 0644)
+		os.WriteFile("/etc/echoes/agent/private_key", x509.MarshalPKCS1PrivateKey(a.PrivateKey), 0644)
+		os.WriteFile("/etc/echoes/agent/public_key", a.PublicKey, 0644)
 
 		Logger.Info(Logger{}, "agent", "Stored RSA keys in /etc/echoes/agent")
 	} else {
@@ -102,7 +103,7 @@ func (a *Agent) PerformHandshake(url string) error {
 	}
 
 	// Read the server's public key
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		return err // Handle error
 	}
