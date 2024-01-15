@@ -1,0 +1,7 @@
+services:
+  agent:
+    build: agent
+    restart: always
+    environment:
+      - AGENT_SECRET=secret
+      - AGENT_SERVER_URL=http://server:8080
