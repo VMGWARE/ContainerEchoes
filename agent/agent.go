@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
@@ -11,6 +12,9 @@ import (
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/client"
 )
 
 // Agent represents the client that will communicate with the server
@@ -123,4 +127,28 @@ func (a *Agent) PerformHandshake(url string) error {
 	Logger.Info(Logger{}, "agent", "Server's Public Key: "+string(body))
 
 	return nil
+}
+
+// TODO: This would then be sent to the server, to display the possible containers that can be monitored (to help with regex pattern making)
+// Get a list of all the containers running on the host (used by the server to display the containers that can be monitored)
+func (a *Agent) GetContainers() []types.Container {
+	// Create a new docker client
+	cli, err := client.NewClientWithOpts(client.FromEnv)
+	if err != nil {
+		panic(err)
+	}
+
+	// List containers
+	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
+	if err != nil {
+		panic(err)
+	}
+
+	// Print the containers (for debugging)
+	for _, container := range containers {
+		fmt.Printf("%s %s\n", container.ID[:10], container.Image)
+	}
+
+	// return containers
+	return containers
 }
