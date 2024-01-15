@@ -1,7 +1,43 @@
 package main
 
+import (
+	"net/http"
+	"os"
+)
+
+// Array of required environment variables
+var requiredEnvVars = []string{
+	"SERVER_URL",
+	"AGENT_TOKEN",
+}
+
 func main() {
+	// create a logger
+	log := Logger{}
+
+	// log the agent starting
+	log.Info("agent", "Container Echoes Agent starting")
+
+	// Checks to ensure required environment variables are set
+	var missingEnvVars bool
+	if (len(os.Args) == 2 && os.Args[1] == "init") || len(os.Args) == 1 {
+		for _, envVar := range requiredEnvVars {
+			if os.Getenv(envVar) == "" {
+				log.Error("agent", "Missing required environment variable: "+envVar)
+				missingEnvVars = true
+			}
+		}
+
+		if missingEnvVars {
+			return
+		}
+	}
+
 	// perform check to ensure the server is healthy and ready to accept connections
+	if !checkServerHealth(os.Getenv("SERVER_URL")) {
+		log.Error("agent", "Server is not healthy")
+		return
+	}
 
 	// perform E2E encryption handshake with the server
 
@@ -13,4 +49,18 @@ func main() {
 
 	// watch for container logs, and send them to the server if they are needed
 
+}
+
+func checkServerHealth(url string) bool {
+	resp, err := http.Get(url)
+	if err != nil {
+		return false // return false if unhealthy
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return false // return false if unhealthy
+	}
+
+	return true // return true if healthy
 }
