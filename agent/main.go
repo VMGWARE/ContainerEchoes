@@ -34,6 +34,7 @@ func main() {
 		}
 
 		if missingEnvVars {
+			log.Warn("agent", "I’m gonna give you a chance to re-check the config, surely you can fix it?")
 			return
 		}
 	}
