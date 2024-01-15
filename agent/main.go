@@ -26,6 +26,7 @@ type response struct {
 type AgentInfo struct {
 	PublicKey string `json:"publicKey"`
 	Token     string `json:"token"`
+	Hostname  string `json:"hostname"`
 }
 
 func main() {
@@ -122,6 +123,7 @@ func main() {
 				agentData := AgentInfo{
 					PublicKey: string(agent.PublicKey),
 					Token:     agent.Token,
+					Hostname:  getHostName(),
 				}
 
 				// Build agent info message
@@ -181,6 +183,7 @@ func main() {
 
 }
 
+// Check if the server is healthy
 func checkServerHealth(url string) bool {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -189,4 +192,15 @@ func checkServerHealth(url string) bool {
 	defer resp.Body.Close()
 
 	return resp.StatusCode == http.StatusOK // return true if healthy
+}
+
+// Get the hostname of the host
+func getHostName() string {
+	hostname, err := os.Hostname()
+
+	if err != nil {
+		return "unknown"
+	}
+
+	return hostname
 }
