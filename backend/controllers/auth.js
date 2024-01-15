@@ -263,9 +263,13 @@ async function register(req, res) {
 			});
 		}
 
+		// Check if no users exist, if so, make the user an admin
+		const users = await knex("user").select("id");
+		const isAdmin = users.length === 0;
+
 		// Generate a hashed password
 		const hashedPassword = hashPassword(validator.getPassedFields().password);
-		const userId = await generateUniqueId(12);
+		const userId = generateUniqueId(12);
 
 		// Create the user
 		await knex("user").insert({
@@ -273,6 +277,7 @@ async function register(req, res) {
 			name: validator.getPassedFields().name,
 			email: validator.getPassedFields().email,
 			password: hashedPassword,
+			superuser: isAdmin,
 		});
 
 		log.debug("auth.register", `User ${userId} registered`);

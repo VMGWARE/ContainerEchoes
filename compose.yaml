@@ -1,0 +1,71 @@
+services:
+  mysql:
+    image: mysql:8.0.30
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: container-echoes
+      MYSQL_USER: container-echoes
+      MYSQL_PASSWORD: root
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+    environment:
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+    networks:
+      - default
+      - echoes
+
+  agent:
+    build: agent
+    restart: always
+    environment:
+      - AGENT_SECRET=secret
+      - AGENT_SERVER_URL=http://backend:5000
+    volumes:
+      - echoes-agent-data:/etc/echoes/agent
+    networks:
+      - default
+      - echoes
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    restart: always
+    environment:
+      APP_PORT: 5000
+      SESSION_SECRET: 588ceea9cb916cc9748d7f0ed553d6e4
+      DB_CLIENT: mysql2
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: container-echoes
+      DB_USER: container-echoes
+      DB_PASS: root
+      JWT_SECRET: f3b911dec7043dd20a597abad61ab143
+    ports:
+      - 5000:5000
+    networks:
+      - default
+      - echoes
+    depends_on:
+      - mysql
+
+volumes:
+  echoes-agent-data:
+
+networks:
+  echoes:
+    driver: bridge

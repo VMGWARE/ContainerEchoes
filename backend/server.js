@@ -11,6 +11,7 @@ const gracefulShutdown = require("http-graceful-shutdown");
 const knex = require("@container-echoes/core/database");
 const limiter = require("./middleware/rateLimit");
 const config = require("@container-echoes/core/config");
+const WebSocket = require("ws");
 
 // Load environment variables
 require("dotenv").config();
@@ -45,13 +46,6 @@ const url = config.app.url;
 	log.info("server", "Checking database connection...");
 	await knex.raw("SELECT 1+1 AS result");
 	log.info("server", "Database connection successful");
-
-	// Perform check to see if DB exists, if not, create it
-	if (!(await knex.schema.hasTable("migration"))) {
-		log.info("server", "Creating database...");
-		await knex.raw("CREATE DATABASE IF NOT EXISTS " + config.mysql.db);
-		log.info("server", "Database created");
-	}
 
 	// Migrate the database using knex
 	log.info("server", "Migrating database...");
@@ -141,6 +135,17 @@ const url = config.app.url;
 	const Routes = require("./routes");
 	app.use("/", Routes.authRoutes);
 
+	// Health check
+	log.debug("server", "Loading health check");
+	app.use("/health", (req, res) => {
+		res.status(200).json({
+			status: "success",
+			code: 200,
+			message: "OK",
+			data: null,
+		});
+	});
+
 	// Swagger documentation
 	log.debug("server", "Loading Swagger documentation");
 	const options = require("./configs/swagger");
@@ -179,6 +184,32 @@ const url = config.app.url;
 			code: 500,
 			message: "An internal server error has occurred.",
 			data: null,
+		});
+	});
+
+	// Initialize the WebSocket server
+	log.debug("server", "Initializing WebSocket server");
+	const wss = new WebSocket.Server({ port: 8080 });
+
+	// Handle WebSocket connections
+	wss.on("connection", (ws) => {
+		log.debug("server", "WebSocket connection established");
+
+		// Interrogate the connection for agent information
+		ws.send(JSON.stringify({ type: "agentInfo" }));
+
+		ws.send(JSON.stringify({ type: "containerList" }));
+
+		ws.on("message", (message) => {
+			message = JSON.parse(message);
+			log.debug("server", "Message type: " + message.type);
+			console.log(message);
+
+			// based on the message type, handle the message and hand off to the appropriate controller
+
+			// Check if token is valid
+
+			// If not, send error message and close connection
 		});
 	});
 

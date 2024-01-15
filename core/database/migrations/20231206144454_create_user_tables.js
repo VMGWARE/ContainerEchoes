@@ -15,6 +15,8 @@ exports.up = async function (knex) {
       table.timestamp("emailVerifiedAt").nullable();
       // password
       table.string("password").notNullable();
+      // superuser
+      table.boolean("superuser").defaultTo(false);
       // Timestamps
       table
         .timestamp("createdAt")

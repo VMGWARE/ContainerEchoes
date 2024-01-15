@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 	"strings"
 	"time"
 )
@@ -29,66 +28,21 @@ const (
 	FgPink       = "\033[38;5;219m"
 )
 
-var consoleModuleColors = []string{
-	FgCyan,
-	FgGreen,
-	FgLightGreen,
-	FgBlue,
-	FgLightBlue,
-	FgMagenta,
-	FgOrange,
-	FgViolet,
-	FgBrown,
-	FgPink,
-}
-
-var consoleLevelColors = map[string]string{
-	"INFO":  FgCyan,
-	"WARN":  FgYellow,
-	"ERROR": FgRed,
-	"DEBUG": FgGray,
-}
-
 // Log method for Logger struct
 func (l Logger) Log(module, msg, level string) {
-	if level == "DEBUG" && os.Getenv("NODE_ENV") != "development" {
-		return
-	}
+	// TODO: add log level filtering and color coding
+	// if level == "DEBUG" && os.Getenv("NODE_ENV") != "development" {
+	// 	return
+	// }
 
 	now := time.Now().Format(time.RFC3339)
 	module = strings.ToUpper(module)
 	level = strings.ToUpper(level)
 
-	levelColor, ok := consoleLevelColors[level]
-	if !ok {
-		levelColor = ""
-	}
-	moduleColor := consoleModuleColors[intHash(module)%len(consoleModuleColors)]
+	logEntry := fmt.Sprintf("%s [%s] %s: %s",
+		now, module, level, msg)
 
-	logEntry := fmt.Sprintf("%s [%s%s%s] %s%s%s: %s",
-		now, moduleColor, module, Reset, levelColor, level, Reset, msg)
-
-	switch level {
-	case "ERROR":
-		log.Println(logEntry)
-	case "WARN":
-		log.Println(logEntry)
-	case "INFO":
-		log.Println(logEntry)
-	case "DEBUG":
-		log.Println(logEntry)
-	default:
-		log.Println(logEntry)
-	}
-}
-
-// intHash generates a hash for string coloring
-func intHash(str string) int {
-	hash := 0
-	for _, char := range str {
-		hash += int(char)
-	}
-	return hash
+	log.Println(logEntry)
 }
 
 // Info logs an info level message
