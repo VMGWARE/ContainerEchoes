@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"net/url"
 	"os"
@@ -15,6 +15,17 @@ import (
 var requiredEnvVars = []string{
 	"AGENT_SERVER_URL",
 	"AGENT_SECRET",
+}
+
+type response struct {
+	Type string      `json:"type"`
+	Data interface{} `json:"data"`
+}
+
+// Create a custom struct for PublicKey and Token
+type AgentInfo struct {
+	PublicKey string `json:"publicKey"`
+	Token     string `json:"token"`
 }
 
 func main() {
@@ -38,7 +49,7 @@ func main() {
 		}
 
 		if missingEnvVars {
-			log.Warn("agent", "I’m gonna give you a chance to re-check the config, surely you can fix it?")
+			log.Warn("agent", "I'm gonna give you a chance to re-check the config, surely you can fix it?")
 			return
 		}
 	}
@@ -51,7 +62,7 @@ func main() {
 
 	agent := Agent{}
 	// Initialize the agent
-	agent.Initialize()
+	agent.Initialize(os.Getenv("AGENT_SECRET"))
 
 	// Perform E2E Encryption Handshake
 	// if the agent is being initialized, send the agent token to the server
@@ -76,6 +87,19 @@ func main() {
 		log.Info("agent", "WebSocket connected")
 		defer c.Close()
 
+		/**
+		 * {
+		 * type: "handshake",
+		 * data: {
+		 * 	token: "agent token",
+		 * 	publicKey: "agent public key"
+		 * }
+		 *}
+		 */
+
+		// TODO: Send message containing the agent token
+		// TODO: Receive message containing the public key and the agent id
+
 		// Inner loop for continuous message handling
 		for {
 			// Receive message
@@ -84,13 +108,40 @@ func main() {
 				log.Error("agent", "read:"+err.Error())
 				return
 			}
-			log.Info("agent", fmt.Sprintf("recv: %s", message))
 
-			// Send message
-			err = c.WriteMessage(websocket.TextMessage, []byte("Hello from Go!"))
-			if err != nil {
-				log.Error("agent", "write:"+err.Error())
-				return
+			var resp response
+
+			// Parse message
+			json.Unmarshal(message, &resp)
+
+			// Handle message
+			switch resp.Type {
+			case "agentInfo":
+				log.Info("agent", "Server interrogating for agent info")
+
+				agentData := AgentInfo{
+					PublicKey: string(agent.PublicKey),
+					Token:     agent.Token,
+				}
+
+				// Build agent info message
+				agentInfo := response{
+					Type: "agentInfo",
+					Data: agentData,
+				}
+
+				// Convert the agentInfo struct to a JSON string
+				jsonData, err := json.Marshal(agentInfo)
+				if err != nil {
+					log.Error("agent", "json.Marshal error:"+err.Error())
+					return
+				}
+
+				// Send the JSON string as a byte slice
+				err = c.WriteMessage(websocket.TextMessage, jsonData)
+				if err != nil {
+					log.Error("agent", "write:"+err.Error())
+				}
 			}
 
 		}

@@ -193,15 +193,21 @@ const url = config.app.url;
 
 	// Handle WebSocket connections
 	wss.on("connection", (ws) => {
+		log.debug("server", "WebSocket connection established");
+
+		// Interrogate the connection for agent information
+		ws.send(JSON.stringify({ type: "agentInfo" }));
+
 		ws.on("message", (message) => {
-			console.log("Received message => " + message);
+			message = JSON.parse(message);
+			log.debug("server", "Message type: " + message.type);
+
+			// based on the message type, handle the message and hand off to the appropriate controller
+
+			// Check if token is valid
+
+			// If not, send error message and close connection
 		});
-
-		ws.send("Hello! Message From Server!!");
-
-		setInterval(() => {
-			ws.send("Ping from server => " + new Date().toTimeString());
-		}, 10000);
 	});
 
 	// Start listening for requests

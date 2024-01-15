@@ -33,7 +33,7 @@ func NewAgent() *Agent {
 }
 
 // Initialize sets up the Agent by generating RSA keys
-func (a *Agent) Initialize() {
+func (a *Agent) Initialize(token string) {
 	// TODO: Only allow 1 agent per server
 
 	// if on windows, store the RSA keys in %APPDATA%\Echoes\agent
@@ -91,6 +91,9 @@ func (a *Agent) Initialize() {
 
 		Logger.Info(Logger{}, "agent", "Loaded RSA keys from disk")
 	}
+
+	// Set the agent token
+	a.Token = token
 }
 
 // PerformHandshake performs the E2E encryption handshake with the server
