@@ -9,7 +9,6 @@ import (
 	"encoding/pem"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 )
@@ -21,6 +20,9 @@ type Agent struct {
 	Token      string
 }
 
+// agentDir is the directory where the agent stores its RSA keys and other files
+var agentDir string
+
 // NewAgent creates a new Agent instance
 func NewAgent() *Agent {
 	return &Agent{}
@@ -30,8 +32,15 @@ func NewAgent() *Agent {
 func (a *Agent) Initialize() {
 	// TODO: Only allow 1 agent per server
 
+	// if on windows, store the RSA keys in %APPDATA%\Echoes\agent
+	if os.Getenv("OS") == "Windows_NT" {
+		agentDir = os.Getenv("APPDATA") + "\\Echoes\\agent"
+	} else {
+		agentDir = "/etc/echoes/agent"
+	}
+
 	// Check if the files /etc/echoes/agent/private_key and /etc/echoes/agent/public_key exist
-	if _, err := os.Stat("/etc/echoes/agent/private_key"); os.IsNotExist(err) {
+	if _, err := os.Stat(agentDir + "/private_key"); os.IsNotExist(err) {
 		// Generate RSA Keys
 		var err error
 		a.PrivateKey, err = rsa.GenerateKey(rand.Reader, 2048)
@@ -52,14 +61,14 @@ func (a *Agent) Initialize() {
 		Logger.Info(Logger{}, "agent", "Generated RSA keys")
 
 		// Store the RSA keys in /etc/echoes/agent
-		os.MkdirAll("/etc/echoes/agent", os.ModePerm)
-		os.WriteFile("/etc/echoes/agent/private_key", x509.MarshalPKCS1PrivateKey(a.PrivateKey), 0644)
-		os.WriteFile("/etc/echoes/agent/public_key", a.PublicKey, 0644)
+		os.MkdirAll(agentDir, os.ModePerm)
+		os.WriteFile(agentDir+"/private_key", x509.MarshalPKCS1PrivateKey(a.PrivateKey), 0644)
+		os.WriteFile(agentDir+"/public_key", a.PublicKey, 0644)
 
-		Logger.Info(Logger{}, "agent", "Stored RSA keys in /etc/echoes/agent")
+		Logger.Info(Logger{}, "agent", "Stored RSA keys in "+agentDir)
 	} else {
 		// Read the private key from the file
-		privateKeyBytes, err := ioutil.ReadFile("/etc/echoes/agent/private_key")
+		privateKeyBytes, err := os.ReadFile(agentDir + "/private_key")
 		if err != nil {
 			panic(err) // Handle error
 		}
@@ -71,7 +80,7 @@ func (a *Agent) Initialize() {
 		}
 
 		// Read the public key from the file
-		a.PublicKey, err = ioutil.ReadFile("/etc/echoes/agent/public_key")
+		a.PublicKey, err = os.ReadFile(agentDir + "/public_key")
 		if err != nil {
 			panic(err) // Handle error
 		}

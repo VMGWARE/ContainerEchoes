@@ -42,18 +42,7 @@ func (l Logger) Log(module, msg, level string) {
 	logEntry := fmt.Sprintf("%s [%s] %s: %s",
 		now, module, level, msg)
 
-	switch level {
-	case "ERROR":
-		log.Println(logEntry)
-	case "WARN":
-		log.Println(logEntry)
-	case "INFO":
-		log.Println(logEntry)
-	case "DEBUG":
-		log.Println(logEntry)
-	default:
-		log.Println(logEntry)
-	}
+	log.Println(logEntry)
 }
 
 // Info logs an info level message
