@@ -11,6 +11,7 @@ const gracefulShutdown = require("http-graceful-shutdown");
 const knex = require("@container-echoes/core/database");
 const limiter = require("./middleware/rateLimit");
 const config = require("@container-echoes/core/config");
+const WebSocket = require("ws");
 
 // Load environment variables
 require("dotenv").config();
@@ -184,6 +185,23 @@ const url = config.app.url;
 			message: "An internal server error has occurred.",
 			data: null,
 		});
+	});
+
+	// Initialize the WebSocket server
+	log.debug("server", "Initializing WebSocket server");
+	const wss = new WebSocket.Server({ port: 8080 });
+
+	// Handle WebSocket connections
+	wss.on("connection", (ws) => {
+		ws.on("message", (message) => {
+			console.log("Received message => " + message);
+		});
+
+		ws.send("Hello! Message From Server!!");
+
+		setInterval(() => {
+			ws.send("Ping from server => " + new Date().toTimeString());
+		}, 10000);
 	});
 
 	// Start listening for requests

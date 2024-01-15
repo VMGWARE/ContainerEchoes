@@ -1,9 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"net/url"
 	"os"
+	"time"
 
+	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 )
 
@@ -53,9 +57,47 @@ func main() {
 	// if the agent is being initialized, send the agent token to the server
 	// once authenticated, the server will send a public key to encrypt traffic with
 	// the agent will then send a public key to the server to encrypt traffic with the agent
-	agent.PerformHandshake(os.Getenv("AGENT_SERVER_URL") + "/handshake")
+	// agent.PerformHandshake(os.Getenv("AGENT_SERVER_URL") + "/handshake")
 
 	// After the handshake, the agent will begin polling the server for containers to monitor
+	u := url.URL{Scheme: "ws", Host: "localhost:8080", Path: "/"}
+
+	// Infinite loop to keep trying the connection
+	for {
+		c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
+		if err != nil {
+			log.Error("agent", "dial:"+err.Error())
+			// Wait for a bit before trying to reconnect
+			// Wait for a bit before trying to reconnect
+			time.Sleep(5 * time.Second)
+			continue
+		}
+
+		log.Info("agent", "WebSocket connected")
+		defer c.Close()
+
+		// Inner loop for continuous message handling
+		for {
+			// Receive message
+			_, message, err := c.ReadMessage()
+			if err != nil {
+				log.Error("agent", "read:"+err.Error())
+				return
+			}
+			log.Info("agent", fmt.Sprintf("recv: %s", message))
+
+			// Send message
+			err = c.WriteMessage(websocket.TextMessage, []byte("Hello from Go!"))
+			if err != nil {
+				log.Error("agent", "write:"+err.Error())
+				return
+			}
+
+		}
+
+		// If disconnected, wait for a bit before trying to reconnect
+		time.Sleep(5 * time.Second)
+	}
 
 	// if the server returns or changes the needed container name, add it to the list of containers to monitor
 
