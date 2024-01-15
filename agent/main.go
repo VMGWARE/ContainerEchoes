@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 // Array of required environment variables
@@ -17,6 +19,9 @@ func main() {
 
 	// log the agent starting
 	log.Info("agent", "Container Echoes Agent starting")
+
+	// load environment variables from .env file
+	godotenv.Load()
 
 	// Checks to ensure required environment variables are set
 	var missingEnvVars bool
