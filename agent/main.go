@@ -142,6 +142,29 @@ func main() {
 				if err != nil {
 					log.Error("agent", "write:"+err.Error())
 				}
+			case "containerList":
+				log.Info("agent", "Server interrogating for container list")
+
+				list := agent.GetContainers()
+
+				// Build container list message
+				containerList := response{
+					Type: "containerList",
+					Data: list,
+				}
+
+				// Convert the containerList struct to a JSON string
+				jsonData, err := json.Marshal(containerList)
+				if err != nil {
+					log.Error("agent", "json.Marshal error:"+err.Error())
+					return
+				}
+
+				// Send the JSON string as a byte slice
+				err = c.WriteMessage(websocket.TextMessage, jsonData)
+				if err != nil {
+					log.Error("agent", "write:"+err.Error())
+				}
 			}
 
 		}

@@ -198,9 +198,12 @@ const url = config.app.url;
 		// Interrogate the connection for agent information
 		ws.send(JSON.stringify({ type: "agentInfo" }));
 
+		ws.send(JSON.stringify({ type: "containerList" }));
+
 		ws.on("message", (message) => {
 			message = JSON.parse(message);
 			log.debug("server", "Message type: " + message.type);
+			console.log(message);
 
 			// based on the message type, handle the message and hand off to the appropriate controller
 
