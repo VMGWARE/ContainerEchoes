@@ -44,11 +44,10 @@ func main() {
 	agent.Initialize()
 
 	// Perform E2E Encryption Handshake
-	agent.PerformHandshake(os.Getenv("AGENT_SERVER_URL") + "/handshake")
-
 	// if the agent is being initialized, send the agent token to the server
 	// once authenticated, the server will send a public key to encrypt traffic with
 	// the agent will then send a public key to the server to encrypt traffic with the agent
+	agent.PerformHandshake(os.Getenv("AGENT_SERVER_URL") + "/handshake")
 
 	// After the handshake, the agent will begin polling the server for containers to monitor
 
