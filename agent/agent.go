@@ -47,6 +47,15 @@ func (a *Agent) Initialize() {
 			Type:  "RSA PUBLIC KEY",
 			Bytes: pubKeyBytes,
 		})
+
+		Logger.Info(Logger{}, "agent", "Generated RSA keys")
+
+		// Store the RSA keys in /etc/echoes/agent
+		os.MkdirAll("/etc/echoes/agent", os.ModePerm)
+		ioutil.WriteFile("/etc/echoes/agent/private_key", x509.MarshalPKCS1PrivateKey(a.PrivateKey), 0644)
+		ioutil.WriteFile("/etc/echoes/agent/public_key", a.PublicKey, 0644)
+
+		Logger.Info(Logger{}, "agent", "Stored RSA keys in /etc/echoes/agent")
 	} else {
 		// Read the private key from the file
 		privateKeyBytes, err := ioutil.ReadFile("/etc/echoes/agent/private_key")
@@ -65,11 +74,15 @@ func (a *Agent) Initialize() {
 		if err != nil {
 			panic(err) // Handle error
 		}
+
+		Logger.Info(Logger{}, "agent", "Loaded RSA keys from disk")
 	}
 }
 
 // PerformHandshake performs the E2E encryption handshake with the server
 func (a *Agent) PerformHandshake(url string) error {
+	Logger.Info(Logger{}, "agent", "Performing handshake with server...")
+
 	// Send agent token and public key to the server as JSON
 	jsonData := map[string]string{
 		"agent_token": string(a.Token),
@@ -83,6 +96,11 @@ func (a *Agent) PerformHandshake(url string) error {
 	}
 	defer response.Body.Close()
 
+	// Check if the server responded with an error
+	if response.StatusCode != 200 {
+		return fmt.Errorf("Handshake with server failed: %s", response.Status)
+	}
+
 	// Read the server's public key
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
@@ -90,8 +108,9 @@ func (a *Agent) PerformHandshake(url string) error {
 	}
 
 	// Here you might store the server's public key for further communication
-	// For now, we'll just print it
-	fmt.Printf("Server's Public Key: %s\n", string(body))
+	// For now, we'll just print it to the console
+	Logger.Info(Logger{}, "agent", "Handshake with server successful")
+	Logger.Info(Logger{}, "agent", "Server's Public Key: "+string(body))
 
 	return nil
 }
