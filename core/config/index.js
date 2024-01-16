@@ -40,6 +40,11 @@ class Config {
        * Base URL of the frontend application
        */
       frontendUrl: process.env.FRONTEND_URL || "http://localhost:3000",
+      /**
+       * Auto add agents
+       * When a new agent is added to the system, it will automatically be integrated with the system.
+       */
+      autoAddAgents: process.env.AUTO_ADD_AGENTS || false,
     };
 
     /**
