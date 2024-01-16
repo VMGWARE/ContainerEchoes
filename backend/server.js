@@ -13,6 +13,7 @@ const limiter = require("./middleware/rateLimit");
 const config = require("@container-echoes/core/config");
 const WebSocket = require("ws");
 const { Client } = require("@elastic/elasticsearch");
+const WebSocketManager = require("./managers/webSocket");
 
 // Load environment variables
 require("dotenv").config();
@@ -209,31 +210,10 @@ const url = config.app.url;
 		});
 	});
 
-	// Initialize the WebSocket server
+	// Initialize the WebSocket manager
 	log.debug("server", "Initializing WebSocket server");
 	const wss = new WebSocket.Server({ port: 8080 });
-
-	// Handle WebSocket connections
-	wss.on("connection", (ws) => {
-		log.debug("server", "WebSocket connection established");
-
-		// Interrogate the connection for agent information
-		ws.send(JSON.stringify({ type: "agentInfo" }));
-
-		ws.send(JSON.stringify({ type: "containerList" }));
-
-		ws.on("message", (message) => {
-			message = JSON.parse(message);
-			log.debug("server", "Message type: " + message.type);
-			console.log(message);
-
-			// based on the message type, handle the message and hand off to the appropriate controller
-
-			// Check if token is valid
-
-			// If not, send error message and close connection
-		});
-	});
+	new WebSocketManager(wss);
 
 	// Start listening for requests
 	app.listen(port, async () => {

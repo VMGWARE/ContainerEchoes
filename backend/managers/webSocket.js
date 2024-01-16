@@ -1,0 +1,86 @@
+const log = require("@vmgware/js-logger");
+const WebSocket = require("ws");
+
+class WebSocketManager {
+	constructor(wss) {
+		this.wss = wss;
+		this.connections = [];
+
+		this.wss.getUniqueID = function () {
+			function s4() {
+				return Math.floor((1 + Math.random()) * 0x10000)
+					.toString(16)
+					.substring(1);
+			}
+			return s4() + s4() + "-" + s4();
+		};
+
+		this.wss.on("connection", (ws) => {
+			log.debug("WebSocketManager", "New WebSocket connection");
+
+			// TODO: The id should be the agent's id, not a random one
+			ws.id = wss.getUniqueID();
+
+			// Ask for the agent info
+			this.sendMessage(ws, this.buildMessage("agentInfo"));
+
+			ws.on("message", (message) => {
+				this.handleMessage(ws, message);
+			});
+		});
+
+		this.wss.on("error", (error) => {
+			log.error("WebSocketManager", "WebSocket error: " + error.message);
+		});
+
+		this.wss.on("close", () => {
+			log.debug("WebSocketManager", "WebSocket closed");
+		});
+	}
+
+	handleMessage(ws, message) {
+		// Handle incoming messages
+		log.debug("WebSocketManager", "Received message: " + message);
+		// Your custom message handling logic goes here
+	}
+
+	// Method for sending messages
+	sendMessage(ws, message) {
+		try {
+			ws.send(message);
+		} catch (error) {
+			log.error("WebSocketManager", "Error sending message: " + error.message);
+		}
+	}
+
+	/**
+	 * Builds a message to send to the client
+	 * @param {*} type - The type of message
+	 * @param {*} data - The data to send
+	 * @returns {string} The message to send
+	 */
+	buildMessage(type, data) {
+		return JSON.stringify({
+			type: type,
+			data: data,
+		});
+	}
+
+	/**
+	 * Sends a message to all connected clients
+	 * @param {*} type - The type of message
+	 * @param {*} data - The data to send
+	 * @returns {void}
+	 */
+	broadcastMessage(type, data) {
+		this.wss.clients.forEach((client) => {
+			if (client.readyState === WebSocket.OPEN) {
+				this.sendMessage(client, this.buildMessage(type, data));
+			}
+		});
+
+		log.debug("WebSocketManager", "Sent message to all clients");
+	}
+}
+
+module.exports = WebSocketManager;

@@ -167,12 +167,11 @@ func main() {
 				if err != nil {
 					log.Error("agent", "write:"+err.Error())
 				}
+			default:
+				log.Warn("agent", "Unknown message type: "+resp.Type)
 			}
 
 		}
-
-		// If disconnected, wait for a bit before trying to reconnect
-		time.Sleep(5 * time.Second)
 	}
 
 	// if the server returns or changes the needed container name, add it to the list of containers to monitor
