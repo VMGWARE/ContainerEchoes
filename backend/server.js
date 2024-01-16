@@ -12,6 +12,7 @@ const knex = require("@container-echoes/core/database");
 const limiter = require("./middleware/rateLimit");
 const config = require("@container-echoes/core/config");
 const WebSocket = require("ws");
+const { Client } = require("@elastic/elasticsearch");
 
 // Load environment variables
 require("dotenv").config();
@@ -63,6 +64,35 @@ const url = config.app.url;
 		"server",
 		"Latest migration: " + (await knex.migrate.currentVersion())
 	);
+
+	// Check connection to Elasticsearch
+	log.info("server", "Checking Elasticsearch connection...");
+	const client = new Client({
+		node: config.elasticsearch.url,
+		auth: {
+			apiKey: config.elasticsearch.apiKey,
+		},
+		tls: {
+			// ca: config.elasticsearch.ca,
+			ca: Buffer.from(config.elasticsearch.ca, "base64").toString("ascii"),
+			rejectUnauthorized: false,
+		},
+	});
+
+	try {
+		// API Key should have cluster monitor rights.
+		const resp = await client.info();
+		log.info(
+			"server",
+			"Elasticsearch connection successful, version: " + resp.version.number
+		);
+	} catch (err) {
+		if (config.exceptionless.apiKey && config.exceptionless.serverUrl) {
+			await Exceptionless.submitException(err);
+		}
+		log.error("server", "Error connecting to Elasticsearch: " + err);
+		process.exit(1);
+	}
 
 	// Initialize the app
 	log.debug("server", "Initializing app");
@@ -178,7 +208,9 @@ const url = config.app.url;
 
 	// 500 middleware
 	app.use(async (error, req, res) => {
-		await Exceptionless.submitException(error);
+		if (config.exceptionless.apiKey && config.exceptionless.serverUrl) {
+			await Exceptionless.submitException(error);
+		}
 		return res.status(500).json({
 			status: "error",
 			code: 500,

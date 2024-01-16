@@ -172,6 +172,10 @@ class Config {
        * Index name for Elasticsearch
        */
       index: process.env.ELASTICSEARCH_INDEX,
+      /**
+       * CA for Elasticsearch
+       */
+      ca: process.env.ELASTICSEARCH_CA,
     };
   }
 }
