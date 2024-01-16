@@ -1,10 +1,26 @@
 const log = require("@vmgware/js-logger");
 const WebSocket = require("ws");
 
+/**
+ * Manages WebSocket connections
+ */
 class WebSocketManager {
+	/**
+	 * The WebSocket server
+	 */
+	wss;
+
+	/**
+	 * The public key of the agent
+	 */
+	publicKey;
+
+	/**
+	 * New WebSocketManager
+	 * @param {*} wss - The WebSocket server
+	 */
 	constructor(wss) {
 		this.wss = wss;
-		this.connections = [];
 
 		this.wss.getUniqueID = function () {
 			function s4() {
@@ -39,13 +55,24 @@ class WebSocketManager {
 		});
 	}
 
+	/**
+	 * Handles incoming messages
+	 * @param {*} ws - The WebSocket connection
+	 * @param {*} message - The message
+	 * @returns {void}
+	 */
 	handleMessage(ws, message) {
 		// Handle incoming messages
 		log.debug("WebSocketManager", "Received message: " + message);
 		// Your custom message handling logic goes here
 	}
 
-	// Method for sending messages
+	/**
+	 * Sends a message to the client
+	 * @param {*} ws - The WebSocket connection
+	 * @param {*} message - The message
+	 * @returns {void}
+	 */
 	sendMessage(ws, message) {
 		try {
 			ws.send(message);
