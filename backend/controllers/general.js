@@ -7,6 +7,7 @@
 
 // Helpers/utilities
 const { genericInternalServerError } = require("../utils/responses");
+const { getVersion } = require("../utils/general");
 const log = require("@vmgware/js-logger");
 const si = require("systeminformation");
 const knex = require("@container-echoes/core/database");
@@ -64,7 +65,7 @@ async function getSystemInformation(req, res) {
 		const osInfo = await si.osInfo();
 
 		const echoes = {
-			version: process.env.npm_package_version,
+			version: getVersion(),
 			latestVersion: "1.0.0",
 			nodeVersion: process.version,
 		};
