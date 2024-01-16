@@ -35,6 +35,18 @@ class WebSocketManager {
 		this.wss.on("connection", (ws) => {
 			log.debug("WebSocketManager", "New WebSocket connection");
 
+			// https://stackoverflow.com/questions/13364243/websocketserver-node-js-how-to-differentiate-clients
+
+			// TODO: The public key should be retrieved from the database
+
+			// TODO: Perform handshake with the agent (send the public key, receive the agent's public key)
+
+			// TODO: Get the agents info
+
+			// TODO: Check if the agent is valid (if flag to auto add is set, add the agent to the database
+
+			// TODO: Once the agent is valid, send the agent's id to the agent and store other info in the database
+
 			// TODO: The id should be the agent's id, not a random one
 			ws.id = wss.getUniqueID();
 
