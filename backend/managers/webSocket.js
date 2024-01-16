@@ -24,6 +24,7 @@ class WebSocketManager {
 			// Ask for the agent info
 			this.sendMessage(ws, this.buildMessage("agentInfo"));
 
+			// Handle incoming messages
 			ws.on("message", (message) => {
 				this.handleMessage(ws, message);
 			});
@@ -80,6 +81,40 @@ class WebSocketManager {
 		});
 
 		log.debug("WebSocketManager", "Sent message to all clients");
+	}
+
+	/**
+	 * Sends a message to a specific client
+	 * @param {*} id - The id of the client to send the message to
+	 * @param {*} type - The type of message
+	 * @param {*} data - The data to send
+	 * @returns {void}
+	 */
+	sendMessageToClient(id, type, data) {
+		this.wss.clients.forEach((client) => {
+			if (client.id === id && client.readyState === WebSocket.OPEN) {
+				this.sendMessage(client, this.buildMessage(type, data));
+			}
+		});
+
+		log.debug("WebSocketManager", "Sent message to client " + id);
+	}
+
+	/**
+	 * Sends a message to all clients except the one specified
+	 * @param {*} id - The id of the client to exclude
+	 * @param {*} type - The type of message
+	 * @param {*} data - The data to send
+	 * @returns {void}
+	 */
+	broadcastMessageExcept(id, type, data) {
+		this.wss.clients.forEach((client) => {
+			if (client.id !== id && client.readyState === WebSocket.OPEN) {
+				this.sendMessage(client, this.buildMessage(type, data));
+			}
+		});
+
+		log.debug("WebSocketManager", "Sent message to all clients except " + id);
 	}
 }
 
