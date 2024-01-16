@@ -11,6 +11,7 @@ class Config {
    * @property sentry - Sentry related configuration.
    * @property email - Email related configuration.
    * @property exceptionless - Exceptionless related configuration.
+   * @property elasticsearch - Elasticsearch related configuration.
    */
   constructor() {
     /**
@@ -150,6 +151,27 @@ class Config {
        * URL of the Exceptionless server
        */
       serverUrl: process.env.EXCEPTIONLESS_SERVER_URL,
+    };
+
+    /**
+     * Elasticsearch configuration
+     * @property url - The URL of the Elasticsearch server.
+     * @property apiKey - The API key for Elasticsearch.
+     * @property index - The index name for Elasticsearch.
+     */
+    this.elasticsearch = {
+      /**
+       * URL of the Elasticsearch server
+       */
+      url: process.env.ELASTICSEARCH_URL,
+      /**
+       * API key for Elasticsearch
+       */
+      apiKey: process.env.ELASTICSEARCH_API_KEY,
+      /**
+       * Index name for Elasticsearch
+       */
+      index: process.env.ELASTICSEARCH_INDEX,
     };
   }
 }
