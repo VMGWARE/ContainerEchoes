@@ -1,5 +1,6 @@
 const log = require("@vmgware/js-logger");
 const WebSocket = require("ws");
+const forge = require("node-forge");
 
 /**
  * Manages WebSocket connections
@@ -142,6 +143,25 @@ class WebSocketManager {
 		});
 
 		log.debug("WebSocketManager", "Sent message to all clients except " + id);
+	}
+
+	/**
+	 * Encrypts a message using RSA encryption with the provided public key
+	 * @param {string} message - The message to encrypt
+	 * @param {string} publicKey - The RSA public key in PEM format
+	 * @returns {string} The encrypted message in hexadecimal format
+	 */
+	encryptMessageWithRSA(message, publicKey) {
+		const publicKeyObj = forge.pki.publicKeyFromPem(publicKey);
+		const encryptedMessage = publicKeyObj.encrypt(message, "RSA-OAEP", {
+			md: forge.md.sha256.create(),
+			mgf1: {
+				md: forge.md.sha1.create(),
+			},
+		});
+
+		// Convert the encrypted message to hexadecimal format
+		return forge.util.bytesToHex(encryptedMessage);
 	}
 }
 
