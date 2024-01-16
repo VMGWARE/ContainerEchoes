@@ -34,7 +34,7 @@ const GeneralController = require("../controllers/general");
  *                  type: null
  *                  example: null
  */
-router.use("/healthcheck", (req, res) => {
+router.get("/general/healthcheck", (req, res) => {
 	res.status(200).json({
 		status: "success",
 		code: 200,

@@ -56,7 +56,7 @@ func main() {
 	}
 
 	// perform check to ensure the server is healthy and ready to accept connections
-	if !checkServerHealth(os.Getenv("AGENT_SERVER_URL") + "/health") {
+	if !checkServerHealth(os.Getenv("AGENT_SERVER_URL") + "/general/healthcheck") {
 		log.Error("agent", "Server is not healthy")
 		return
 	}
