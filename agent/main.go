@@ -212,6 +212,27 @@ func main() {
 				if err != nil {
 					log.Error("agent", "write:"+err.Error())
 				}
+			case "agentId":
+				log.Info("agent", "Server sending agent id")
+
+				// Check if resp.Data is a map and contains "agentId" key
+				data, ok := resp.Data.(map[string]interface{})
+				if !ok {
+					log.Error("agent", "Invalid agentId message format")
+					// Handle the error appropriately, e.g., return or log
+					return
+				}
+
+				// Convert the agentIdValue string to int
+				agentIdFloat, ok := data["agentId"].(float64)
+				if !ok {
+					log.Error("agent", "Invalid agentId format")
+					// Handle the error appropriately, e.g., return or log
+					return
+				}
+
+				agentId := int(agentIdFloat) // Convert to int if needed
+				agent.Id = agentId
 			default:
 				log.Warn("agent", "Unknown message type: "+resp.Type)
 			}

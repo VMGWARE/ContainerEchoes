@@ -1,6 +1,7 @@
 const log = require("@vmgware/js-logger");
 const WebSocket = require("ws");
 const forge = require("node-forge");
+const knex = require("@container-echoes/core/database");
 
 /**
  * Manages WebSocket connections
@@ -70,8 +71,8 @@ class WebSocketManager {
 			this.sendMessage(ws, this.buildMessage("agentInfo"));
 
 			// Handle incoming messages
-			ws.on("message", (message) => {
-				this.handleMessage(ws, message);
+			ws.on("message", async (message) => {
+				await this.handleMessage(ws, message);
 			});
 		});
 
@@ -90,7 +91,7 @@ class WebSocketManager {
 	 * @param {*} message - The message
 	 * @returns {void}
 	 */
-	handleMessage(ws, message) {
+	async handleMessage(ws, message) {
 		// Handle incoming messages
 		log.debug("WebSocketManager", "Received message: " + message);
 		// Your custom message handling logic goes here
@@ -101,6 +102,61 @@ class WebSocketManager {
 			// Store the agent's public key
 			ws.publicKey = messageObj.data.publicKey;
 			this.publicKey = messageObj.data.publicKey;
+		}
+		if (messageObj.type === "agentInfo") {
+			// FIXME: Below is some REALLY BAD code, but it works for now
+
+			let token = messageObj.data.token;
+			let hostname = messageObj.data.hostname;
+
+			// Check if the agent is valid
+			await knex("agent")
+				.where({
+					token: token,
+				})
+				.then(async (rows) => {
+					if (rows.length === 0) {
+						// Add the agent to the database
+						await knex("agent").insert({
+							token: token,
+							hostname: hostname,
+							publickey: ws.publicKey,
+						});
+					} else {
+						// Update the agent's hostname
+						await knex("agent")
+							.where({
+								token: token,
+							})
+							.update({
+								hostname: hostname,
+							});
+					}
+				})
+				.catch((error) => {
+					log.error(
+						"WebSocketManager",
+						"Error checking agent validity: " + error.message
+					);
+				});
+
+			// Get the agent's id
+			const agent = await knex("agent")
+				.where({
+					token: token,
+				})
+				.first()
+				.catch((error) => {
+					log.error("WebSocketManager", "Error getting agent id: " + error.message);
+				});
+
+			// Send the agent's id to the agent
+			this.sendMessage(
+				ws,
+				this.buildMessage("agentId", {
+					agentId: agent.agentId,
+				})
+			);
 		}
 	}
 

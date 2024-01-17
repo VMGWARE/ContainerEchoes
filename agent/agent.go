@@ -23,6 +23,7 @@ type Agent struct {
 	PublicKey       []byte
 	Token           string
 	ServerPublicKey []byte
+	Id              int
 }
 
 // agentDir is the directory where the agent stores its RSA keys and other files
