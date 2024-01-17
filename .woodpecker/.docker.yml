@@ -5,8 +5,9 @@ when:
       - ${CI_REPO_DEFAULT_BRANCH}
 
 depends_on:
-  - test
+  - agent
   - frontend
+  - backend
 
 variables:
   - &golang_image 'docker.io/golang:1.21.6'

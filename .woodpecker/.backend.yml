@@ -5,20 +5,18 @@ when:
       - ${CI_REPO_DEFAULT_BRANCH}
 
 variables:
-  - &node_image 'docker.io/node:18-alpine'
+  - &node_image "docker.io/node:18-alpine"
   - &when
     path:
       # related config files
-      - '.woodpecker/.frontend.yml'
-      # web source code
-      - 'frontend/**'
+      - ".woodpecker/.backend.yml"
       # backend source code
-      - 'backend/**'
+      - "backend/**"
 
 steps:
   install-dependencies:
     image: *node_image
-    directory: frontend/
+    directory: backend/
     commands:
       - npm install --frozen-lockfile
     when: *when
@@ -27,25 +25,16 @@ steps:
     depends_on:
       - install-dependencies
     image: *node_image
-    directory: frontend/
+    directory: backend/
     commands:
-      - npm run lint
-    when: *when
-
-  formatcheck:
-    depends_on:
-      - install-dependencies
-    image: *node_image
-    directory: frontend/
-    commands:
-      - npm run format:check
+      - npm run lint --if-present
     when: *when
 
   test:
     depends_on:
       - install-dependencies
     image: *node_image
-    directory: frontend/
+    directory: backend/
     commands:
-      - npm run test:unit
+      - npm run test:mocha --if-present
     when: *when
