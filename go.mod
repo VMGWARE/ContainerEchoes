@@ -1,4 +1,4 @@
-module agent
+module echoes
 
 go 1.21
 
