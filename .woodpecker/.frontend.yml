@@ -1,0 +1,51 @@
+when:
+  - event: pull_request
+  - event: push
+    branch:
+      - ${CI_REPO_DEFAULT_BRANCH}
+
+variables:
+  - &node_image 'docker.io/node:18-alpine'
+  - &when
+    path:
+      # related config files
+      - '.woodpecker/.web.yml'
+      # web source code
+      - 'frontend/**'
+      # backend source code
+      - 'backend/controllers/**'
+
+steps:
+  install-dependencies:
+    image: *node_image
+    directory: frontend/
+    commands:
+      - npm install --frozen-lockfile
+    when: *when
+
+  lint:
+    depends_on:
+      - install-dependencies
+    image: *node_image
+    directory: frontend/
+    commands:
+      - npm lint
+    when: *when
+
+  formatcheck:
+    depends_on:
+      - install-dependencies
+    image: *node_image
+    directory: frontend/
+    commands:
+      - npm format:check
+    when: *when
+
+  test:
+    depends_on:
+      - install-dependencies
+    image: *node_image
+    directory: frontend/
+    commands:
+      - npm test
+    when: *when

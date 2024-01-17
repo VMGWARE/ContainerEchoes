@@ -99,12 +99,23 @@ install-tools: ## Install development tools
 		go install mvdan.cc/gofumpt@latest; \
 	fi ;
 
+frontend-dependencies: ## Install frontend dependencies
+	(cd frontend/; npm install --frozen-lockfile)
+
 ##@ Test
 
 .PHONY: lint
 lint: install-tools ## Lint code
 	@echo "Running golangci-lint"
 	golangci-lint run
+
+test-frontend: frontend-dependencies ## Test frontend code
+	(cd frontend/; npm run lint)
+	(cd frontend/; npm run format:check)
+	(cd frontend/; npm run test:unit)
+
+.PHONY: test
+test: test-frontend ## Run all tests
 
 ##@ Build
 
