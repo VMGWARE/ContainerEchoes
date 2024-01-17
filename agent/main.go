@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -24,9 +26,8 @@ type response struct {
 
 // Create a custom struct for PublicKey and Token
 type AgentInfo struct {
-	PublicKey string `json:"publicKey"`
-	Token     string `json:"token"`
-	Hostname  string `json:"hostname"`
+	Token    string `json:"token"`
+	Hostname string `json:"hostname"`
 }
 
 func main() {
@@ -87,6 +88,26 @@ func main() {
 
 		log.Info("agent", "WebSocket connected")
 		defer c.Close()
+
+		// Create a channel to listen for termination signals
+		sigCh := make(chan os.Signal, 1)
+		signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
+
+		// Set up a goroutine to handle the termination signal and close the WebSocket connection
+		go func() {
+			<-sigCh // Wait for a termination signal
+
+			// Perform cleanup actions here, such as closing the WebSocket connection
+			// Close the WebSocket connection gracefully
+			if err := c.Close(); err != nil {
+				log.Error("agent", "Error closing WebSocket connection")
+			} else {
+				log.Info("agent", "WebSocket connection closed")
+			}
+
+			// Exit the program
+			os.Exit(0)
+		}()
 
 		/**
 		 * {
