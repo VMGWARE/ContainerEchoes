@@ -2,6 +2,8 @@ const log = require("@vmgware/js-logger");
 const WebSocket = require("ws");
 const forge = require("node-forge");
 const knex = require("@container-echoes/core/database");
+const config = require("@container-echoes/core/config");
+const { hostname } = require("os");
 
 /**
  * Manages WebSocket connections
@@ -62,11 +64,6 @@ class WebSocketManager {
 
 			// TODO: Check if the agent is valid (if flag to auto add is set, add the agent to the database
 
-			// TODO: Once the agent is valid, send the agent's id to the agent and store other info in the database
-
-			// TODO: The id should be the agent's id, not a random one
-			ws.id = wss.getUniqueID();
-
 			// Ask for the agent info
 			this.sendMessage(ws, this.buildMessage("agentInfo"));
 
@@ -104,51 +101,46 @@ class WebSocketManager {
 			this.publicKey = messageObj.data.publicKey;
 		}
 		if (messageObj.type === "agentInfo") {
-			// FIXME: Below is some REALLY BAD code, but it works for now
-
 			let token = messageObj.data.token;
 			let hostname = messageObj.data.hostname;
 
 			// Check if the agent is valid
-			await knex("agent")
+			let agent = await knex("agent")
 				.where({
 					token: token,
 				})
-				.then(async (rows) => {
-					if (rows.length === 0) {
-						// Add the agent to the database
-						await knex("agent").insert({
-							token: token,
-							hostname: hostname,
-							publickey: ws.publicKey,
-						});
-					} else {
-						// Update the agent's hostname
-						await knex("agent")
-							.where({
-								token: token,
-							})
-							.update({
-								hostname: hostname,
-							});
-					}
-				})
-				.catch((error) => {
-					log.error(
-						"WebSocketManager",
-						"Error checking agent validity: " + error.message
-					);
-				});
+				.first();
 
-			// Get the agent's id
-			const agent = await knex("agent")
-				.where({
-					token: token,
-				})
-				.first()
-				.catch((error) => {
-					log.error("WebSocketManager", "Error getting agent id: " + error.message);
-				});
+			if (!agent) {
+				if (config.app.autoAddAgents) {
+					log.debug(
+						"WebSocketManager",
+						"Agent is not valid, but auto add is enabled"
+					);
+
+					// Add the agent to the database
+					await knex("agent").insert({
+						token: token,
+						publickey: ws.publicKey,
+						hostname: hostname,
+					});
+
+					// Get the agent's info
+					agent = await knex("agent")
+						.where({
+							token: token,
+						})
+						.first();
+				} else {
+					log.debug("WebSocketManager", "Agent is not valid");
+					ws.close();
+				}
+			}
+
+			// Store the agent's id
+			ws.id = agent.agentId;
+
+			log.debug("WebSocketManager", `Authenticated agent ${agent.agentId}`);
 
 			// Send the agent's id to the agent
 			this.sendMessage(
@@ -254,6 +246,28 @@ class WebSocketManager {
 
 		// Convert the encrypted message to hexadecimal format
 		return forge.util.bytesToHex(encryptedMessage);
+	}
+
+	/**
+	 * Sends a message to a specific client and waits for a response
+	 * @param {*} id - The id of the client to send the message to
+	 * @param {*} type - The type of message
+	 * @param {*} data - The data to send
+	 * @returns {Promise<string>} The response from the client
+	 */
+	async sendMessageAndWaitForResponse(id, type, data) {
+		// TODO: Test this
+		return new Promise((resolve) => {
+			this.wss.clients.forEach((client) => {
+				if (client.id === id && client.readyState === WebSocket.OPEN) {
+					this.sendMessage(client, this.buildMessage(type, data));
+
+					client.on("message", (message) => {
+						resolve(message);
+					});
+				}
+			});
+		});
 	}
 }
 
