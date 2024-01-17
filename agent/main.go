@@ -167,9 +167,8 @@ func main() {
 				log.Info("agent", "Server interrogating for agent info")
 
 				agentData := AgentInfo{
-					PublicKey: string(agent.PublicKey),
-					Token:     agent.Token,
-					Hostname:  getHostName(),
+					Token:    agent.Token,
+					Hostname: getHostName(),
 				}
 
 				// Build agent info message
