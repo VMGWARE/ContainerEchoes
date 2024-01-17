@@ -1,3 +1,5 @@
+# This code originates from the Woodpecker CI project: https://github.com/woodpecker-ci/woodpecker/blob/main/Makefile
+
 GO_PACKAGES ?= $(shell go list agent/... | grep -v agent/vendor/)
 
 TARGETOS ?= $(shell go env GOOS)
@@ -86,9 +88,32 @@ build-agent: ## Build agent
 .PHONY: build
 build: build-agent ## Build agent binary
 
+##@ Release
+
+release-agent: ## Create agent binaries for release
+	# compile
+	GOOS=linux   GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '${LDFLAGS}' -o dist/agent/linux_amd64/echoes-agent       ./agent
+	GOOS=linux   GOARCH=arm64 CGO_ENABLED=0 go build -ldflags '${LDFLAGS}' -o dist/agent/linux_arm64/echoes-agent       ./agent
+	GOOS=linux   GOARCH=arm   CGO_ENABLED=0 go build -ldflags '${LDFLAGS}' -o dist/agent/linux_arm/echoes-agent         ./agent
+	GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '${LDFLAGS}' -o dist/agent/windows_amd64/echoes-agent.exe ./agent
+	GOOS=darwin  GOARCH=amd64 CGO_ENABLED=0 go build -ldflags '${LDFLAGS}' -o dist/agent/darwin_amd64/echoes-agent      ./agent
+	GOOS=darwin  GOARCH=arm64 CGO_ENABLED=0 go build -ldflags '${LDFLAGS}' -o dist/agent/darwin_arm64/echoes-agent      ./agent
+	# tar binary files
+	tar -cvzf dist/echoes-agent_linux_amd64.tar.gz   -C dist/agent/linux_amd64   echoes-agent
+	tar -cvzf dist/echoes-agent_linux_arm64.tar.gz   -C dist/agent/linux_arm64   echoes-agent
+	tar -cvzf dist/echoes-agent_linux_arm.tar.gz     -C dist/agent/linux_arm     echoes-agent
+	tar -cvzf dist/echoes-agent_windows_amd64.tar.gz -C dist/agent/windows_amd64 echoes-agent.exe
+	tar -cvzf dist/echoes-agent_darwin_amd64.tar.gz  -C dist/agent/darwin_amd64  echoes-agent
+	tar -cvzf dist/echoes-agent_darwin_arm64.tar.gz  -C dist/agent/darwin_arm64  echoes-agent
+
 release-checksums: ## Create checksums for all release files
 	# generate shas for tar files
 	(cd dist/; sha256sum *.* > checksums.txt)
+
+.PHONY: release
+release: release-agent ## Release all binaries
+
+##@ Bundle
 
 bundle-prepare: ## Prepare the bundles
 	go install github.com/goreleaser/nfpm/v2/cmd/nfpm@v2.6.0
