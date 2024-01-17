@@ -15,6 +15,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"github.com/gorilla/websocket"
 )
 
 // Agent represents the client that will communicate with the server
@@ -24,6 +25,7 @@ type Agent struct {
 	Token           string
 	ServerPublicKey []byte
 	Id              int
+	Connection      *websocket.Conn
 }
 
 // agentDir is the directory where the agent stores its RSA keys and other files
