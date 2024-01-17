@@ -3,9 +3,6 @@ when:
   - event: push
     branch:
       - ${CI_REPO_DEFAULT_BRANCH}
-  - event: deployment
-    branch:
-      - ${CI_REPO_DEFAULT_BRANCH}
 
 depends_on:
   - test
@@ -56,6 +53,37 @@ steps:
   # A g e n t #
   #############
 
+  publish-agent-preview:
+    depends_on:
+      - vendor
+    image: *buildx_plugin
+    settings:
+      repo: *publish_repos_agent
+      dockerfile: docker/Dockerfile.agent
+      platforms: *platforms_preview
+      tag: pull_${CI_COMMIT_PULL_REQUEST}
+      build_args: *build_args
+      logins: *publish_logins
+    when:
+      evaluate: 'CI_COMMIT_PULL_REQUEST_LABELS contains "build_pr_images"'
+      event: pull_request
+
+  build-agent:
+    depends_on:
+      - vendor
+    image: *buildx_plugin
+    settings:
+      dry_run: true
+      repo: *publish_repos_agent
+      dockerfile: docker/Dockerfile.agent
+      platforms: *platforms_preview
+      tag: pull_${CI_COMMIT_PULL_REQUEST}
+      build_args: *build_args
+    when:
+      evaluate: 'not (CI_COMMIT_PULL_REQUEST_LABELS contains "build_pr_images")'
+      event: pull_request
+      path: *when_path
+
   publish-next-agent:
     depends_on:
       - vendor
@@ -85,6 +113,4 @@ steps:
       logins: *publish_logins
       build_args: *build_args
     when:
-      branch: ${CI_REPO_DEFAULT_BRANCH}
       event: tag
-      path: *when_path
