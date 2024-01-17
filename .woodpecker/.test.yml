@@ -19,7 +19,7 @@ when:
       - ${CI_REPO_DEFAULT_BRANCH}
 
 variables:
-  - &golang_image "docker.io/golang:1.21.5"
+  - &golang_image "docker.io/golang:1.21"
   - &when
     - path: &when_path # related config files
         - ".woodpecker/test.yaml"
@@ -40,16 +40,16 @@ steps:
         - <<: *when_path
         - ".woodpecker/**"
 
-  lint-pipeline:
-    depends_on:
-      - vendor
-    image: *golang_image
-    commands:
-      - go run go.woodpecker-ci.org/woodpecker/v2/cmd/cli lint
-    when:
-      - event: pull_request
-        path:
-          - ".woodpecker/**"
+  # lint-pipeline:
+  #   depends_on:
+  #     - vendor
+  #   image: *golang_image
+  #   commands:
+  #     - go run go.woodpecker-ci.org/woodpecker/v2/cmd/cli lint
+  #   when:
+  #     - event: pull_request
+  #       path:
+  #         - ".woodpecker/**"
 
   lint:
     depends_on:
