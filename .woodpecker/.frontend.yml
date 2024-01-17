@@ -13,7 +13,7 @@ variables:
       # web source code
       - 'frontend/**'
       # backend source code
-      - 'backend/controllers/**'
+      - 'backend/**'
 
 steps:
   install-dependencies:
