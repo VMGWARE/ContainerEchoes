@@ -22,7 +22,7 @@ variables:
   - &golang_image "docker.io/golang:1.21"
   - &when
     - path: &when_path # related config files
-        - ".woodpecker/test.yaml"
+        - ".woodpecker/.test.yml"
         # go source code
         - "**/*.go"
         - "go.*"
