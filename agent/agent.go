@@ -69,9 +69,18 @@ func (a *Agent) Initialize(token string) {
 		Logger.Info(Logger{}, "agent", "Generated RSA keys")
 
 		// Store the RSA keys in /etc/echoes/agent
-		os.MkdirAll(agentDir, os.ModePerm)
-		os.WriteFile(agentDir+"/private_key", x509.MarshalPKCS1PrivateKey(a.PrivateKey), 0644)
-		os.WriteFile(agentDir+"/public_key", a.PublicKey, 0644)
+		err = os.MkdirAll(agentDir, os.ModePerm)
+		if err != nil {
+			panic(err) // Handle error
+		}
+		err = os.WriteFile(agentDir+"/private_key", x509.MarshalPKCS1PrivateKey(a.PrivateKey), 0644)
+		if err != nil {
+			panic(err) // Handle error
+		}
+		err = os.WriteFile(agentDir+"/public_key", a.PublicKey, 0644)
+		if err != nil {
+			panic(err) // Handle error
+		}
 
 		Logger.Info(Logger{}, "agent", "Stored RSA keys in "+agentDir)
 	} else {
