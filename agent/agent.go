@@ -19,9 +19,10 @@ import (
 
 // Agent represents the client that will communicate with the server
 type Agent struct {
-	PrivateKey *rsa.PrivateKey
-	PublicKey  []byte
-	Token      string
+	PrivateKey      *rsa.PrivateKey
+	PublicKey       []byte
+	Token           string
+	ServerPublicKey []byte
 }
 
 // agentDir is the directory where the agent stores its RSA keys and other files

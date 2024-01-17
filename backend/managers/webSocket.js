@@ -17,11 +17,21 @@ class WebSocketManager {
 	publicKey;
 
 	/**
+	 * The public and private keys of the server
+	 */
+	server = {
+		publicKey: "",
+		privateKey: "",
+	};
+
+	/**
 	 * New WebSocketManager
 	 * @param {*} wss - The WebSocket server
 	 */
-	constructor(wss) {
+	constructor(wss, serverPublicKey, serverPrivateKey) {
 		this.wss = wss;
+		this.server.publicKey = serverPublicKey;
+		this.server.privateKey = serverPrivateKey;
 
 		this.wss.getUniqueID = function () {
 			function s4() {
@@ -40,6 +50,12 @@ class WebSocketManager {
 			// TODO: The public key should be retrieved from the database
 
 			// TODO: Perform handshake with the agent (send the public key, receive the agent's public key)
+			this.sendMessage(
+				ws,
+				this.buildMessage("handshake", {
+					publicKey: this.server.publicKey,
+				})
+			);
 
 			// TODO: Get the agents info
 
@@ -78,6 +94,14 @@ class WebSocketManager {
 		// Handle incoming messages
 		log.debug("WebSocketManager", "Received message: " + message);
 		// Your custom message handling logic goes here
+
+		const messageObj = JSON.parse(message);
+
+		if (messageObj.type === "handshake") {
+			// Store the agent's public key
+			ws.publicKey = messageObj.data.publicKey;
+			this.publicKey = messageObj.data.publicKey;
+		}
 	}
 
 	/**

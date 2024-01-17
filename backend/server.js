@@ -98,8 +98,8 @@ const url = config.app.url;
 
 	// Check if we have RSA keys stored in the database, if not, generate them
 	log.info("server", "Checking RSA keys...");
-	const publicKey = await knex("setting").where("key", "publicKey").first();
-	const privateKey = await knex("setting").where("key", "privateKey").first();
+	let publicKey = await knex("setting").where("key", "publicKey").first();
+	let privateKey = await knex("setting").where("key", "privateKey").first();
 
 	if (!publicKey || !privateKey) {
 		log.info("server", "RSA keys not found, generating new keys...");
@@ -235,7 +235,7 @@ const url = config.app.url;
 	// Initialize the WebSocket manager
 	log.debug("server", "Initializing WebSocket server");
 	const wss = new WebSocket.Server({ port: 8080 });
-	new WebSocketManager(wss);
+	new WebSocketManager(wss, publicKey.value, privateKey.value);
 
 	// Start listening for requests
 	app.listen(port, async () => {

@@ -117,6 +117,52 @@ func main() {
 
 			// Handle message
 			switch resp.Type {
+			case "handshake":
+				log.Info("agent", "Server performing handshake")
+
+				// Check if resp.Data is a map and contains "publicKey" key
+				data, ok := resp.Data.(map[string]interface{})
+				if !ok {
+					log.Error("agent", "Invalid handshake message format")
+					// Handle the error appropriately, e.g., return or log
+					return
+				}
+
+				publicKeyValue, ok := data["publicKey"].(string)
+				if !ok {
+					log.Error("agent", "Invalid publicKey format")
+					// Handle the error appropriately, e.g., return or log
+					return
+				}
+
+				// Convert the publicKeyValue string to []byte
+				publicKeyBytes := []byte(publicKeyValue)
+
+				// Now you can use publicKeyBytes as []byte
+				agent.ServerPublicKey = publicKeyBytes
+
+				// Build handshake message
+				handshakeData := response{
+					Type: "handshake",
+					Data: struct {
+						PublicKey string `json:"publicKey"`
+					}{
+						PublicKey: string(agent.PublicKey),
+					},
+				}
+
+				// Convert the handshakeData struct to a JSON string
+				jsonData, err := json.Marshal(handshakeData)
+				if err != nil {
+					log.Error("agent", "json.Marshal error:"+err.Error())
+					return
+				}
+
+				// Send the JSON string as a byte slice
+				err = c.WriteMessage(websocket.TextMessage, jsonData)
+				if err != nil {
+					log.Error("agent", "write:"+err.Error())
+				}
 			case "agentInfo":
 				log.Info("agent", "Server interrogating for agent info")
 
