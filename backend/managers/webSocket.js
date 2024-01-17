@@ -50,9 +50,7 @@ class WebSocketManager {
 
 			// https://stackoverflow.com/questions/13364243/websocketserver-node-js-how-to-differentiate-clients
 
-			// TODO: The public key should be retrieved from the database
-
-			// TODO: Perform handshake with the agent (send the public key, receive the agent's public key)
+			// Perform handshake with the agent (send the public key, receive the agent's public key)
 			this.sendMessage(
 				ws,
 				this.buildMessage("handshake", {
@@ -60,16 +58,12 @@ class WebSocketManager {
 				})
 			);
 
-			// TODO: Get the agents info
-
-			// TODO: Check if the agent is valid (if flag to auto add is set, add the agent to the database
-
 			// Ask for the agent info
 			this.sendMessage(ws, this.buildMessage("agentInfo"));
 
 			// Handle incoming messages
 			ws.on("message", async (message) => {
-				await this.handleMessage(ws, message);
+				this.handleMessage(ws, message);
 			});
 		});
 
@@ -268,6 +262,14 @@ class WebSocketManager {
 				}
 			});
 		});
+	}
+
+	/**
+	 * Closes the WebSocket server
+	 * @returns {void}
+	 */
+	static close() {
+		this.wss.close();
 	}
 }
 
