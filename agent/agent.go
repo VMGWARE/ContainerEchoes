@@ -169,20 +169,27 @@ func (a *Agent) GetContainers() []types.Container {
 	return containers
 }
 
-// GetContainerLog gets the logs of a container
-func (a *Agent) GetContainerLog(containerId string) {
+// GetContainerLog gets the logs of a container and returns them as a string
+func (a *Agent) GetContainerLog(containerId string) (string, error) {
 	// Create a new docker client
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	// Get the container logs
 	out, err := cli.ContainerLogs(context.Background(), containerId, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true})
 	if err != nil {
-		panic(err)
+		return "", err
+	}
+	defer out.Close()
+
+	// Use a buffer to store the logs
+	var buf bytes.Buffer
+	if _, err := io.Copy(&buf, out); err != nil {
+		return "", err
 	}
 
-	// Print the logs
-	io.Copy(os.Stdout, out)
+	// Return the logs as a string
+	return buf.String(), nil
 }
