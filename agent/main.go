@@ -44,7 +44,10 @@ func main() {
 	log.Info("agent", "Container Echoes Agent starting")
 
 	// load environment variables from .env file
-	godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		log.Error("agent", "Error loading .env file: "+err.Error())
+	}
 
 	// Checks to ensure required environment variables are set
 	var missingEnvVars bool
@@ -141,7 +144,10 @@ func handleServerCommunication(agent *Agent, log Logger) {
 		var resp response
 
 		// Parse message
-		json.Unmarshal(message, &resp)
+		err = json.Unmarshal(message, &resp)
+		if err != nil {
+			log.Error("agent", "Error unmarshaling JSON: "+err.Error())
+		}
 
 		// Handle message
 		switch resp.Type {
