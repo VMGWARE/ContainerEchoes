@@ -27,7 +27,9 @@ services:
       - echoes
 
   agent:
-    build: agent
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.agent
     restart: always
     environment:
       - AGENT_SECRET=secret
