@@ -3,7 +3,6 @@ const WebSocket = require("ws");
 const forge = require("node-forge");
 const knex = require("@container-echoes/core/database");
 const config = require("@container-echoes/core/config");
-const { hostname } = require("os");
 
 /**
  * Manages WebSocket connections

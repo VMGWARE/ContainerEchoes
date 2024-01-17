@@ -87,22 +87,22 @@ async function generateUniqueId(length = 8, characterSetOption = 3) {
 	let characterSet = "";
 
 	switch (characterSetOption) {
-		case 1:
-			characterSet = "abcdefghijklmnopqrstuvwxyz";
-			break;
-		case 2:
-			characterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-			break;
-		case 3:
-			characterSet =
+	case 1:
+		characterSet = "abcdefghijklmnopqrstuvwxyz";
+		break;
+	case 2:
+		characterSet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		break;
+	case 3:
+		characterSet =
 				"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-			break;
-		case 4:
-			characterSet =
+		break;
+	case 4:
+		characterSet =
 				"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
-			break;
-		default:
-			throw new Error("Invalid character set option");
+		break;
+	default:
+		throw new Error("Invalid character set option");
 	}
 
 	let id = "";
