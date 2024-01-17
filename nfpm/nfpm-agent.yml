@@ -1,0 +1,12 @@
+name: echoes-agent
+arch: amd64
+platform: linux
+version: ${VERSION_NUMBER}
+description: Echoes Agent
+homepage: https://github.com/VMGWARE/ContainerEchoes
+license: MIT
+maintainer: echoes Authors <maintainer@vmgware.dev>
+section: daemon/system
+contents:
+  - src: ./dist/agent/linux_amd64/echoes-agent
+    dst: /usr/local/bin/echoes-agent
