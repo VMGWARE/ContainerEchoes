@@ -1,4 +1,4 @@
-module github.com/VMGWARE/ContainerEchoes/agent
+module agent
 
 go 1.21
 
