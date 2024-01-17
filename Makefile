@@ -1,6 +1,6 @@
 # This code originates from the Woodpecker CI project: https://github.com/woodpecker-ci/woodpecker/blob/main/Makefile
 
-GO_PACKAGES ?= $(shell go list agent/... | grep -v agent/vendor/)
+GO_PACKAGES ?= $(shell go list ./... | grep -v /vendor/)
 
 TARGETOS ?= $(shell go env GOOS)
 TARGETARCH ?= $(shell go env GOARCH)
