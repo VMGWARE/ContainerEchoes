@@ -1,4 +1,17 @@
-# This code originates from the Woodpecker CI project: https://github.com/woodpecker-ci/woodpecker/blob/main/Makefile
+# /*
+# * This file is part of Container Echoes, under the Apache License 2.0.
+# * See the LICENSE file in the root directory of this source tree for license information.
+# *
+# * Portions of this file were derived from Woodpecker CI
+# * https://github.com/woodpecker-ci/woodpecker/blob/main/Makefile
+# * 
+# * Woodpecker CI's licensed under the Apache License 2.0.
+# * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+# *
+# * Changes made to the original work:
+# * - Changed the project name
+# * - Modified the build process slightly
+# */
 
 GO_PACKAGES ?= $(shell go list ./... | grep -v /vendor/)
 
