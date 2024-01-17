@@ -14,6 +14,7 @@ const config = require("@container-echoes/core/config");
 const WebSocket = require("ws");
 const { Client } = require("@elastic/elasticsearch");
 const WebSocketManager = require("./managers/webSocket");
+const { generateKeyPair } = require("crypto");
 
 // Load environment variables
 require("dotenv").config();
@@ -93,6 +94,27 @@ const url = config.app.url;
 		}
 		log.error("server", "Error connecting to Elasticsearch: " + err);
 		process.exit(1);
+	}
+
+	// Check if we have RSA keys stored in the database, if not, generate them
+	log.info("server", "Checking RSA keys...");
+	const publicKey = await knex("setting").where("key", "publicKey").first();
+	const privateKey = await knex("setting").where("key", "privateKey").first();
+
+	if (!publicKey || !privateKey) {
+		log.info("server", "RSA keys not found, generating new keys...");
+		const { publicKey, privateKey } = await generateRSAKeys();
+		await knex("setting")
+			.insert({ key: "publicKey", value: publicKey })
+			.then(async () => {
+				await knex("setting")
+					.insert({ key: "privateKey", value: privateKey })
+					.then(() => {
+						log.info("server", "RSA keys stored in database");
+					});
+			});
+	} else {
+		log.info("server", "RSA keys found in database");
 	}
 
 	// Initialize the app
@@ -249,6 +271,44 @@ async function shutdownFunction(signal) {
  */
 function finalFunction() {
 	log.info("server", "Graceful shutdown successful!");
+}
+
+/**
+ * Generates RSA keys
+ * @returns {Promise<{publicKey: string, privateKey: string}>} The generated keys
+ */
+async function generateRSAKeys() {
+	return new Promise((resolve, reject) => {
+		try {
+			const modulusLength = 2048;
+
+			generateKeyPair(
+				"rsa",
+				{
+					modulusLength: modulusLength,
+					publicKeyEncoding: {
+						type: "spki",
+						format: "pem",
+					},
+					privateKeyEncoding: {
+						type: "pkcs8",
+						format: "pem",
+					},
+				},
+				(err, publicKey, privateKey) => {
+					if (err) {
+						log.error("server", "Error generating RSA keys: " + err);
+						reject(err);
+					} else {
+						resolve({ publicKey, privateKey });
+					}
+				}
+			);
+		} catch (err) {
+			log.error("server", "Error generating RSA keys: " + err);
+			reject(err);
+		}
+	});
 }
 
 // Graceful shutdown
