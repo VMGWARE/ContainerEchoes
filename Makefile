@@ -91,13 +91,6 @@ clean-all: clean ## Clean all artifacts
 version: ## Print the current version
 	@echo ${VERSION}
 
-##@ Test
-
-.PHONY: lint
-lint: install-tools ## Lint code
-	@echo "Running golangci-lint"
-	golangci-lint run
-
 install-tools: ## Install development tools
 	@hash golangci-lint > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
 		go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest; \
@@ -105,6 +98,13 @@ install-tools: ## Install development tools
 	hash gofumpt > /dev/null 2>&1; if [ $$? -ne 0 ]; then \
 		go install mvdan.cc/gofumpt@latest; \
 	fi ;
+
+##@ Test
+
+.PHONY: lint
+lint: install-tools ## Lint code
+	@echo "Running golangci-lint"
+	golangci-lint run
 
 ##@ Build
 
