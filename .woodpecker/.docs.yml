@@ -27,20 +27,38 @@ when:
   - event: manual
     evaluate: 'TASK == "docs"'
 
+clone:
+  git:
+    image: woodpeckerci/plugin-git
+    settings:
+      recursive: false
+      lfs: true
+      partial: false
+      depth: 0
+
 steps:
-  build-deploy:
+  build:
     image: *node_image
     directory: docs/
-    secrets: [git_user, git_password, git_user_email, git_user_name, git_ssh_key]
+    commands:
+      - npm install --frozen-lockfile
+      - npm run build
+    when:
+      - path: *when_path
+        event: [tag, pull_request, push]
+      - event: manual
+
+  deploy:
+    image: *node_image
+    secrets: [github_private_key]
     commands:
       - apk add openssh-client rsync git
       - mkdir -p $HOME/.ssh
-      - echo "${GIT_SSH_KEY}" > $HOME/.ssh/id_rsa
+      - ssh-keyscan -t rsa github.com >> $HOME/.ssh/known_hosts
+      - echo "$GITHUB_PRIVATE_KEY" > "$HOME/.ssh/id_rsa"
       - chmod 0600 $HOME/.ssh/id_rsa
-      - git config --global user.email "${GIT_USER_EMAIL}"
-      - git config --global user.name "${GIT_USER_NAME}"
-      - npm install --frozen-lockfile
-      - npm run deploy
+      - cd docs
+      - USE_SSH=true npm run deploy
     when:
       - event: push
         path:
