@@ -33,18 +33,6 @@ const url = config.app.url;
 
 // Begin the server
 (async () => {
-	// Initialize Exceptionless
-	log.debug("server", "Initializing Exceptionless");
-	if (!config.exceptionless.apiKey || !config.exceptionless.serverUrl) {
-		log.warn(
-			"server",
-			"Exceptionless API key or server URL not set. Exceptionless will be disabled."
-		);
-	} else {
-		Exceptionless = await initializeExceptionless();
-		log.debug("server", "Exceptionless initialized");
-	}
-
 	// Make sure the database is up and running
 	log.info("server", "Checking database connection...");
 	await knex.raw("SELECT 1+1 AS result");
@@ -68,7 +56,20 @@ const url = config.app.url;
 	);
 
 	// Load configuration from database
+	log.info("server", "Loading configuration from database...");
 	await config.getDatabaseConfiguration();
+
+	// Initialize Exceptionless
+	log.debug("server", "Initializing Exceptionless");
+	if (!config.exceptionless.apiKey || !config.exceptionless.serverUrl) {
+		log.warn(
+			"server",
+			"Exceptionless API key or server URL not set. Exceptionless will be disabled."
+		);
+	} else {
+		Exceptionless = await initializeExceptionless();
+		log.debug("server", "Exceptionless initialized");
+	}
 
 	// Check connection to Elasticsearch
 	log.info("server", "Checking Elasticsearch connection...");
