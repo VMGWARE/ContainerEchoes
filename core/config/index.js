@@ -240,7 +240,7 @@ class Config {
     // Loop through the configuration variables
     for (const key in configVariables) {
       // Get the value of the configuration variable from the database
-      const value = this.getDatabaseConfig(key);
+      const value = await this.getDatabaseConfig(key);
       // If the value is not null, set the value of the configuration variable
       if (value !== null) {
         // Split the key by dot
