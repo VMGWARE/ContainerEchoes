@@ -132,3 +132,13 @@ dist
 # Ignore IDE files
 .idea
 .vscode
+
+### GO ###
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+vendor/
+__debug_bin

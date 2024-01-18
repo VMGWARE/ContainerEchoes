@@ -1,0 +1,40 @@
+when:
+  - event: pull_request
+  - event: push
+    branch:
+      - ${CI_REPO_DEFAULT_BRANCH}
+
+variables:
+  - &node_image "docker.io/node:18-alpine"
+  - &when
+    path:
+      # related config files
+      - ".woodpecker/.backend.yml"
+      # backend source code
+      - "backend/**"
+
+steps:
+  install-dependencies:
+    image: *node_image
+    directory: backend/
+    commands:
+      - npm install --frozen-lockfile
+    when: *when
+
+  lint:
+    depends_on:
+      - install-dependencies
+    image: *node_image
+    directory: backend/
+    commands:
+      - npm run lint --if-present
+    when: *when
+
+  test:
+    depends_on:
+      - install-dependencies
+    image: *node_image
+    directory: backend/
+    commands:
+      - npm run test:mocha --if-present
+    when: *when

@@ -15,13 +15,17 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"github.com/gorilla/websocket"
 )
 
 // Agent represents the client that will communicate with the server
 type Agent struct {
-	PrivateKey *rsa.PrivateKey
-	PublicKey  []byte
-	Token      string
+	PrivateKey      *rsa.PrivateKey
+	PublicKey       []byte
+	Token           string
+	ServerPublicKey []byte
+	Id              int
+	Connection      *websocket.Conn
 }
 
 // agentDir is the directory where the agent stores its RSA keys and other files
@@ -65,9 +69,18 @@ func (a *Agent) Initialize(token string) {
 		Logger.Info(Logger{}, "agent", "Generated RSA keys")
 
 		// Store the RSA keys in /etc/echoes/agent
-		os.MkdirAll(agentDir, os.ModePerm)
-		os.WriteFile(agentDir+"/private_key", x509.MarshalPKCS1PrivateKey(a.PrivateKey), 0644)
-		os.WriteFile(agentDir+"/public_key", a.PublicKey, 0644)
+		err = os.MkdirAll(agentDir, os.ModePerm)
+		if err != nil {
+			panic(err) // Handle error
+		}
+		err = os.WriteFile(agentDir+"/private_key", x509.MarshalPKCS1PrivateKey(a.PrivateKey), 0644)
+		if err != nil {
+			panic(err) // Handle error
+		}
+		err = os.WriteFile(agentDir+"/public_key", a.PublicKey, 0644)
+		if err != nil {
+			panic(err) // Handle error
+		}
 
 		Logger.Info(Logger{}, "agent", "Stored RSA keys in "+agentDir)
 	} else {
@@ -156,20 +169,27 @@ func (a *Agent) GetContainers() []types.Container {
 	return containers
 }
 
-// GetContainerLog gets the logs of a container
-func (a *Agent) GetContainerLog(containerId string) {
+// GetContainerLog gets the logs of a container and returns them as a string
+func (a *Agent) GetContainerLog(containerId string) (string, error) {
 	// Create a new docker client
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	// Get the container logs
 	out, err := cli.ContainerLogs(context.Background(), containerId, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true})
 	if err != nil {
-		panic(err)
+		return "", err
+	}
+	defer out.Close()
+
+	// Use a buffer to store the logs
+	var buf bytes.Buffer
+	if _, err := io.Copy(&buf, out); err != nil {
+		return "", err
 	}
 
-	// Print the logs
-	io.Copy(os.Stdout, out)
+	// Return the logs as a string
+	return buf.String(), nil
 }

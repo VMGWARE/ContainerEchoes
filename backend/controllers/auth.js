@@ -916,17 +916,6 @@ async function updateMe(req, res) {
 		) {
 			// Set the emailVerifiedAt field to null
 			updateUser.emailVerifiedAt = null;
-
-			// Send an email verification email
-			await sendEmailVerificationEmail(
-				req.user,
-				validator.getPassedFields().email
-					? validator.getPassedFields().email
-					: user.email,
-				validator.getPassedFields().name
-					? validator.getPassedFields().name
-					: user.name
-			);
 		}
 
 		// Update the user

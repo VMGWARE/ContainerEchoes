@@ -1,0 +1,34 @@
+# /*
+# * This file is part of Container Echoes, under the Apache License 2.0.
+# * See the LICENSE file in the root directory of this source tree for license information.
+# *
+# * Portions of this file were derived from Woodpecker CI
+# * https://github.com/woodpecker-ci/woodpecker
+# * 
+# * Woodpecker CI's licensed under the Apache License 2.0.
+# * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+# *
+# * Changes made to the original work:
+# * - Modified to build the Echoes Agent (basically just changed the binary name)
+# */
+
+
+FROM --platform=$BUILDPLATFORM docker.io/golang:1.21 AS build
+
+WORKDIR /src
+COPY . .
+ARG TARGETOS TARGETARCH CI_COMMIT_SHA CI_COMMIT_TAG CI_COMMIT_BRANCH
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/go/pkg \
+    make build-agent
+RUN mkdir -p /etc/echoes/agent
+
+FROM scratch
+ENV GODEBUG=netdns=go
+EXPOSE 3000
+
+# copy agent binary
+COPY --from=build /src/dist/echoes-agent /bin/
+COPY --from=build /etc/echoes/agent /etc
+
+ENTRYPOINT ["/bin/echoes-agent"]

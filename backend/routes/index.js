@@ -13,6 +13,7 @@
  */
 
 const authRoutes = require("./auth");
+const generalRoutes = require("./general");
 const log = require("@vmgware/js-logger");
 
 // Function to log routes for a given router
@@ -36,8 +37,10 @@ function logRoutes(router, routerName) {
 
 // Log routes for each router
 logRoutes(authRoutes, "auth");
+logRoutes(generalRoutes, "general");
 
 // Export all routes
 module.exports = {
 	authRoutes,
+	generalRoutes,
 };

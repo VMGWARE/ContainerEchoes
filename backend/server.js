@@ -12,6 +12,9 @@ const knex = require("@container-echoes/core/database");
 const limiter = require("./middleware/rateLimit");
 const config = require("@container-echoes/core/config");
 const WebSocket = require("ws");
+const { Client } = require("@elastic/elasticsearch");
+const WebSocketManager = require("./managers/webSocket");
+const { generateKeyPair } = require("crypto");
 
 // Load environment variables
 require("dotenv").config();
@@ -63,6 +66,56 @@ const url = config.app.url;
 		"server",
 		"Latest migration: " + (await knex.migrate.currentVersion())
 	);
+
+	// Check connection to Elasticsearch
+	log.info("server", "Checking Elasticsearch connection...");
+	const client = new Client({
+		node: config.elasticsearch.url,
+		auth: {
+			apiKey: config.elasticsearch.apiKey,
+		},
+		tls: {
+			// ca: config.elasticsearch.ca,
+			ca: Buffer.from(config.elasticsearch.ca, "base64").toString("ascii"),
+			rejectUnauthorized: false,
+		},
+	});
+
+	try {
+		// API Key should have cluster monitor rights.
+		const resp = await client.info();
+		log.info(
+			"server",
+			"Elasticsearch connection successful, version: " + resp.version.number
+		);
+	} catch (err) {
+		if (config.exceptionless.apiKey && config.exceptionless.serverUrl) {
+			await Exceptionless.submitException(err);
+		}
+		log.error("server", "Error connecting to Elasticsearch: " + err);
+		process.exit(1);
+	}
+
+	// Check if we have RSA keys stored in the database, if not, generate them
+	log.info("server", "Checking RSA keys...");
+	let publicKey = await knex("setting").where("key", "publicKey").first();
+	let privateKey = await knex("setting").where("key", "privateKey").first();
+
+	if (!publicKey || !privateKey) {
+		log.info("server", "RSA keys not found, generating new keys...");
+		const { publicKey, privateKey } = await generateRSAKeys();
+		await knex("setting")
+			.insert({ key: "publicKey", value: publicKey })
+			.then(async () => {
+				await knex("setting")
+					.insert({ key: "privateKey", value: privateKey })
+					.then(() => {
+						log.info("server", "RSA keys stored in database");
+					});
+			});
+	} else {
+		log.info("server", "RSA keys found in database");
+	}
 
 	// Initialize the app
 	log.debug("server", "Initializing app");
@@ -134,17 +187,7 @@ const url = config.app.url;
 	log.debug("server", "Loading routes");
 	const Routes = require("./routes");
 	app.use("/", Routes.authRoutes);
-
-	// Health check
-	log.debug("server", "Loading health check");
-	app.use("/health", (req, res) => {
-		res.status(200).json({
-			status: "success",
-			code: 200,
-			message: "OK",
-			data: null,
-		});
-	});
+	app.use("/", Routes.generalRoutes);
 
 	// Swagger documentation
 	log.debug("server", "Loading Swagger documentation");
@@ -178,7 +221,9 @@ const url = config.app.url;
 
 	// 500 middleware
 	app.use(async (error, req, res) => {
-		await Exceptionless.submitException(error);
+		if (config.exceptionless.apiKey && config.exceptionless.serverUrl) {
+			await Exceptionless.submitException(error);
+		}
 		return res.status(500).json({
 			status: "error",
 			code: 500,
@@ -187,31 +232,10 @@ const url = config.app.url;
 		});
 	});
 
-	// Initialize the WebSocket server
+	// Initialize the WebSocket manager
 	log.debug("server", "Initializing WebSocket server");
 	const wss = new WebSocket.Server({ port: 8080 });
-
-	// Handle WebSocket connections
-	wss.on("connection", (ws) => {
-		log.debug("server", "WebSocket connection established");
-
-		// Interrogate the connection for agent information
-		ws.send(JSON.stringify({ type: "agentInfo" }));
-
-		ws.send(JSON.stringify({ type: "containerList" }));
-
-		ws.on("message", (message) => {
-			message = JSON.parse(message);
-			log.debug("server", "Message type: " + message.type);
-			console.log(message);
-
-			// based on the message type, handle the message and hand off to the appropriate controller
-
-			// Check if token is valid
-
-			// If not, send error message and close connection
-		});
-	});
+	new WebSocketManager(wss, publicKey.value, privateKey.value);
 
 	// Start listening for requests
 	app.listen(port, async () => {
@@ -247,6 +271,44 @@ async function shutdownFunction(signal) {
  */
 function finalFunction() {
 	log.info("server", "Graceful shutdown successful!");
+}
+
+/**
+ * Generates RSA keys
+ * @returns {Promise<{publicKey: string, privateKey: string}>} The generated keys
+ */
+async function generateRSAKeys() {
+	return new Promise((resolve, reject) => {
+		try {
+			const modulusLength = 2048;
+
+			generateKeyPair(
+				"rsa",
+				{
+					modulusLength: modulusLength,
+					publicKeyEncoding: {
+						type: "spki",
+						format: "pem",
+					},
+					privateKeyEncoding: {
+						type: "pkcs8",
+						format: "pem",
+					},
+				},
+				(err, publicKey, privateKey) => {
+					if (err) {
+						log.error("server", "Error generating RSA keys: " + err);
+						reject(err);
+					} else {
+						resolve({ publicKey, privateKey });
+					}
+				}
+			);
+		} catch (err) {
+			log.error("server", "Error generating RSA keys: " + err);
+			reject(err);
+		}
+	});
 }
 
 // Graceful shutdown
