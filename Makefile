@@ -102,6 +102,9 @@ install-tools: ## Install development tools
 frontend-dependencies: ## Install frontend dependencies
 	(cd frontend/; npm install --frozen-lockfile)
 
+backend-dependencies: ## Install backend dependencies
+	(cd backend/; npm install --frozen-lockfile)
+
 ##@ Test
 
 .PHONY: lint
@@ -114,8 +117,12 @@ test-frontend: frontend-dependencies ## Test frontend code
 	(cd frontend/; npm run format:check)
 	(cd frontend/; npm run test:unit)
 
+test-backend: backend-dependencies ## Test backend code
+	(cd backend/; npm run lint --if-present)
+	(cd backend/; npm run test:mocha --if-present)
+
 .PHONY: test
-test: test-frontend ## Run all tests
+test: test-frontend test-backend ## Run all tests
 
 ##@ Build
 
