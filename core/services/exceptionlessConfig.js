@@ -1,5 +1,5 @@
 // Load environment variables
-const config = require("../config");
+const config = require("../config").getInstance();
 
 let Exceptionless;
 
