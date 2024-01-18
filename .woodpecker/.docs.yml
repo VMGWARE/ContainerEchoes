@@ -17,15 +17,15 @@ when:
   - event: tag
   - event: pull_request
   - event: push
-    path:
-      - <<: *when_path
-      - <<: *docker_path
-    branch:
-      - ${CI_REPO_DEFAULT_BRANCH}
-  - event: pull_request_closed
-    path: *when_path
-  - event: manual
-    evaluate: 'TASK == "docs"'
+  #   path:
+  #     - <<: *when_path
+  #     - <<: *docker_path
+  #   branch:
+  #     - ${CI_REPO_DEFAULT_BRANCH}
+  # - event: pull_request_closed
+  #   path: *when_path
+  # - event: manual
+  #   evaluate: 'TASK == "docs"'
 
 steps:
   build-deploy:
@@ -41,10 +41,10 @@ steps:
       - git config --global user.name "${GIT_USER_NAME}"
       - npm install --frozen-lockfile
       - npm run deploy
-    when:
-      - event: push
-        path:
-          - <<: *when_path
-          - <<: *docker_path
-        branch: ${CI_REPO_DEFAULT_BRANCH}
-      - event: [manual, tag]
+    # when:
+    #   - event: push
+    #     path:
+    #       - <<: *when_path
+    #       - <<: *docker_path
+    #     branch: ${CI_REPO_DEFAULT_BRANCH}
+    #   - event: [manual, tag]
