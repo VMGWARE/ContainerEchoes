@@ -62,7 +62,7 @@ steps:
       - echo "$GITHUB_PRIVATE_KEY" > "$HOME/.ssh/id_rsa"
       - chmod 0600 $HOME/.ssh/id_rsa
       - cd docs
-      - npm run deploy
+      - USE_SSH=true npm run deploy
     # when:
     #   - event: push
     #     path:
