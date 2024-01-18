@@ -1,5 +1,5 @@
 const log = require("@vmgware/js-logger");
-const config = require("@container-echoes/core/config");
+const config = require("@container-echoes/core/config").getInstance();
 
 /**
  * Sends a generic error response with a 500 status code.

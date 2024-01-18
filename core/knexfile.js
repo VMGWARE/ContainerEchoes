@@ -1,5 +1,5 @@
 // Update with your config settings.
-const env = require("./config");
+const env = require("./config").getInstance();
 const path = require("path");
 
 const config = {

@@ -38,7 +38,7 @@ const Validator = require("@vmgware/js-validator");
 const { hashPassword, generateUniqueId } = require("../utils/general");
 const { genericInternalServerError } = require("../utils/responses");
 const AuditLog = require("@container-echoes/core/helpers/auditLog");
-const config = require("@container-echoes/core/config");
+const config = require("@container-echoes/core/config").getInstance();
 
 // Database
 const knex = require("@container-echoes/core/database");
