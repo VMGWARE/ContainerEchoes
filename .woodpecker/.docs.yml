@@ -1,6 +1,5 @@
 variables:
-  - &node_image "docker.io/node:21-alpine"
-  - &alpine_image "docker.io/alpine:3.19"
+  - &node_image "docker.io/node:18-alpine"
   - path: &when_path
       - "docs/**"
       - ".woodpecker/.docs.yml"
@@ -34,6 +33,7 @@ steps:
     directory: docs/
     secrets: [git_user, git_password, GIT_USER_NAME, GIT_USER_EMAIL]
     commands:
+      - apk add openssh-client rsync git
       - npm install --frozen-lockfile
       - npm run deploy
     when:
