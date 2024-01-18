@@ -44,9 +44,9 @@ steps:
     directory: docs/
     secrets: [git_user, git_password, git_user_email, git_user_name, git_ssh_key]
     commands:
-      - echo $${GIT_USER}
-      - echo ${GIT_USER}
-      - echo $GIT_USER
+      - echo "$${GIT_USER}"
+      - echo "${GIT_USER}"
+      - echo "$GIT_USER"
       - apk add openssh-client rsync git
       - npm run deploy
     # when:
