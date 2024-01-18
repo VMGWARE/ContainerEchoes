@@ -24,8 +24,8 @@ when:
   #     - ${CI_REPO_DEFAULT_BRANCH}
   # - event: pull_request_closed
   #   path: *when_path
-  # - event: manual
-  #   evaluate: 'TASK == "docs"'
+  - event: manual
+    evaluate: 'TASK == "docs"'
 
 steps:
   build-deploy:
