@@ -44,10 +44,17 @@ steps:
     directory: docs/
     secrets: [git_user, git_password, git_user_email, git_user_name, git_ssh_key]
     commands:
-      - echo "$${GIT_USER}"
-      - echo "${GIT_USER}"
-      - echo "$GIT_USER"
+      # - echo "$${GIT_USER}"
+      # - echo "$GIT_USER"
+      # - apk add openssh-client rsync git
+      # - npm run deploy
       - apk add openssh-client rsync git
+      - mkdir -p $HOME/.ssh
+      - echo "$GIT_SSH_KEY" > $HOME/.ssh/id_rsa
+      - chmod 0600 $HOME/.ssh/id_rsa
+      - git config --global user.email "$GIT_USER_EMAIL"
+      - git config --global user.name "$GIT_USER_NAME"
+      - npm install --frozen-lockfile
       - npm run deploy
     # when:
     #   - event: push
