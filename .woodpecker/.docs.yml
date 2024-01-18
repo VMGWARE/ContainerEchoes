@@ -37,16 +37,16 @@ clone:
       depth: 0
 
 steps:
-  # build:
-  #   image: *node_image
-  #   directory: docs/
-  #   commands:
-  #     - npm install --frozen-lockfile
-  #     - npm run build
-  #   when:
-  #     - path: *when_path
-  #       event: [tag, pull_request, push]
-  #     - event: manual
+  build:
+    image: *node_image
+    directory: docs/
+    commands:
+      - npm install --frozen-lockfile
+      - npm run build
+    when:
+      - path: *when_path
+        event: [tag, pull_request, push]
+      - event: manual
 
   deploy:
     image: *node_image
@@ -61,10 +61,7 @@ steps:
       - mkdir -p $HOME/.ssh
       - echo "$GIT_SSH_KEY" > $HOME/.ssh/id_rsa
       - chmod 0600 $HOME/.ssh/id_rsa
-      - git config --global user.email "$GIT_USER_EMAIL"
-      - git config --global user.name "$GIT_USER_NAME"
-      - npm install --frozen-lockfile
-      - USE_SSH=true npm run deploy
+      - npm run deploy
     # when:
     #   - event: push
     #     path:
