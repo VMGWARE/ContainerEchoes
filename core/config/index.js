@@ -1,4 +1,3 @@
-// Require all the environment variables
 require("dotenv").config();
 
 class Config {
@@ -12,6 +11,7 @@ class Config {
    * @property email - Email related configuration.
    * @property exceptionless - Exceptionless related configuration.
    * @property elasticsearch - Elasticsearch related configuration.
+   * @property rsa - RSA related configuration.
    */
   constructor() {
     /**
@@ -182,6 +182,73 @@ class Config {
        */
       ca: process.env.ELASTICSEARCH_CA,
     };
+
+    /**
+     * RSA configuration - Used for encrypting and decrypting data.
+     * @property privateKey - The private key for RSA.
+     * @property publicKey - The public key for RSA.
+     */
+    this.rsa = {
+      /**
+       * Private key for RSA
+       */
+      privateKey: process.env.RSA_PRIVATE_KEY,
+      /**
+       * Public key for RSA
+       */
+      publicKey: process.env.RSA_PUBLIC_KEY,
+    };
+  }
+
+  /**
+   * @method getDatabaseConfig
+   * @description Get the value of a configuration variable.
+   * @param {string} key - The configuration variable key.
+   * @returns {string} The value of the configuration variable.
+   */
+  async getDatabaseConfig(key) {
+    try {
+      const knex = require("../database/index");
+      const result = await knex("setting").where({ key }).select("value");
+      return result.length > 0 ? result[0].value : null;
+    } catch (error) {
+      console.error("Error fetching configuration from database:", error);
+      return null;
+    }
+  }
+
+  /**
+   * @method getDatabaseConfiguration
+   * @description Get the configuration from the database.
+   */
+  async getDatabaseConfiguration() {
+    // Loop through the configuration variables, the key is the name of the variable and the value is the default value for example email.host
+    // Below, are the only configuration variables that can be set in the database
+    const configVariables = {
+      "email.host": this.email.host,
+      "email.port": this.email.port,
+      "email.user": this.email.user,
+      "email.pass": this.email.pass,
+      "email.fromAddress": this.email.fromAddress,
+      "email.fromName": this.email.fromName,
+      "exceptionless.apiKey": this.exceptionless.apiKey,
+      "exceptionless.serverUrl": this.exceptionless.serverUrl,
+      "rsa.privateKey": this.rsa.privateKey,
+      "rsa.publicKey": this.rsa.publicKey,
+    };
+
+    // Loop through the configuration variables
+    for (const key in configVariables) {
+      // Get the value of the configuration variable from the database
+      const value = this.getDatabaseConfig(key);
+      // If the value is not null, set the value of the configuration variable
+      if (value !== null) {
+        // Split the key by dot
+        const keyParts = key.split(".");
+        // Set the value of the configuration variable
+        this[keyParts[0]][keyParts[1]] = value;
+      }
+    }
   }
 }
 

@@ -67,6 +67,9 @@ const url = config.app.url;
 		"Latest migration: " + (await knex.migrate.currentVersion())
 	);
 
+	// Load configuration from database
+	await config.getDatabaseConfiguration();
+
 	// Check connection to Elasticsearch
 	log.info("server", "Checking Elasticsearch connection...");
 	const client = new Client({
@@ -98,17 +101,17 @@ const url = config.app.url;
 
 	// Check if we have RSA keys stored in the database, if not, generate them
 	log.info("server", "Checking RSA keys...");
-	let publicKey = await knex("setting").where("key", "publicKey").first();
-	let privateKey = await knex("setting").where("key", "privateKey").first();
+	let publicKey = config.rsa.publicKey;
+	let privateKey = config.rsa.privateKey;
 
 	if (!publicKey || !privateKey) {
 		log.info("server", "RSA keys not found, generating new keys...");
 		const { publicKey, privateKey } = await generateRSAKeys();
 		await knex("setting")
-			.insert({ key: "publicKey", value: publicKey })
+			.insert({ key: "rsa.publicKey", value: publicKey })
 			.then(async () => {
 				await knex("setting")
-					.insert({ key: "privateKey", value: privateKey })
+					.insert({ key: "rsa.privateKey", value: privateKey })
 					.then(() => {
 						log.info("server", "RSA keys stored in database");
 					});
