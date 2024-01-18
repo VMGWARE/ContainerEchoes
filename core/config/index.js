@@ -250,7 +250,27 @@ class Config {
       }
     }
   }
+
+  /**
+   * @method getInstance
+   * @description Get an instance of the Config class.
+   * @returns {Config} An instance of the Config class.
+   */
+  static getInstance() {
+    if (!Config.instance) {
+      Config.instance = new Config();
+    }
+    return Config.instance;
+  }
+
+  /**
+   * @method refreshConfig
+   * @description Refresh the configuration from the database.
+   */
+  async refreshConfig() {
+    await this.getDatabaseConfiguration();
+  }
 }
 
 // Export an instance of the Config class
-module.exports = new Config();
+module.exports = Config;

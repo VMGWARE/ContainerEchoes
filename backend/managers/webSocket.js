@@ -2,7 +2,7 @@ const log = require("@vmgware/js-logger");
 const WebSocket = require("ws");
 const forge = require("node-forge");
 const knex = require("@container-echoes/core/database");
-const config = require("@container-echoes/core/config");
+const config = require("@container-echoes/core/config").getInstance();
 
 /**
  * Manages WebSocket connections
