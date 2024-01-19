@@ -1,0 +1,18 @@
+when:
+  - event: push
+    branch: ${CI_REPO_DEFAULT_BRANCH}
+  - event: manual
+    evaluate: 'TASK == "release-helper"'
+
+steps:
+  release-helper:
+    image: woodpeckerci/plugin-ready-release-go:1.0.3
+    secrets: [github_token]
+    settings:
+      forge_type: github
+      git_email: me@vahngomes.dev
+      github_token:
+        from_secret: GITHUB_TOKEN
+      release_branch: "master" # default: main
+      pull_request_branch_prefix: "next-release/"
+      # debug: true
