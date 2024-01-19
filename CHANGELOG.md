@@ -25,6 +25,7 @@
 
 ### Misc
 
+- Update Git user and email [[#18](https://github.com/VMGWARE/ContainerEchoes/pull/18)]
 - Buggy [[#10](https://github.com/VMGWARE/ContainerEchoes/pull/10)]
 - Update Docker image version and add additional commands for deployment [[#6](https://github.com/VMGWARE/ContainerEchoes/pull/6)]
 - General updates & working on agent [[#4](https://github.com/VMGWARE/ContainerEchoes/pull/4)]
