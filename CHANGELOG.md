@@ -8,6 +8,7 @@
 
 ### 📈 Enhancement
 
+- Update woodpecker CI workflows [[#17](https://github.com/VMGWARE/ContainerEchoes/pull/17)]
 - Add release-helper configuration file [[#15](https://github.com/VMGWARE/ContainerEchoes/pull/15)]
 - Add dev container [[#13](https://github.com/VMGWARE/ContainerEchoes/pull/13)]
 - Add RSA key generation, update config loading, and improve exception handling [[#9](https://github.com/VMGWARE/ContainerEchoes/pull/9)]
