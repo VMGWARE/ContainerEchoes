@@ -6,20 +6,60 @@ sidebar_position: 3
 
 ## Purpose of Environment Variables
 
-Environment variables in Container Echoes are used to configure various aspects of the system, including database connections, log paths, and agent settings.
+Environment variables in Container Echoes are used to configure various aspects of the system, including database connections, server URLs, authentication mechanisms, and more.
 
 ## List of Environment Variables
 
-### General Variables
+### General Application Variables
 
-- `DB_HOST`: Hostname of the PostgreSQL database.
+- `APP_PORT`: The port number for the application server.
+- `APP_ENV`: The environment in which the app is running, e.g., 'development', 'production'.
+- `APP_URL`: The base URL of the application.
+- `FRONTEND_URL`: The base URL of the frontend application.
+- `AUTO_ADD_AGENTS`: Automatically integrate new agents with the system.
+
+### Database Variables
+
+- `DB_CLIENT`: Database client (e.g., 'mysql2', 'pg').
+- `DB_HOST`: Hostname of the database server.
+- `DB_PORT`: Database server port number.
+- `DB_NAME`: Name of the database.
 - `DB_USER`: Database user name.
 - `DB_PASS`: Database password.
 
-### Agent Variables
+### JWT (JSON Web Token) Variables
 
-- `AGENT_LOG_PATH`: Path where the agent should store collected logs.
-- `SERVER_URL`: URL of the Container Echoes server.
+- `JWT_SECRET`: Secret key used for signing JWTs.
+
+### Sentry Configuration
+
+- `SENTRY_BACKEND_DSN`: Sentry DSN for backend error tracking.
+
+### Email Configuration
+
+- `EMAIL_HOST`: Host address of the email server.
+- `EMAIL_PORT`: Port number on which the email server is running.
+- `EMAIL_USER`: Username for email server access.
+- `EMAIL_PASS`: Password for email server access.
+- `EMAIL_FROM_ADDRESS`: Email address from which all emails will be sent.
+- `EMAIL_FROM_NAME`: Name from which all emails will be sent.
+
+### Exceptionless Configuration
+
+- `EXCEPTIONLESS_API_KEY`: API key for Exceptionless.
+- `EXCEPTIONLESS_SERVER_URL`: URL of the Exceptionless server.
+
+### Elasticsearch Configuration
+
+- `ELASTICSEARCH_URL`: URL of the Elasticsearch server.
+- `ELASTICSEARCH_API_KEY`: API key for Elasticsearch.
+- `ELASTICSEARCH_INDEX`: Index name for Elasticsearch.
+- `ELASTICSEARCH_CA`: CA for Elasticsearch.
+
+### RSA Configuration
+
+- `RSA_PRIVATE_KEY`: Private key for RSA.
+- `RSA_PUBLIC_KEY`: Public key for RSA.
 
 ## Setting Environment Variables
 
@@ -36,4 +76,3 @@ Remember to replace `localhost` with your actual database host.
 ## Next Steps
 
 With your environment variables configured, you can proceed to [Configuring the Container Echoes Agent](agent-configuration).
-```

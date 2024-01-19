@@ -9,17 +9,17 @@ sidebar_position: 2
 Before installing Container Echoes, ensure you have the following:
 
 - Docker installed and running
-- Node.js (version 12 or later)
-- PostgreSQL database
+- Node.js (version 18 or later)
+- MySQL or MariaDB database
 
 ## Installation Steps
 
 ### Server Setup
 
 1. Clone the Container Echoes repository.
-2. Navigate to the server directory.
+2. Navigate to the backend directory.
 3. Run `npm install` to install dependencies.
-4. Configure the database connection in `config.js`.
+4. Configure the database connection in the `.env` file.
 5. Start the server using `npm start`.
 
 ### Agent Setup
