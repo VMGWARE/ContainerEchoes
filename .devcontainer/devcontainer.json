@@ -16,6 +16,6 @@
         3000,
         5000
     ],
-    "postCreateCommand": "echo 'Container ready!'",
-    "remoteUser": "root"
+    "remoteUser": "root",
+    "postCreateCommand": "bash .devcontainer/postCreateCommand.sh"
 }
