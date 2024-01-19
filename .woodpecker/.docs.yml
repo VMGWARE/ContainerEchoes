@@ -49,9 +49,9 @@ steps:
       - ssh-keyscan -t rsa github.com >> $HOME/.ssh/known_hosts
       - echo "$GITHUB_PRIVATE_KEY" > "$HOME/.ssh/id_rsa"
       - chmod 0600 $HOME/.ssh/id_rsa
-      - git config --global user.name "Vahn Gomes"
-      - git config --global user.email "me@vahngomes.dev"
-      - GIT_USER="Vahn Gomes" USE_SSH=true npm run deploy
+      - git config --global user.name "vmgware-bot"
+      - git config --global user.email "github-bot@vmgware.dev"
+      - GIT_USER="vmgware-bot" USE_SSH=true npm run deploy
     when:
       - event: push
         path:

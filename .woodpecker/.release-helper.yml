@@ -10,7 +10,7 @@ steps:
     secrets: [github_token]
     settings:
       forge_type: github
-      git_email: me@vahngomes.dev
+      git_email: github-bot@vmgware.dev
       github_token:
         from_secret: GITHUB_TOKEN
       release_branch: ${CI_REPO_DEFAULT_BRANCH}
