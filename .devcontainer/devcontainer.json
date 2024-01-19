@@ -1,0 +1,21 @@
+{
+    "name": "Go and Node.js",
+    "dockerFile": "Dockerfile",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "golang.go",
+                "dbaeumer.vscode-eslint"
+            ],
+            "settings": {
+                "terminal.integrated.shell.linux": "/bin/bash"
+            }
+        }
+    },
+    "forwardPorts": [
+        3000,
+        5000
+    ],
+    "remoteUser": "root",
+    "postCreateCommand": "bash .devcontainer/postCreateCommand.sh"
+}
