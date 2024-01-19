@@ -1,0 +1,72 @@
+depends_on:
+  - agent
+  - backend
+  - frontend
+
+when:
+  event: tag
+
+variables:
+  - &golang_image "docker.io/golang:1.21.6"
+  - &node_image "docker.io/node:21-alpine"
+  - &xgo_image "docker.io/techknowlogick/xgo:go-1.21.5"
+  - &xgo_version "go-1.21.2"
+
+steps:
+  build-frontend:
+    image: *node_image
+    directory: frontend/
+    commands:
+      - corepack enable
+      - npm install --frozen-lockfile
+      - npm build
+
+  vendor:
+    image: *golang_image
+    commands:
+      - go mod vendor
+
+  build-agent:
+    depends_on:
+      - vendor
+    image: *golang_image
+    commands:
+      - make release-agent
+
+  build-deb-rpm:
+    depends_on:
+      - build-agent
+    image: *golang_image
+    commands:
+      - make bundle
+
+  checksums:
+    depends_on:
+      - build-agent
+      - build-deb-rpm
+    image: *golang_image
+    commands:
+      - make release-checksums
+
+  release-dryrun:
+    depends_on:
+      - checksums
+    image: *golang_image
+    commands:
+      - ls -la dist/*.*
+      - cat dist/checksums.txt
+
+  release:
+    depends_on:
+      - checksums
+    image: docker.io/plugins/github-release
+    secrets:
+      - source: github_token
+        target: github_release_api_key
+    settings:
+      files:
+        - dist/*.tar.gz
+        - dist/*.deb
+        - dist/*.rpm
+        - dist/checksums.txt
+      title: ${CI_COMMIT_TAG##v}
