@@ -8,19 +8,22 @@
 
 ### 📈 Enhancement
 
+- Add release-helper configuration file [[#15](https://github.com/VMGWARE/ContainerEchoes/pull/15)]
+- Add dev container [[#13](https://github.com/VMGWARE/ContainerEchoes/pull/13)]
 - Add RSA key generation, update config loading, and improve exception handling [[#9](https://github.com/VMGWARE/ContainerEchoes/pull/9)]
 - General changes & Updates [[#5](https://github.com/VMGWARE/ContainerEchoes/pull/5)]
 
 ### 🐛 Bug Fixes
 
+- Remove unnecessary clone settings in .docs.yml [[#12](https://github.com/VMGWARE/ContainerEchoes/pull/12)]
 - Attempt to fix GH-Pages deployment [[#8](https://github.com/VMGWARE/ContainerEchoes/pull/8)]
+
+### 📚 Documentation
+
+- Update docs [[#11](https://github.com/VMGWARE/ContainerEchoes/pull/11)]
 
 ### Misc
 
-- Add release-helper configuration file [[#15](https://github.com/VMGWARE/ContainerEchoes/pull/15)]
-- Add dev container [[#13](https://github.com/VMGWARE/ContainerEchoes/pull/13)]
-- Remove unnecessary clone settings in .docs.yml [[#12](https://github.com/VMGWARE/ContainerEchoes/pull/12)]
-- Update docs [[#11](https://github.com/VMGWARE/ContainerEchoes/pull/11)]
 - Buggy [[#10](https://github.com/VMGWARE/ContainerEchoes/pull/10)]
 - Update Docker image version and add additional commands for deployment [[#6](https://github.com/VMGWARE/ContainerEchoes/pull/6)]
 - General updates & working on agent [[#4](https://github.com/VMGWARE/ContainerEchoes/pull/4)]
