@@ -13,6 +13,4 @@ steps:
       git_email: me@vahngomes.dev
       github_token:
         from_secret: GITHUB_TOKEN
-      release_branch: "master" # default: main
-      pull_request_branch_prefix: "next-release/"
-      # debug: true
+      release_branch: ${CI_REPO_DEFAULT_BRANCH}
