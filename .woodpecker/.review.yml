@@ -1,0 +1,9 @@
+when:
+  - event: pull_request
+
+steps:
+  review:
+    image: woodpeckerci/plugin-reviewdog-eslint
+    settings:
+      token:
+        from_secret: GITHUB_TOKEN
