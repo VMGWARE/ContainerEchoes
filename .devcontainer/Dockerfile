@@ -6,14 +6,17 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Update and install necessary packages
 RUN apt-get update && \
-    apt-get install -y curl software-properties-common
+    apt-get install -y curl software-properties-common wget tar
 
 # Install Go 1.21 (replace this with the appropriate method if 1.21 is available)
-RUN curl -OL https://golang.org/dl/go1.21.linux-amd64.tar.gz && \
-    tar -C /usr/local -xzf go1.21.linux-amd64.tar.gz && \
-    rm go1.21.linux-amd64.tar.gz
+RUN wget https://go.dev/dl/go1.21.0.linux-amd64.tar.gz && \
+    tar -C /usr/local -xzf go1.21.0.linux-amd64.tar.gz && \
+    rm go1.21.0.linux-amd64.tar.gz
 
-ENV PATH="/usr/local/go/bin:${PATH}"
+# Export environment variables
+ENV GOROOT=/usr/local/go
+ENV GOPATH=$HOME/go
+ENV PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 # Install Node.js and npm
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
