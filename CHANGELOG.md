@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.1.0) - 2024-01-19
+## [0.1.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.1.0) - 2024-01-21
 
 ### ❤️ Thanks to all contributors! ❤️
 
@@ -8,6 +8,7 @@
 
 ### 📈 Enhancement
 
+- Update dependencies and log level [[#20](https://github.com/VMGWARE/ContainerEchoes/pull/20)]
 - Update woodpecker CI workflows [[#17](https://github.com/VMGWARE/ContainerEchoes/pull/17)]
 - Add release-helper configuration file [[#15](https://github.com/VMGWARE/ContainerEchoes/pull/15)]
 - Add dev container [[#13](https://github.com/VMGWARE/ContainerEchoes/pull/13)]
@@ -25,6 +26,7 @@
 
 ### Misc
 
+- Bump vite from 5.0.11 to 5.0.12 in /frontend [[#19](https://github.com/VMGWARE/ContainerEchoes/pull/19)]
 - Update Git user and email [[#18](https://github.com/VMGWARE/ContainerEchoes/pull/18)]
 - Buggy [[#10](https://github.com/VMGWARE/ContainerEchoes/pull/10)]
 - Update Docker image version and add additional commands for deployment [[#6](https://github.com/VMGWARE/ContainerEchoes/pull/6)]
