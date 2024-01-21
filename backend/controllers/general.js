@@ -8,7 +8,7 @@
 // Helpers/utilities
 const { genericInternalServerError } = require("../utils/responses");
 const { getVersion } = require("../utils/general");
-const log = require("@vmgware/js-logger");
+const log = require("@vmgware/js-logger").getInstance();
 const si = require("systeminformation");
 const knex = require("@container-echoes/core/database");
 

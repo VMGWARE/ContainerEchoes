@@ -2,7 +2,7 @@
 
 // Dependencies
 const jwt = require("jsonwebtoken");
-const log = require("@vmgware/js-logger");
+const log = require("@vmgware/js-logger").getInstance();
 
 /**
  * Middleware to authenticate user using JWT tokens

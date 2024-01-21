@@ -1,5 +1,5 @@
 const knex = require("../database");
-const log = require("@vmgware/js-logger");
+const log = require("@vmgware/js-logger").getInstance();
 
 /**
  * Audit Log
