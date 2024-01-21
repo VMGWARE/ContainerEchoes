@@ -14,7 +14,7 @@
 
 const authRoutes = require("./auth");
 const generalRoutes = require("./general");
-const log = require("@vmgware/js-logger");
+const log = require("@vmgware/js-logger").getInstance();
 
 // Function to log routes for a given router
 function logRoutes(router, routerName) {

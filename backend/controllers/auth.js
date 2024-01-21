@@ -30,7 +30,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
-const log = require("@vmgware/js-logger");
+const log = require("@vmgware/js-logger").getInstance();
 const speakeasy = require("speakeasy");
 
 // Helpers/utilities

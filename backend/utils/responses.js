@@ -1,4 +1,4 @@
-const log = require("@vmgware/js-logger");
+const log = require("@vmgware/js-logger").getInstance();
 const config = require("@container-echoes/core/config").getInstance();
 
 /**
