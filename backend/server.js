@@ -6,7 +6,7 @@ const helmet = require("helmet");
 const swaggerJsdoc = require("swagger-jsdoc");
 const { getVersion } = require("./utils/general");
 const { apiReference } = require("@scalar/express-api-reference");
-const log = require("@vmgware/js-logger");
+const log = require("@vmgware/js-logger").getInstance();
 const gracefulShutdown = require("http-graceful-shutdown");
 const knex = require("@container-echoes/core/database");
 const limiter = require("./middleware/rateLimit");
@@ -18,6 +18,11 @@ const { generateKeyPair } = require("crypto");
 
 // Load environment variables
 require("dotenv").config();
+
+// If APP_LOG_LEVEL is set, override the default log level
+if (process.env.APP_LOG_LEVEL) {
+	log.setLogLevel(process.env.APP_LOG_LEVEL);
+}
 
 // Initialize Exceptionless
 let Exceptionless;

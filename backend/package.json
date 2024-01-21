@@ -18,7 +18,7 @@
 		"@scalar/express-api-reference": "^0.0.1",
 		"@sentry/node": "^7.66.0",
 		"@types/node": "^20.8.3",
-		"@vmgware/js-logger": "^1.0.0",
+		"@vmgware/js-logger": "^1.2.0",
 		"@vmgware/js-validator": "^1.4.6",
 		"bcrypt": "^5.1.0",
 		"chalk": "^4.1.0",

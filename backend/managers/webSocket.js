@@ -1,4 +1,4 @@
-const log = require("@vmgware/js-logger");
+const log = require("@vmgware/js-logger").getInstance();
 const WebSocket = require("ws");
 const forge = require("node-forge");
 const knex = require("@container-echoes/core/database");
