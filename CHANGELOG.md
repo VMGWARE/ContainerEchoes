@@ -6,9 +6,12 @@
 
 @Codycody31, @dependabot[bot]
 
-### 📈 Enhancement
+### ✨ Features
 
 - Update dependencies and log level [[#20](https://github.com/VMGWARE/ContainerEchoes/pull/20)]
+
+### 📈 Enhancement
+
 - Update woodpecker CI workflows [[#17](https://github.com/VMGWARE/ContainerEchoes/pull/17)]
 - Add release-helper configuration file [[#15](https://github.com/VMGWARE/ContainerEchoes/pull/15)]
 - Add dev container [[#13](https://github.com/VMGWARE/ContainerEchoes/pull/13)]
