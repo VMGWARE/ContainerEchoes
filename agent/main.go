@@ -17,8 +17,9 @@ import (
 )
 
 type response struct {
-	Event string      `json:"event"`
-	Data  interface{} `json:"data"`
+	Status string      `json:"status"`
+	Event  string      `json:"event"`
+	Data   interface{} `json:"data"`
 }
 
 // Create a custom struct for PublicKey and Token
