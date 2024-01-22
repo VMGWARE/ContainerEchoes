@@ -1,4 +1,5 @@
 // Packages
+const http = require("http");
 const Sentry = require("@sentry/node");
 const express = require("express");
 
@@ -36,12 +37,18 @@ const app = express();
 const port = config.app.port;
 const url = config.app.url;
 
+// Initialize a basic HTTP server
+const server = http.createServer(app);
+
 // Begin the server
 (async () => {
 	// Make sure the database is up and running
 	log.info("server", "Checking database connection...");
-	await knex.raw("SELECT 1+1 AS result");
-	log.info("server", "Database connection successful");
+	const dbVersion = await knex.raw("SELECT VERSION()");
+	log.info(
+		"server",
+		"Database connection successful, version: " + dbVersion[0][0]["VERSION()"]
+	);
 
 	// Migrate the database using knex
 	log.info("server", "Migrating database...");
@@ -243,11 +250,11 @@ const url = config.app.url;
 
 	// Initialize the WebSocket manager
 	log.debug("server", "Initializing WebSocket server");
-	const wss = new WebSocket.Server({ port: 8080 });
-	new WebSocketManager(wss, publicKey.value, privateKey.value);
+	const wss = new WebSocket.Server({ server, path: "/ws" });
+	new WebSocketManager(wss, publicKey, privateKey);
 
 	// Start listening for requests
-	app.listen(port, async () => {
+	server.listen(port, async () => {
 		// Show the version number and the port that the app is running on
 		log.info(
 			"server",
