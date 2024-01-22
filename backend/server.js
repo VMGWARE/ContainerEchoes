@@ -44,8 +44,11 @@ const server = http.createServer(app);
 (async () => {
 	// Make sure the database is up and running
 	log.info("server", "Checking database connection...");
-	await knex.raw("SELECT 1+1 AS result");
-	log.info("server", "Database connection successful");
+	const dbVersion = await knex.raw("SELECT VERSION()");
+	log.info(
+		"server",
+		"Database connection successful, version: " + dbVersion[0][0]["VERSION()"]
+	);
 
 	// Migrate the database using knex
 	log.info("server", "Migrating database...");
