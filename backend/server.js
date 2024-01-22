@@ -16,6 +16,7 @@ const WebSocket = require("ws");
 const { Client } = require("@elastic/elasticsearch");
 const WebSocketManager = require("./managers/webSocket");
 const { generateKeyPair } = require("crypto");
+const rsa = require("trsa");
 
 // Load environment variables
 require("dotenv").config();
@@ -296,30 +297,12 @@ function finalFunction() {
 async function generateRSAKeys() {
 	return new Promise((resolve, reject) => {
 		try {
-			const modulusLength = 2048;
+			const keypair = rsa.generateKeyPair({ bits: 512 });
 
-			generateKeyPair(
-				"rsa",
-				{
-					modulusLength: modulusLength,
-					publicKeyEncoding: {
-						type: "spki",
-						format: "pem",
-					},
-					privateKeyEncoding: {
-						type: "pkcs8",
-						format: "pem",
-					},
-				},
-				(err, publicKey, privateKey) => {
-					if (err) {
-						log.error("server", "Error generating RSA keys: " + err);
-						reject(err);
-					} else {
-						resolve({ publicKey, privateKey });
-					}
-				}
-			);
+			resolve({
+				publicKey: keypair.publicKey,
+				privateKey: keypair.privateKey,
+			});
 		} catch (err) {
 			log.error("server", "Error generating RSA keys: " + err);
 			reject(err);
@@ -340,7 +323,9 @@ gracefulShutdown(app, {
 // Catch unhandled rejections
 process.on("unhandledRejection", (err) => {
 	log.error("server", "Unhandled rejection: " + err);
+	console.error(err);
 });
 process.on("uncaughtException", (err) => {
 	log.error("server", "Uncaught exception: " + err);
+	console.error(err);
 });

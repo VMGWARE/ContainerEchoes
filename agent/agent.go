@@ -3,15 +3,13 @@ package main
 import (
 	"bytes"
 	"context"
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/x509"
 	"encoding/json"
-	"encoding/pem"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
+
+	"echoes/shared/trsa"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -20,7 +18,7 @@ import (
 
 // Agent represents the client that will communicate with the server
 type Agent struct {
-	PrivateKey      *rsa.PrivateKey
+	PrivateKey      []byte
 	PublicKey       []byte
 	Token           string
 	ServerPublicKey []byte
@@ -38,8 +36,6 @@ func NewAgent() *Agent {
 
 // Initialize sets up the Agent by generating RSA keys
 func (a *Agent) Initialize(token string) {
-	// TODO: Only allow 1 agent per server
-
 	// if on windows, store the RSA keys in %APPDATA%\Echoes\agent
 	if os.Getenv("OS") == "Windows_NT" {
 		agentDir = os.Getenv("APPDATA") + "\\Echoes\\agent"
@@ -50,21 +46,11 @@ func (a *Agent) Initialize(token string) {
 	// Check if the files /etc/echoes/agent/private_key and /etc/echoes/agent/public_key exist
 	if _, err := os.Stat(agentDir + "/private_key"); os.IsNotExist(err) {
 		// Generate RSA Keys
-		var err error
-		a.PrivateKey, err = rsa.GenerateKey(rand.Reader, 2048)
+		publicKey, privateKey, err := trsa.GenerateKeys(2048)
 		if err != nil {
-			panic(err) // In production, handle this error properly
+			fmt.Println(err)
+			return
 		}
-
-		// Extract the public key
-		pubKeyBytes, err := x509.MarshalPKIXPublicKey(&a.PrivateKey.PublicKey)
-		if err != nil {
-			panic(err) // Handle error
-		}
-		a.PublicKey = pem.EncodeToMemory(&pem.Block{
-			Type:  "RSA PUBLIC KEY",
-			Bytes: pubKeyBytes,
-		})
 
 		Logger.Info(Logger{}, "agent", "Generated RSA keys")
 
@@ -73,28 +59,27 @@ func (a *Agent) Initialize(token string) {
 		if err != nil {
 			panic(err) // Handle error
 		}
-		err = os.WriteFile(agentDir+"/private_key", x509.MarshalPKCS1PrivateKey(a.PrivateKey), 0644)
+		err = os.WriteFile(agentDir+"/private_key", privateKey, 0644)
 		if err != nil {
 			panic(err) // Handle error
 		}
-		err = os.WriteFile(agentDir+"/public_key", a.PublicKey, 0644)
+		err = os.WriteFile(agentDir+"/public_key", publicKey, 0644)
 		if err != nil {
 			panic(err) // Handle error
 		}
 
 		Logger.Info(Logger{}, "agent", "Stored RSA keys in "+agentDir)
+
+		// Set the agent's public and private keys
+		a.PrivateKey = privateKey
+		a.PublicKey = publicKey
 	} else {
 		// Read the private key from the file
-		privateKeyBytes, err := os.ReadFile(agentDir + "/private_key")
+		privateKey, err := os.ReadFile(agentDir + "/private_key")
 		if err != nil {
 			panic(err) // Handle error
 		}
-
-		// Decode the private key
-		a.PrivateKey, err = x509.ParsePKCS1PrivateKey(privateKeyBytes)
-		if err != nil {
-			panic(err) // Handle error
-		}
+		a.PrivateKey = privateKey
 
 		// Read the public key from the file
 		a.PublicKey, err = os.ReadFile(agentDir + "/public_key")

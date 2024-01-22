@@ -17,8 +17,8 @@ import (
 )
 
 type response struct {
-	Type string      `json:"type"`
-	Data interface{} `json:"data"`
+	Event string      `json:"event"`
+	Data  interface{} `json:"data"`
 }
 
 // Create a custom struct for PublicKey and Token
@@ -166,7 +166,7 @@ func handleServerCommunication(agent *Agent, log Logger) {
 		}
 
 		// Handle message
-		switch resp.Type {
+		switch resp.Event {
 		case "handshake":
 			log.Info("agent", "Server performing handshake")
 
@@ -193,7 +193,7 @@ func handleServerCommunication(agent *Agent, log Logger) {
 
 			// Build handshake message
 			handshakeData := response{
-				Type: "handshake",
+				Event: "handshake",
 				Data: struct {
 					PublicKey string `json:"publicKey"`
 				}{
@@ -223,8 +223,8 @@ func handleServerCommunication(agent *Agent, log Logger) {
 
 			// Build agent info message
 			agentInfo := response{
-				Type: "agentInfo",
-				Data: agentData,
+				Event: "agentInfo",
+				Data:  agentData,
 			}
 
 			// Convert the agentInfo struct to a JSON string
@@ -246,8 +246,8 @@ func handleServerCommunication(agent *Agent, log Logger) {
 
 			// Build container list message
 			containerList := response{
-				Type: "containerList",
-				Data: list,
+				Event: "containerList",
+				Data:  list,
 			}
 
 			// Convert the containerList struct to a JSON string
@@ -264,6 +264,8 @@ func handleServerCommunication(agent *Agent, log Logger) {
 			}
 		case "agentId":
 			log.Info("agent", "Server sending agent id")
+
+			// TODO: Add logic to easily decrypt the agentId in one line (e.g., agent.Decrypt(resp.Data)) and we can then easily work with the data
 
 			// Check if resp.Data is a map and contains "agentId" key
 			data, ok := resp.Data.(map[string]interface{})
@@ -284,7 +286,7 @@ func handleServerCommunication(agent *Agent, log Logger) {
 			agentId := int(agentIdFloat) // Convert to int if needed
 			agent.Id = agentId
 		default:
-			log.Warn("agent", "Unknown message type: "+resp.Type)
+			log.Warn("agent", "Unknown message event: "+resp.Event)
 		}
 
 	}

@@ -1,6 +1,6 @@
 const log = require("@vmgware/js-logger").getInstance();
 const WebSocket = require("ws");
-const forge = require("node-forge");
+const rsa = require("trsa");
 const knex = require("@container-echoes/core/database");
 const config = require("@container-echoes/core/config").getInstance();
 
@@ -52,13 +52,15 @@ class WebSocketManager {
 			// Perform handshake with the agent (send the public key, receive the agent's public key)
 			this.sendMessage(
 				ws,
-				this.buildMessage("handshake", {
-					publicKey: this.server.publicKey,
-				})
+				this.buildMessage(
+					"ok",
+					"handshake",
+					{
+						publicKey: this.server.publicKey,
+					},
+					false
+				)
 			);
-
-			// Ask for the agent info
-			this.sendMessage(ws, this.buildMessage("agentInfo"));
 
 			// Handle incoming messages
 			ws.on("message", async (message) => {
@@ -88,12 +90,12 @@ class WebSocketManager {
 
 		const messageObj = JSON.parse(message);
 
-		if (messageObj.type === "handshake") {
-			// Store the agent's public key
+		if (messageObj.event === "handshake") {
 			ws.publicKey = messageObj.data.publicKey;
 			this.publicKey = messageObj.data.publicKey;
+			this.sendMessage(ws, this.buildMessage("ok", "agentInfo"));
 		}
-		if (messageObj.type === "agentInfo") {
+		if (messageObj.event === "agentInfo") {
 			let token = messageObj.data.token;
 			let hostname = messageObj.data.hostname;
 
@@ -138,9 +140,14 @@ class WebSocketManager {
 			// Send the agent's id to the agent
 			this.sendMessage(
 				ws,
-				this.buildMessage("agentId", {
-					agentId: agent.agentId,
-				})
+				this.buildMessage(
+					"ok",
+					"agentId",
+					{
+						agentId: agent.agentId,
+					},
+					true
+				)
 			);
 		}
 	}
@@ -161,15 +168,24 @@ class WebSocketManager {
 
 	/**
 	 * Builds a message to send to the client
-	 * @param {*} type - The type of message
+	 * @param {*} status - The status of the message
+	 * @param {*} event - The event of the message
 	 * @param {*} data - The data to send
+	 * @param {boolean} encrypted - Whether or not the message should be encrypted
 	 * @returns {string} The message to send
 	 */
-	buildMessage(type, data) {
-		return JSON.stringify({
-			type: type,
+	buildMessage(status = "ok", event, data = {}, encrypted = true) {
+		let message = {
+			status: status,
+			event: event,
 			data: data,
-		});
+		};
+
+		if (encrypted) {
+			message.data = rsa.encrypt(JSON.stringify(message.data), this.publicKey);
+		}
+
+		return JSON.stringify(message);
 	}
 
 	/**
@@ -220,25 +236,6 @@ class WebSocketManager {
 		});
 
 		log.debug("WebSocketManager", "Sent message to all clients except " + id);
-	}
-
-	/**
-	 * Encrypts a message using RSA encryption with the provided public key
-	 * @param {string} message - The message to encrypt
-	 * @param {string} publicKey - The RSA public key in PEM format
-	 * @returns {string} The encrypted message in hexadecimal format
-	 */
-	encryptMessageWithRSA(message, publicKey) {
-		const publicKeyObj = forge.pki.publicKeyFromPem(publicKey);
-		const encryptedMessage = publicKeyObj.encrypt(message, "RSA-OAEP", {
-			md: forge.md.sha256.create(),
-			mgf1: {
-				md: forge.md.sha1.create(),
-			},
-		});
-
-		// Convert the encrypted message to hexadecimal format
-		return forge.util.bytesToHex(encryptedMessage);
 	}
 
 	/**
