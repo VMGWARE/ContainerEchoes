@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -44,6 +45,11 @@ func main() {
 			Name:  "ping",
 			Usage: "ping the agent",
 			// Action: pinger,
+		},
+		{
+			Name:   "healthcheck",
+			Usage:  "check the health of the agent",
+			Action: healthchecker,
 		},
 	}
 	app.Flags = flags
@@ -304,4 +310,21 @@ func getHostName() string {
 	}
 
 	return hostname
+}
+
+// Check if the server is healthy
+func healthchecker(context *cli.Context) error {
+	// perform check to ensure the server is healthy and ready to accept connections
+	healthcheckAddress := context.String("healthcheck-addr")
+	if strings.HasPrefix(healthcheckAddress, ":") {
+		healthcheckAddress = "localhost" + healthcheckAddress
+	}
+	if !checkServerHealth("http://" + healthcheckAddress + "/general/healthcheck") {
+		fmt.Println("Server is not healthy")
+		return nil
+	} else {
+		fmt.Println("Server is healthy")
+	}
+
+	return nil
 }
