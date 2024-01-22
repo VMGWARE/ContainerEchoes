@@ -2,22 +2,19 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
+	"github.com/urfave/cli/v2"
 )
-
-// Array of required environment variables
-var requiredEnvVars = []string{
-	"AGENT_SERVER_URL",
-	"AGENT_SECRET",
-}
 
 type response struct {
 	Type string      `json:"type"`
@@ -35,6 +32,35 @@ const (
 )
 
 func main() {
+	// create a logger
+	log := Logger{}
+
+	app := cli.NewApp()
+	app.Name = "echoes-agent"
+	// app.Version = version.String()
+	app.Usage = "echoes agent"
+	app.Action = runAgent
+	app.Commands = []*cli.Command{
+		{
+			Name:  "ping",
+			Usage: "ping the agent",
+			// Action: pinger,
+		},
+		{
+			Name:   "healthcheck",
+			Usage:  "check the health of the agent",
+			Action: healthchecker,
+		},
+	}
+	app.Flags = flags
+
+	if err := app.Run(os.Args); err != nil {
+		log.Error("agent", err.Error())
+		return
+	}
+}
+
+func runAgent(context *cli.Context) error {
 	startTime := time.Now()
 
 	// create a logger
@@ -49,31 +75,19 @@ func main() {
 		log.Error("agent", "Error loading .env file: "+err.Error())
 	}
 
-	// Checks to ensure required environment variables are set
-	var missingEnvVars bool
-	if (len(os.Args) == 2 && os.Args[1] == "init") || len(os.Args) == 1 {
-		for _, envVar := range requiredEnvVars {
-			if os.Getenv(envVar) == "" {
-				log.Error("agent", "Missing required environment variable: "+envVar)
-				missingEnvVars = true
-			}
-		}
-
-		if missingEnvVars {
-			log.Warn("agent", "I'm gonna give you a chance to re-check the config, surely you can fix it?")
-			return
-		}
-	}
-
 	// perform check to ensure the server is healthy and ready to accept connections
-	if !checkServerHealth(os.Getenv("AGENT_SERVER_URL") + "/general/healthcheck") {
+	healthcheckAddress := context.String("healthcheck-addr")
+	if strings.HasPrefix(healthcheckAddress, ":") {
+		healthcheckAddress = "localhost" + healthcheckAddress
+	}
+	if !checkServerHealth("http://" + healthcheckAddress + "/general/healthcheck") {
 		log.Error("agent", "Server is not healthy")
-		return
+		return nil
 	}
 
 	agent := Agent{}
 	// Initialize the agent
-	agent.Initialize(os.Getenv("AGENT_SECRET"))
+	agent.Initialize(context.String("secret"))
 
 	// Infinite loop replaced with loop that runs for retryDuration
 	for {
@@ -82,18 +96,20 @@ func main() {
 			break
 		}
 
-		if connectToServer(&agent, log) {
+		if connectToServer(&agent, log, context) {
 			handleServerCommunication(&agent, log)
 		}
 
 		// Sleep before retrying
 		time.Sleep(5 * time.Second)
 	}
+
+	return nil
 }
 
 // Connect to the server
-func connectToServer(agent *Agent, log Logger) bool {
-	u := url.URL{Scheme: "ws", Host: "localhost:8080", Path: "/"}
+func connectToServer(agent *Agent, log Logger, context *cli.Context) bool {
+	u := url.URL{Scheme: "ws", Host: context.String("server"), Path: "/ws"}
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
@@ -294,4 +310,21 @@ func getHostName() string {
 	}
 
 	return hostname
+}
+
+// Check if the server is healthy
+func healthchecker(context *cli.Context) error {
+	// perform check to ensure the server is healthy and ready to accept connections
+	healthcheckAddress := context.String("healthcheck-addr")
+	if strings.HasPrefix(healthcheckAddress, ":") {
+		healthcheckAddress = "localhost" + healthcheckAddress
+	}
+	if !checkServerHealth("http://" + healthcheckAddress + "/general/healthcheck") {
+		fmt.Println("Server is not healthy")
+		return nil
+	} else {
+		fmt.Println("Server is healthy")
+	}
+
+	return nil
 }
