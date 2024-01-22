@@ -6,11 +6,13 @@ import (
 	"net/url"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
+	"github.com/urfave/cli/v2"
 )
 
 // Array of required environment variables
@@ -35,6 +37,30 @@ const (
 )
 
 func main() {
+	// create a logger
+	log := Logger{}
+
+	app := cli.NewApp()
+	app.Name = "echoes-agent"
+	// app.Version = version.String()
+	app.Usage = "echoes agent"
+	app.Action = runAgent
+	app.Commands = []*cli.Command{
+		{
+			Name:  "ping",
+			Usage: "ping the agent",
+			// Action: pinger,
+		},
+	}
+	app.Flags = flags
+
+	if err := app.Run(os.Args); err != nil {
+		log.Error("agent", err.Error())
+		return
+	}
+}
+
+func runAgent(context *cli.Context) error {
 	startTime := time.Now()
 
 	// create a logger
@@ -61,14 +87,18 @@ func main() {
 
 		if missingEnvVars {
 			log.Warn("agent", "I'm gonna give you a chance to re-check the config, surely you can fix it?")
-			return
+			return nil
 		}
 	}
 
 	// perform check to ensure the server is healthy and ready to accept connections
-	if !checkServerHealth(os.Getenv("AGENT_SERVER_URL") + "/general/healthcheck") {
+	healthcheckAddress := context.String("healthcheck-addr")
+	if strings.HasPrefix(healthcheckAddress, ":") {
+		healthcheckAddress = "localhost" + healthcheckAddress
+	}
+	if !checkServerHealth("http://" + healthcheckAddress + "/general/healthcheck") {
 		log.Error("agent", "Server is not healthy")
-		return
+		return nil
 	}
 
 	agent := Agent{}
@@ -89,6 +119,8 @@ func main() {
 		// Sleep before retrying
 		time.Sleep(5 * time.Second)
 	}
+
+	return nil
 }
 
 // Connect to the server

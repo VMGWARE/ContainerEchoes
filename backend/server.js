@@ -6,7 +6,7 @@ const helmet = require("helmet");
 const swaggerJsdoc = require("swagger-jsdoc");
 const { getVersion } = require("./utils/general");
 const { apiReference } = require("@scalar/express-api-reference");
-const log = require("@vmgware/js-logger").getInstance();
+const log = require("@vmgware/js-logger").getInstance("DEBUG");
 const gracefulShutdown = require("http-graceful-shutdown");
 const knex = require("@container-echoes/core/database");
 const limiter = require("./middleware/rateLimit");
@@ -244,7 +244,7 @@ const url = config.app.url;
 	// Initialize the WebSocket manager
 	log.debug("server", "Initializing WebSocket server");
 	const wss = new WebSocket.Server({ port: 8080 });
-	new WebSocketManager(wss, publicKey.value, privateKey.value);
+	new WebSocketManager(wss, publicKey, privateKey);
 
 	// Start listening for requests
 	app.listen(port, async () => {
