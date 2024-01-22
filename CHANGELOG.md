@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-22
+
+### ❤️ Thanks to all contributors! ❤️
+
+@Codycody31
+
+### 📈 Enhancement
+
+- Update agent to use CLI flags along with new version of the logger [[#22](https://github.com/VMGWARE/ContainerEchoes/pull/22)]
+
 ## [0.1.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.1.0) - 2024-01-21
 
 ### ❤️ Thanks to all contributors! ❤️
