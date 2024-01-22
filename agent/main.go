@@ -15,12 +15,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// Array of required environment variables
-var requiredEnvVars = []string{
-	"AGENT_SERVER_URL",
-	"AGENT_SECRET",
-}
-
 type response struct {
 	Type string      `json:"type"`
 	Data interface{} `json:"data"`
@@ -75,22 +69,6 @@ func runAgent(context *cli.Context) error {
 		log.Error("agent", "Error loading .env file: "+err.Error())
 	}
 
-	// Checks to ensure required environment variables are set
-	var missingEnvVars bool
-	if (len(os.Args) == 2 && os.Args[1] == "init") || len(os.Args) == 1 {
-		for _, envVar := range requiredEnvVars {
-			if os.Getenv(envVar) == "" {
-				log.Error("agent", "Missing required environment variable: "+envVar)
-				missingEnvVars = true
-			}
-		}
-
-		if missingEnvVars {
-			log.Warn("agent", "I'm gonna give you a chance to re-check the config, surely you can fix it?")
-			return nil
-		}
-	}
-
 	// perform check to ensure the server is healthy and ready to accept connections
 	healthcheckAddress := context.String("healthcheck-addr")
 	if strings.HasPrefix(healthcheckAddress, ":") {
@@ -103,7 +81,7 @@ func runAgent(context *cli.Context) error {
 
 	agent := Agent{}
 	// Initialize the agent
-	agent.Initialize(os.Getenv("AGENT_SECRET"))
+	agent.Initialize(context.String("secret"))
 
 	// Infinite loop replaced with loop that runs for retryDuration
 	for {
@@ -112,7 +90,7 @@ func runAgent(context *cli.Context) error {
 			break
 		}
 
-		if connectToServer(&agent, log) {
+		if connectToServer(&agent, log, context) {
 			handleServerCommunication(&agent, log)
 		}
 
@@ -124,8 +102,8 @@ func runAgent(context *cli.Context) error {
 }
 
 // Connect to the server
-func connectToServer(agent *Agent, log Logger) bool {
-	u := url.URL{Scheme: "ws", Host: "localhost:8080", Path: "/"}
+func connectToServer(agent *Agent, log Logger, context *cli.Context) bool {
+	u := url.URL{Scheme: "ws", Host: context.String("server"), Path: "/ws"}
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {

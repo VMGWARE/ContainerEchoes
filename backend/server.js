@@ -1,4 +1,5 @@
 // Packages
+const http = require("http");
 const Sentry = require("@sentry/node");
 const express = require("express");
 
@@ -35,6 +36,9 @@ log.debug("server", "Creating Express app");
 const app = express();
 const port = config.app.port;
 const url = config.app.url;
+
+// Initialize a basic HTTP server
+const server = http.createServer(app);
 
 // Begin the server
 (async () => {
@@ -243,11 +247,11 @@ const url = config.app.url;
 
 	// Initialize the WebSocket manager
 	log.debug("server", "Initializing WebSocket server");
-	const wss = new WebSocket.Server({ port: 8080 });
+	const wss = new WebSocket.Server({ server, path: "/ws" });
 	new WebSocketManager(wss, publicKey, privateKey);
 
 	// Start listening for requests
-	app.listen(port, async () => {
+	server.listen(port, async () => {
 		// Show the version number and the port that the app is running on
 		log.info(
 			"server",

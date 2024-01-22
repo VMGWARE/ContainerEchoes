@@ -26,12 +26,12 @@ var flags = []cli.Flag{
 		EnvVars: []string{"ECHOES_SERVER"},
 		Name:    "server",
 		Usage:   "server address",
-		Value:   "localhost:8080",
+		Value:   "localhost:5000",
 	},
 	&cli.StringFlag{
 		EnvVars:  []string{"ECHOES_AGENT_SECRET"},
-		Name:     "grpc-token",
-		Usage:    "server-agent shared token",
+		Name:     "secret",
+		Usage:    "server-agent shared secret",
 		FilePath: os.Getenv("ECHOES_AGENT_SECRET_FILE"),
 	},
 	&cli.StringFlag{
