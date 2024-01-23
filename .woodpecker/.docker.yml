@@ -3,6 +3,10 @@ when:
   - event: push
     branch:
       - ${CI_REPO_DEFAULT_BRANCH}
+
+# Only run on amd64 agents
+labels:
+  arch: amd64
   
 variables:
   - &golang_image 'docker.io/golang:1.21.6'
