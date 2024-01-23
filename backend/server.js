@@ -129,6 +129,9 @@ const server = http.createServer(app);
 						log.info("server", "RSA keys stored in database");
 					});
 			});
+
+		// Update the config object
+		await config.getDatabaseConfiguration();
 	} else {
 		log.info("server", "RSA keys found in database");
 	}
@@ -296,7 +299,7 @@ function finalFunction() {
 async function generateRSAKeys() {
 	return new Promise((resolve, reject) => {
 		try {
-			const keypair = rsa.generateKeyPair({ bits: 512 });
+			const keypair = rsa.generateKeyPair({ bits: 2048 });
 
 			resolve({
 				publicKey: keypair.publicKey,
