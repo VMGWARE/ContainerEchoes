@@ -17,6 +17,8 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
+
+	// _ "github.com/joho/godotenv/autoload"
 	"github.com/urfave/cli/v2"
 )
 
@@ -37,6 +39,8 @@ const (
 )
 
 func main() {
+	godotenv.Load()
+
 	// create a logger
 	log := Logger{}
 
