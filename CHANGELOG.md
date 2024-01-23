@@ -6,6 +6,10 @@
 
 @Codycody31
 
+### ✨ Features
+
+- Enable encryption of data between server and agent [[#24](https://github.com/VMGWARE/ContainerEchoes/pull/24)]
+
 ### 🐛 Bug Fixes
 
 - Remove dependencies and update Docker configuration in CI workflows [[#25](https://github.com/VMGWARE/ContainerEchoes/pull/25)]
