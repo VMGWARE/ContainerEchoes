@@ -11,6 +11,8 @@ import (
 	"syscall"
 	"time"
 
+	"echoes/version"
+
 	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
@@ -38,7 +40,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "echoes-agent"
-	// app.Version = version.String()
+	app.Version = version.String()
 	app.Usage = "echoes agent"
 	app.Action = runAgent
 	app.Commands = []*cli.Command{
@@ -48,8 +50,8 @@ func main() {
 			// Action: pinger,
 		},
 		{
-			Name:   "healthcheck",
-			Usage:  "check the health of the agent",
+			Name:   "health",
+			Usage:  "check the health of the server",
 			Action: healthchecker,
 		},
 	}
