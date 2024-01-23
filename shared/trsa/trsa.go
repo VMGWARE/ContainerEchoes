@@ -55,8 +55,11 @@ func GenerateKeys(bitLength int) ([]byte, []byte, error) {
 	}
 	privateKey := make([]byte, privateKeyBufferWriter.Buffered())
 	privateKeyBufferWriter.Flush()
-	privateKeyBuffer.Read(privateKey)
-
+	_, err = privateKeyBuffer.Read(privateKey)
+	if err != nil {
+		// Handle the error, maybe return it or log it
+		return nil, nil, err
+	}
 	pubKey := privKey.Public()
 	publicKeyBytes, err := x509.MarshalPKIXPublicKey(pubKey)
 	if err != nil {
@@ -74,7 +77,11 @@ func GenerateKeys(bitLength int) ([]byte, []byte, error) {
 	}
 	publicKey := make([]byte, publicKeyBufferWriter.Buffered())
 	publicKeyBufferWriter.Flush()
-	publicKeyBuffer.Read(publicKey)
+	_, err = publicKeyBuffer.Read(publicKey)
+	if err != nil {
+		// Handle the error, maybe return it or log it
+		return nil, nil, err
+	}
 
 	return publicKey, privateKey, nil
 }
@@ -99,7 +106,7 @@ func parsePublicKey(publicKeyPem []byte) (*rsa.PublicKey, error) {
 		return nil, err
 	}
 	publicKey, ok := p.(*rsa.PublicKey)
-	if ok != true {
+	if !ok {
 		return nil, errors.New("public key has the wrong type")
 	}
 	return publicKey, nil
