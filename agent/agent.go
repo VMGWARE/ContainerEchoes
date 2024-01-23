@@ -79,7 +79,6 @@ func (a *Agent) Initialize(token string) {
 		if err != nil {
 			panic(err) // Handle error
 		}
-		fmt.Println("Private Key:", string(privateKey))
 		a.PrivateKey = privateKey
 
 		// Read the public key from the file
