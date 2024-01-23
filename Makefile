@@ -42,6 +42,13 @@ else
 	endif
 endif
 
+LDFLAGS := -X echoes/version.Version=${VERSION}
+STATIC_BUILD ?= true
+ifeq ($(STATIC_BUILD),true)
+	LDFLAGS := -s -w -extldflags "-static" $(LDFLAGS)
+endif
+CGO_ENABLED ?= 1 # only used to compile server
+
 HAS_GO = $(shell hash go > /dev/null 2>&1 && echo "GO" || echo "NOGO" )
 ifeq ($(HAS_GO),GO)
 	XGO_VERSION ?= go-1.20.x
@@ -78,6 +85,9 @@ vendor: ## Update the vendor directory
 	go mod tidy
 	go mod vendor
 
+format: install-tools ## Format source code
+	@gofumpt -extra -w agent/
+
 .PHONY: clean
 clean: ## Clean build artifacts
 	go clean -i ./...
@@ -85,7 +95,7 @@ clean: ## Clean build artifacts
 
 .PHONY: clean-all
 clean-all: clean ## Clean all artifacts
-	rm -rf dist
+	rm -rf dist backend/node_modules core/node_modules docs/node_modules frontend/node_modules
 
 .PHONY: version
 version: ## Print the current version
@@ -128,6 +138,17 @@ test: test-frontend test-backend ## Run all tests
 
 build-agent: ## Build agent
 	CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o dist/echoes-agent${BIN_SUFFIX} ./agent
+
+build-tarball: ## Build tar archive
+	mkdir -p dist && tar chzvf dist/woodpecker-src.tar.gz \
+	  --exclude="*.exe" \
+	  --exclude="./.pnpm-store" \
+	  --exclude="node_modules" \
+	  --exclude="./dist" \
+	  --exclude="./data" \
+	  --exclude="./build" \
+	  --exclude="./.git" \
+	  .
 
 .PHONY: build
 build: build-agent ## Build agent binary
