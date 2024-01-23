@@ -95,7 +95,7 @@ clean: ## Clean build artifacts
 
 .PHONY: clean-all
 clean-all: clean ## Clean all artifacts
-	rm -rf dist
+	rm -rf dist backend/node_modules core/node_modules docs/node_modules frontend/node_modules
 
 .PHONY: version
 version: ## Print the current version
