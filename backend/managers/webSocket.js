@@ -96,6 +96,10 @@ class WebSocketManager {
 			this.sendMessage(ws, this.buildMessage("ok", "agentInfo"));
 		}
 		if (messageObj.event === "agentInfo") {
+			messageObj.data = JSON.parse(
+				rsa.decrypt(messageObj.data, this.server.privateKey)
+			);
+
 			let token = messageObj.data.token;
 			let hostname = messageObj.data.hostname;
 

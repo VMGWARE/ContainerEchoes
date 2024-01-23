@@ -278,6 +278,7 @@ async function shutdownFunction(signal) {
 	log.info("server", "Shutdown requested");
 	log.info("server", "Called signal: " + signal);
 
+	log.info("server", "Closing HTTP server...");
 	app.close();
 
 	await new Promise((resolve) => setTimeout(resolve, 2000));

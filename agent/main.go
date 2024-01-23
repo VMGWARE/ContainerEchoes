@@ -230,10 +230,20 @@ func handleServerCommunication(agent *Agent, log Logger) {
 				Hostname: getHostName(),
 			}
 
+			// Convert to JSON so that it can be encrypted
+			agentDataJSON, err := json.Marshal(agentData)
+			if err != nil {
+				log.Error("agent", "json.Marshal error:"+err.Error())
+				return
+			}
+
+			// Encrypt the agentData using trsa.Encrypt with the server's public key
+			encryptedData, err := trsa.Encrypt([]byte(agentDataJSON), agent.ServerPublicKey)
+
 			// Build agent info message
 			agentInfo := response{
 				Event: "agentInfo",
-				Data:  agentData,
+				Data:  hex.EncodeToString(encryptedData),
 			}
 
 			// Convert the agentInfo struct to a JSON string
