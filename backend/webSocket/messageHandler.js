@@ -1,13 +1,25 @@
 const fs = require("fs");
 const path = require("path");
 
+/**
+ * Manages WebSocket message handling by delegating messages to respective handlers.
+ */
 class WebSocketMessageHandler {
+	/**
+	 * Constructs a WebSocketMessageHandler instance.
+	 * @param {Object} webSocketManager - An instance of the WebSocketManager.
+	 */
 	constructor(webSocketManager) {
 		this.webSocketManager = webSocketManager;
 		this.handlers = {};
 		this.loadHandlers();
 	}
 
+	/**
+	 * Dynamically loads all handler classes from the handlers directory and initializes them.
+	 * This method assumes that each handler class is named after the event it handles and
+	 * extends from the MessageHandlerBase class.
+	 */
 	loadHandlers() {
 		const handlersPath = path.join(__dirname, "handlers");
 		fs.readdirSync(handlersPath).forEach((file) => {
@@ -26,6 +38,11 @@ class WebSocketMessageHandler {
 		});
 	}
 
+	/**
+	 * Handles incoming WebSocket messages by delegating them to the appropriate handler based on the event type.
+	 * @param {WebSocket} ws - The WebSocket connection instance.
+	 * @param {string} message - The raw message received from the WebSocket connection.
+	 */
 	async handleMessage(ws, message) {
 		const messageObj = JSON.parse(message);
 

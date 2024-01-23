@@ -4,11 +4,27 @@ const config = require("@container-echoes/core/config").getInstance();
 const rsa = require("trsa");
 const log = require("@vmgware/js-logger").getInstance();
 
+/**
+ * Represents a handler for the handshake process with agents.
+ * @extends MessageHandlerBase
+ */
 class HandleHandshake extends MessageHandlerBase {
+	/**
+	 * Creates an instance of HandleHandshake.
+	 * @param {WebSocketManager} webSocketManager - The WebSocket manager instance.
+	 */
 	constructor(webSocketManager) {
 		super(webSocketManager, "agentInfo");
 	}
 
+	/**
+	 * Handles the handshake message from the agent.
+	 * Decrypts the message data, checks agent validity, and sends a response.
+	 * @param {WebSocket} ws - The WebSocket connection instance.
+	 * @param {Object} messageObj - The received message object.
+	 * @throws {Error} Throws an error if there is an issue decrypting the message data.
+	 * @returns {Promise<void>} A Promise that resolves when the handling is complete.
+	 */
 	async handle(ws, messageObj) {
 		messageObj.data = JSON.parse(
 			rsa.decrypt(messageObj.data, this.webSocketManager.server.privateKey)
