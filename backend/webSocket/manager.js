@@ -1,8 +1,7 @@
 const log = require("@vmgware/js-logger").getInstance();
 const WebSocket = require("ws");
 const rsa = require("trsa");
-const knex = require("@container-echoes/core/database");
-const config = require("@container-echoes/core/config").getInstance();
+const WebSocketMessageHandler = require("./messageHandler");
 
 /**
  * Manages WebSocket connections
@@ -44,12 +43,12 @@ class WebSocketManager {
 			return s4() + s4() + "-" + s4();
 		};
 
+		this.messageHandler = new WebSocketMessageHandler(this);
+
 		this.wss.on("connection", (ws) => {
 			log.debug("WebSocketManager", "New WebSocket connection");
 
-			// https://stackoverflow.com/questions/13364243/websocketserver-node-js-how-to-differentiate-clients
-
-			// Perform handshake with the agent (send the public key, receive the agent's public key)
+			// Send the initial handshake message
 			this.sendMessage(
 				ws,
 				this.buildMessage(
@@ -64,7 +63,7 @@ class WebSocketManager {
 
 			// Handle incoming messages
 			ws.on("message", async (message) => {
-				this.handleMessage(ws, message);
+				await this.messageHandler.handleMessage(ws, message);
 			});
 		});
 
@@ -75,85 +74,6 @@ class WebSocketManager {
 		this.wss.on("close", () => {
 			log.debug("WebSocketManager", "WebSocket closed");
 		});
-	}
-
-	/**
-	 * Handles incoming messages
-	 * @param {*} ws - The WebSocket connection
-	 * @param {*} message - The message
-	 * @returns {void}
-	 */
-	async handleMessage(ws, message) {
-		// Handle incoming messages
-		log.debug("WebSocketManager", "Received message: " + message);
-		// Your custom message handling logic goes here
-
-		const messageObj = JSON.parse(message);
-
-		if (messageObj.event === "handshake") {
-			ws.publicKey = messageObj.data.publicKey;
-			this.publicKey = messageObj.data.publicKey;
-			this.sendMessage(ws, this.buildMessage("ok", "agentInfo"));
-		}
-		if (messageObj.event === "agentInfo") {
-			messageObj.data = JSON.parse(
-				rsa.decrypt(messageObj.data, this.server.privateKey)
-			);
-
-			let token = messageObj.data.token;
-			let hostname = messageObj.data.hostname;
-
-			// Check if the agent is valid
-			let agent = await knex("agent")
-				.where({
-					token: token,
-				})
-				.first();
-
-			if (!agent) {
-				if (config.app.autoAddAgents) {
-					log.debug(
-						"WebSocketManager",
-						"Agent is not valid, but auto add is enabled"
-					);
-
-					// Add the agent to the database
-					await knex("agent").insert({
-						token: token,
-						publickey: ws.publicKey,
-						hostname: hostname,
-					});
-
-					// Get the agent's info
-					agent = await knex("agent")
-						.where({
-							token: token,
-						})
-						.first();
-				} else {
-					log.debug("WebSocketManager", "Agent is not valid");
-					ws.close();
-				}
-			}
-
-			// Store the agent's id
-			ws.id = agent.agentId;
-
-			log.debug("WebSocketManager", `Authenticated agent ${agent.agentId}`);
-
-			// Send the agent's id to the agent
-			this.sendMessage(
-				ws,
-				this.buildMessage(
-					"ok",
-					"agentId",
-					{
-						agentId: agent.agentId,
-					},
-					true
-				)
-			);
-		}
 	}
 
 	/**
