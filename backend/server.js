@@ -14,7 +14,7 @@ const limiter = require("./middleware/rateLimit");
 const config = require("@container-echoes/core/config").getInstance();
 const WebSocket = require("ws");
 const { Client } = require("@elastic/elasticsearch");
-const WebSocketManager = require("./managers/webSocket");
+const WebSocketManager = require("./webSocket/manager");
 const rsa = require("trsa");
 
 // Load environment variables
