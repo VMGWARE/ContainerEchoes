@@ -37,7 +37,7 @@ class MessageHandlerBase {
 	 * @param {Object} messageObj - The message object received from the WebSocket.
 	 * @throws {Error} If this method is not implemented by the subclass.
 	 */
-	async handle(ws, messageObj) {
+	async handle(ws, messageObj) { // eslint-disable-line no-unused-vars
 		throw new Error("Method 'handle()' must be implemented.");
 	}
 }
