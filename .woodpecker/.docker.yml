@@ -3,12 +3,7 @@ when:
   - event: push
     branch:
       - ${CI_REPO_DEFAULT_BRANCH}
-
-depends_on:
-  - agent
-  - frontend
-  - backend
-
+  
 variables:
   - &golang_image 'docker.io/golang:1.21.6'
   - &buildx_plugin 'docker.io/woodpeckerci/plugin-docker-buildx:2.3.0'
