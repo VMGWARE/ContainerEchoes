@@ -8,6 +8,7 @@
 
 ### ✨ Features
 
+- Feature: event driven ws handling [[#26](https://github.com/VMGWARE/ContainerEchoes/pull/26)]
 - Enable encryption of data between server and agent [[#24](https://github.com/VMGWARE/ContainerEchoes/pull/24)]
 
 ### 🐛 Bug Fixes
