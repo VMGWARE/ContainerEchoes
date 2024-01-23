@@ -15,7 +15,7 @@ const config = require("@container-echoes/core/config").getInstance();
 const WebSocket = require("ws");
 const { Client } = require("@elastic/elasticsearch");
 const WebSocketManager = require("./managers/webSocket");
-const { generateKeyPair } = require("crypto");
+const rsa = require("trsa");
 
 // Load environment variables
 require("dotenv").config();
@@ -129,6 +129,9 @@ const server = http.createServer(app);
 						log.info("server", "RSA keys stored in database");
 					});
 			});
+
+		// Update the config object
+		await config.getDatabaseConfiguration();
 	} else {
 		log.info("server", "RSA keys found in database");
 	}
@@ -275,6 +278,7 @@ async function shutdownFunction(signal) {
 	log.info("server", "Shutdown requested");
 	log.info("server", "Called signal: " + signal);
 
+	log.info("server", "Closing HTTP server...");
 	app.close();
 
 	await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -296,30 +300,12 @@ function finalFunction() {
 async function generateRSAKeys() {
 	return new Promise((resolve, reject) => {
 		try {
-			const modulusLength = 2048;
+			const keypair = rsa.generateKeyPair({ bits: 2048 });
 
-			generateKeyPair(
-				"rsa",
-				{
-					modulusLength: modulusLength,
-					publicKeyEncoding: {
-						type: "spki",
-						format: "pem",
-					},
-					privateKeyEncoding: {
-						type: "pkcs8",
-						format: "pem",
-					},
-				},
-				(err, publicKey, privateKey) => {
-					if (err) {
-						log.error("server", "Error generating RSA keys: " + err);
-						reject(err);
-					} else {
-						resolve({ publicKey, privateKey });
-					}
-				}
-			);
+			resolve({
+				publicKey: keypair.publicKey,
+				privateKey: keypair.privateKey,
+			});
 		} catch (err) {
 			log.error("server", "Error generating RSA keys: " + err);
 			reject(err);
@@ -340,7 +326,9 @@ gracefulShutdown(app, {
 // Catch unhandled rejections
 process.on("unhandledRejection", (err) => {
 	log.error("server", "Unhandled rejection: " + err);
+	console.error(err);
 });
 process.on("uncaughtException", (err) => {
 	log.error("server", "Uncaught exception: " + err);
+	console.error(err);
 });

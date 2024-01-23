@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -11,14 +12,20 @@ import (
 	"syscall"
 	"time"
 
+	"echoes/shared/trsa"
+	"echoes/version"
+
 	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
+
+	// _ "github.com/joho/godotenv/autoload"
 	"github.com/urfave/cli/v2"
 )
 
 type response struct {
-	Type string      `json:"type"`
-	Data interface{} `json:"data"`
+	Status string      `json:"status"`
+	Event  string      `json:"event"`
+	Data   interface{} `json:"data"`
 }
 
 // Create a custom struct for PublicKey and Token
@@ -32,12 +39,17 @@ const (
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file: " + err.Error())
+	}
+
 	// create a logger
 	log := Logger{}
 
 	app := cli.NewApp()
 	app.Name = "echoes-agent"
-	// app.Version = version.String()
+	app.Version = version.String()
 	app.Usage = "echoes agent"
 	app.Action = runAgent
 	app.Commands = []*cli.Command{
@@ -47,8 +59,8 @@ func main() {
 			// Action: pinger,
 		},
 		{
-			Name:   "healthcheck",
-			Usage:  "check the health of the agent",
+			Name:   "health",
+			Usage:  "check the health of the server",
 			Action: healthchecker,
 		},
 	}
@@ -166,7 +178,7 @@ func handleServerCommunication(agent *Agent, log Logger) {
 		}
 
 		// Handle message
-		switch resp.Type {
+		switch resp.Event {
 		case "handshake":
 			log.Info("agent", "Server performing handshake")
 
@@ -193,7 +205,7 @@ func handleServerCommunication(agent *Agent, log Logger) {
 
 			// Build handshake message
 			handshakeData := response{
-				Type: "handshake",
+				Event: "handshake",
 				Data: struct {
 					PublicKey string `json:"publicKey"`
 				}{
@@ -221,10 +233,24 @@ func handleServerCommunication(agent *Agent, log Logger) {
 				Hostname: getHostName(),
 			}
 
+			// Convert to JSON so that it can be encrypted
+			agentDataJSON, err := json.Marshal(agentData)
+			if err != nil {
+				log.Error("agent", "json.Marshal error:"+err.Error())
+				return
+			}
+
+			// Encrypt the agentData using trsa.Encrypt with the server's public key
+			encryptedData, err := trsa.Encrypt([]byte(agentDataJSON), agent.ServerPublicKey)
+			if err != nil {
+				log.Error("agent", "Encryption error: "+err.Error())
+				return
+			}
+
 			// Build agent info message
 			agentInfo := response{
-				Type: "agentInfo",
-				Data: agentData,
+				Event: "agentInfo",
+				Data:  hex.EncodeToString(encryptedData),
 			}
 
 			// Convert the agentInfo struct to a JSON string
@@ -246,8 +272,8 @@ func handleServerCommunication(agent *Agent, log Logger) {
 
 			// Build container list message
 			containerList := response{
-				Type: "containerList",
-				Data: list,
+				Event: "containerList",
+				Data:  list,
 			}
 
 			// Convert the containerList struct to a JSON string
@@ -265,26 +291,30 @@ func handleServerCommunication(agent *Agent, log Logger) {
 		case "agentId":
 			log.Info("agent", "Server sending agent id")
 
-			// Check if resp.Data is a map and contains "agentId" key
-			data, ok := resp.Data.(map[string]interface{})
+			decryptedJSON, err := decryptAndUnmarshal([]byte(resp.Data.(string)), agent.PrivateKey)
+			if err != nil {
+				log.Error("agent", "Error decrypting message: "+err.Error())
+				return
+			}
+
+			// Access and process the agentId
+			agentIdValue, ok := decryptedJSON["agentId"]
 			if !ok {
 				log.Error("agent", "Invalid agentId message format")
-				// Handle the error appropriately, e.g., return or log
 				return
 			}
 
-			// Convert the agentIdValue string to int
-			agentIdFloat, ok := data["agentId"].(float64)
+			// Convert the agentIdValue to int
+			agentIdFloat, ok := agentIdValue.(float64) // JSON numbers are float64 by default
 			if !ok {
 				log.Error("agent", "Invalid agentId format")
-				// Handle the error appropriately, e.g., return or log
 				return
 			}
 
-			agentId := int(agentIdFloat) // Convert to int if needed
+			agentId := int(agentIdFloat)
 			agent.Id = agentId
 		default:
-			log.Warn("agent", "Unknown message type: "+resp.Type)
+			log.Warn("agent", "Unknown message event: "+resp.Event)
 		}
 
 	}
@@ -304,7 +334,6 @@ func checkServerHealth(url string) bool {
 // Get the hostname of the host
 func getHostName() string {
 	hostname, err := os.Hostname()
-
 	if err != nil {
 		return "unknown"
 	}
@@ -327,4 +356,31 @@ func healthchecker(context *cli.Context) error {
 	}
 
 	return nil
+}
+
+// decryptAndUnmarshal takes a hex-encoded encrypted string and a private key,
+// decrypts the string, and unmarshals the JSON content into a map.
+// It returns the unmarshaled map and any error encountered.
+func decryptAndUnmarshal(message, privateKey []byte) (map[string]interface{}, error) {
+	// Decode the hex string to a byte slice
+	dataBytes, err := hex.DecodeString(string(message))
+	if err != nil {
+		return nil, fmt.Errorf("Error decoding hex string: %v\n", err)
+	}
+
+	// Decrypt the data using trsa.Decrypt
+	decryptedData, err := trsa.Decrypt(dataBytes, privateKey)
+	if err != nil {
+		return nil, fmt.Errorf("Decryption error: %v\n", err)
+	}
+
+	// Unmarshal the JSON from the decrypted data
+	var decryptedJSON map[string]interface{}
+	err = json.Unmarshal(decryptedData, &decryptedJSON)
+	if err != nil {
+		return nil, fmt.Errorf("Error unmarshaling JSON: %v\n", err)
+	}
+
+	// Return the decrypted json
+	return decryptedJSON, nil
 }
