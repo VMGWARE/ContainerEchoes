@@ -19,6 +19,10 @@
 
 - Update agent to use CLI flags along with new version of the logger [[#22](https://github.com/VMGWARE/ContainerEchoes/pull/22)]
 
+### Misc
+
+- Add support for amd64 agents in Woodpecker configuration files [[#27](https://github.com/VMGWARE/ContainerEchoes/pull/27)]
+
 ## [0.1.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.1.0) - 2024-01-21
 
 ### ❤️ Thanks to all contributors! ❤️
