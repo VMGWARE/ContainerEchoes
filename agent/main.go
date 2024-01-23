@@ -39,7 +39,10 @@ const (
 )
 
 func main() {
-	godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file: " + err.Error())
+	}
 
 	// create a logger
 	log := Logger{}
@@ -239,6 +242,10 @@ func handleServerCommunication(agent *Agent, log Logger) {
 
 			// Encrypt the agentData using trsa.Encrypt with the server's public key
 			encryptedData, err := trsa.Encrypt([]byte(agentDataJSON), agent.ServerPublicKey)
+			if err != nil {
+				log.Error("agent", "Encryption error: "+err.Error())
+				return
+			}
 
 			// Build agent info message
 			agentInfo := response{
