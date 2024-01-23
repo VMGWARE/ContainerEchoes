@@ -270,7 +270,7 @@ func handleServerCommunication(agent *Agent, log Logger) {
 		case "agentId":
 			log.Info("agent", "Server sending agent id")
 
-			decryptedJSON, err := decryptMessage([]byte(resp.Data.(string)), agent.PrivateKey)
+			decryptedJSON, err := decryptAndUnmarshal([]byte(resp.Data.(string)), agent.PrivateKey)
 			if err != nil {
 				log.Error("agent", "Error decrypting message: "+err.Error())
 				return
@@ -337,8 +337,10 @@ func healthchecker(context *cli.Context) error {
 	return nil
 }
 
-// Decrypt the data part of a message to JSON
-func decryptMessage(message []byte, privateKey []byte) (map[string]interface{}, error) {
+// decryptAndUnmarshal takes a hex-encoded encrypted string and a private key,
+// decrypts the string, and unmarshals the JSON content into a map.
+// It returns the unmarshaled map and any error encountered.
+func decryptAndUnmarshal(message []byte, privateKey []byte) (map[string]interface{}, error) {
 	// Decode the hex string to a byte slice
 	dataBytes, err := hex.DecodeString(string(message))
 	if err != nil {
