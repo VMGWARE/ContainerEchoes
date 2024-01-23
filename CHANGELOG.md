@@ -1,10 +1,14 @@
 # Changelog
 
-## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-22
+## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-23
 
 ### ❤️ Thanks to all contributors! ❤️
 
 @Codycody31
+
+### 🐛 Bug Fixes
+
+- Remove dependencies and update Docker configuration in CI workflows [[#25](https://github.com/VMGWARE/ContainerEchoes/pull/25)]
 
 ### 📈 Enhancement
 
