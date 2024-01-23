@@ -42,6 +42,13 @@ else
 	endif
 endif
 
+LDFLAGS := -X echoes/version.Version=${VERSION}
+STATIC_BUILD ?= true
+ifeq ($(STATIC_BUILD),true)
+	LDFLAGS := -s -w -extldflags "-static" $(LDFLAGS)
+endif
+CGO_ENABLED ?= 1 # only used to compile server
+
 HAS_GO = $(shell hash go > /dev/null 2>&1 && echo "GO" || echo "NOGO" )
 ifeq ($(HAS_GO),GO)
 	XGO_VERSION ?= go-1.20.x
