@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const log = require("@vmgware/js-logger").getInstance();
 
 /**
  * Manages WebSocket message handling by delegating messages to respective handlers.
@@ -44,12 +45,16 @@ class WebSocketMessageHandler {
 	 * @param {string} message - The raw message received from the WebSocket connection.
 	 */
 	async handleMessage(ws, message) {
+		log.debug("ws.handleMessage", "Received message and delegating to handler");
 		const messageObj = JSON.parse(message);
 
 		if (this.handlers[messageObj.event]) {
 			await this.handlers[messageObj.event](ws, messageObj);
 		} else {
-			console.log(`No handler registered for event: ${messageObj.event}`);
+			log.warn(
+				"ws.handleMessage",
+				`No handler found for event type ${messageObj.event}`
+			);
 		}
 	}
 }
