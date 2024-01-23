@@ -340,7 +340,7 @@ func healthchecker(context *cli.Context) error {
 // decryptAndUnmarshal takes a hex-encoded encrypted string and a private key,
 // decrypts the string, and unmarshals the JSON content into a map.
 // It returns the unmarshaled map and any error encountered.
-func decryptAndUnmarshal(message []byte, privateKey []byte) (map[string]interface{}, error) {
+func decryptAndUnmarshal(message, privateKey []byte) (map[string]interface{}, error) {
 	// Decode the hex string to a byte slice
 	dataBytes, err := hex.DecodeString(string(message))
 	if err != nil {
