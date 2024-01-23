@@ -307,7 +307,6 @@ func checkServerHealth(url string) bool {
 // Get the hostname of the host
 func getHostName() string {
 	hostname, err := os.Hostname()
-
 	if err != nil {
 		return "unknown"
 	}

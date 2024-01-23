@@ -82,7 +82,7 @@ func GenerateKeys(bitLength int) ([]byte, []byte, error) {
 // NewKeypair creates a keypair, each key is optional,
 // but the methods needing the missing keys will fail.
 // This is useful when you only have the public key, and need to encrypt or verify
-func NewKeypair(publicKey []byte, privateKey []byte) (*Keypair, error) {
+func NewKeypair(publicKey, privateKey []byte) (*Keypair, error) {
 	return &Keypair{
 		Public:  publicKey,
 		Private: privateKey,
@@ -104,6 +104,7 @@ func parsePublicKey(publicKeyPem []byte) (*rsa.PublicKey, error) {
 	}
 	return publicKey, nil
 }
+
 func parsePrivateKey(privateKeyPem []byte) (*rsa.PrivateKey, error) {
 	block, _ := pem.Decode(privateKeyPem)
 	if block == nil {
@@ -122,7 +123,7 @@ func (key *Keypair) Encrypt(data []byte) ([]byte, error) {
 }
 
 // Encrypt using the public key without creating a keypair
-func Encrypt(data []byte, publicKeyPem []byte) ([]byte, error) {
+func Encrypt(data, publicKeyPem []byte) ([]byte, error) {
 	publicKey, err := parsePublicKey(publicKeyPem)
 	if err != nil {
 		return nil, err
@@ -149,7 +150,7 @@ func (key *Keypair) Decrypt(encrypted []byte) ([]byte, error) {
 }
 
 // Decrypt using a privatekey without creating a keypair
-func Decrypt(encrypted []byte, privateKeyPem []byte) ([]byte, error) {
+func Decrypt(encrypted, privateKeyPem []byte) ([]byte, error) {
 	privateKey, err := parsePrivateKey(privateKeyPem)
 	if err != nil {
 		return nil, err
@@ -175,7 +176,7 @@ func (key *Keypair) Sign(data []byte) ([]byte, error) {
 }
 
 // Sign data
-func Sign(data []byte, privateKeyPem []byte) ([]byte, error) {
+func Sign(data, privateKeyPem []byte) ([]byte, error) {
 	privateKey, err := parsePrivateKey(privateKeyPem)
 	if err != nil {
 		return nil, err
@@ -192,12 +193,12 @@ func Sign(data []byte, privateKeyPem []byte) ([]byte, error) {
 }
 
 // Verify data's signature
-func (key *Keypair) Verify(data []byte, signature []byte) error {
+func (key *Keypair) Verify(data, signature []byte) error {
 	return Verify(data, signature, key.Public)
 }
 
 // Verify data's signature
-func Verify(data []byte, signature []byte, publicKeyPem []byte) error {
+func Verify(data, signature, publicKeyPem []byte) error {
 	publicKey, err := parsePublicKey(publicKeyPem)
 	if err != nil {
 		return err

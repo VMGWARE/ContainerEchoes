@@ -59,11 +59,11 @@ func (a *Agent) Initialize(token string) {
 		if err != nil {
 			panic(err) // Handle error
 		}
-		err = os.WriteFile(agentDir+"/private_key", privateKey, 0644)
+		err = os.WriteFile(agentDir+"/private_key", privateKey, 0o644)
 		if err != nil {
 			panic(err) // Handle error
 		}
-		err = os.WriteFile(agentDir+"/public_key", publicKey, 0644)
+		err = os.WriteFile(agentDir+"/public_key", publicKey, 0o644)
 		if err != nil {
 			panic(err) // Handle error
 		}
