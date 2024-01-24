@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-23
+## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-24
 
 ### ❤️ Thanks to all contributors! ❤️
 
@@ -11,13 +11,14 @@
 - Feature: event driven ws handling [[#26](https://github.com/VMGWARE/ContainerEchoes/pull/26)]
 - Enable encryption of data between server and agent [[#24](https://github.com/VMGWARE/ContainerEchoes/pull/24)]
 
+### 📈 Enhancement
+
+- Switch to vuetify UI [[#28](https://github.com/VMGWARE/ContainerEchoes/pull/28)]
+- Update agent to use CLI flags along with new version of the logger [[#22](https://github.com/VMGWARE/ContainerEchoes/pull/22)]
+
 ### 🐛 Bug Fixes
 
 - Remove dependencies and update Docker configuration in CI workflows [[#25](https://github.com/VMGWARE/ContainerEchoes/pull/25)]
-
-### 📈 Enhancement
-
-- Update agent to use CLI flags along with new version of the logger [[#22](https://github.com/VMGWARE/ContainerEchoes/pull/22)]
 
 ### Misc
 
