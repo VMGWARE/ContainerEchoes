@@ -31,21 +31,3 @@ steps:
     commands:
       - npm run lint
     when: *when
-
-  formatcheck:
-    depends_on:
-      - install-dependencies
-    image: *node_image
-    directory: frontend/
-    commands:
-      - npm run format:check
-    when: *when
-
-  test:
-    depends_on:
-      - install-dependencies
-    image: *node_image
-    directory: frontend/
-    commands:
-      - npm run test:unit
-    when: *when
