@@ -1,5 +1,5 @@
-# Use Node 16 alpine as parent image
-FROM node:18.17
+# Use node as the base image for building both server and backend
+FROM node:18.17 AS builder
 
 # Specify --no-install-recommends to skip unused dependencies, make the base much smaller!
 # dumb-init = avoid zombie processes (#480)
@@ -10,28 +10,63 @@ RUN echo "deb http://deb.debian.org/debian testing main" >> /etc/apt/sources.lis
     rm -rf /var/lib/apt/lists/* && \
     apt --yes autoremove
 
-# Change the working directory on the Docker image to /app
-WORKDIR /app
-
-# Copy the package.json and package-lock.json files to the working directory
+# Build the server
+WORKDIR /app/server
 COPY server/package.json ./
 COPY server/package-lock.json ./
-
-# Install dependencies
 RUN npm ci --omit=dev
-
-# Copy the core library
 COPY core /app/core
-
-# Install the core package from the local path
 RUN npm install /app/core
-
-# Copy the rest of the application source code
 COPY server/ ./
 
-# Expose application port
-EXPOSE 5000
+# Build the frontend
+WORKDIR /app/frontend
+COPY frontend/package.json ./
+COPY frontend/package-lock.json ./
+RUN npm ci --omit=dev
+COPY frontend/ ./
+RUN npm run build
 
-# Start the application
-ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["node", "server.js"]
+# Use Apache to serve the frontend and proxy to the server
+FROM httpd:2.4
+
+# Install Node.js, curl, and git in the Apache stage
+RUN apt-get update && \
+    apt-get install -y curl git && \
+    curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy frontend build output to Apache's htdocs
+COPY --from=builder /app/frontend/dist/ /usr/local/apache2/htdocs/
+
+# Copy the core to a directory inside the container
+COPY --from=builder /app/core/ /usr/local/core/
+
+# Copy the server to a directory inside the container
+COPY --from=builder /app/server/ /usr/local/server/
+
+# Set up reverse proxy with .htaccess
+COPY ./docker/.htaccess /usr/local/apache2/htdocs/.htaccess
+
+# Copy Apache conf to allow .htaccess
+COPY ./docker/my-httpd.conf /usr/local/apache2/conf/httpd.conf
+
+# Copy the dumb-init binary
+COPY --from=builder /usr/bin/dumb-init /usr/bin/dumb-init
+
+# Copy the entrypoint script
+COPY ./docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Make the entrypoint script executable
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Set the entrypoint script as the entrypoint
+ENTRYPOINT ["/usr/bin/dumb-init", "--", "/usr/local/bin/entrypoint.sh"]
+
+# Expose port 80
+EXPOSE 80
+
+# Start Apache
+CMD ["httpd-foreground"]
