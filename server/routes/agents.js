@@ -7,5 +7,6 @@ const AgentsController = require("../controllers/agents");
 
 // Routes
 router.get("/agents", AgentsController.getAll);
+router.get("/agents/:agentId", AgentsController.getOne);
 
 module.exports = router;
