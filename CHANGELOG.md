@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-24
+## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-25
 
 ### ❤️ Thanks to all contributors! ❤️
 
@@ -13,6 +13,7 @@
 
 ### 📈 Enhancement
 
+- Switch name to server and build server image [[#30](https://github.com/VMGWARE/ContainerEchoes/pull/30)]
 - Switch to vuetify UI [[#28](https://github.com/VMGWARE/ContainerEchoes/pull/28)]
 - Update agent to use CLI flags along with new version of the logger [[#22](https://github.com/VMGWARE/ContainerEchoes/pull/22)]
 
@@ -22,6 +23,7 @@
 
 ### Misc
 
+- Update frontend [[#29](https://github.com/VMGWARE/ContainerEchoes/pull/29)]
 - Add support for amd64 agents in Woodpecker configuration files [[#27](https://github.com/VMGWARE/ContainerEchoes/pull/27)]
 
 ## [0.1.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.1.0) - 2024-01-21
