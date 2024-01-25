@@ -29,44 +29,43 @@ RUN npm run build
 
 # Use Apache to serve the frontend and proxy to the server
 FROM httpd:2.4
+ARG S6_OVERLAY_VERSION=3.1.6.2
 
 # Install Node.js, curl, and git in the Apache stage
 RUN apt-get update && \
-    apt-get install -y curl git && \
+    apt-get install -y curl git xz-utils && \
     curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Install s6-overlay
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
+RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
+# TODO: !!!THIS IS A MUST!!! In woodpecker CI target specific architecture so we can support ARM !!!THIS IS A MUST!!!
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp
+RUN tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz
+
 # Copy frontend build output to Apache's htdocs
 COPY --from=builder /app/frontend/dist/ /usr/local/apache2/htdocs/
 
-# Copy the core to a directory inside the container
+# Copy the core, server, and other configuration files
 COPY --from=builder /app/core/ /usr/local/core/
-
-# Copy the server to a directory inside the container
 COPY --from=builder /app/server/ /usr/local/server/
-
-# Set up reverse proxy with .htaccess
 COPY ./docker/.htaccess /usr/local/apache2/htdocs/.htaccess
-
-# Copy Apache conf to allow .htaccess
 COPY ./docker/my-httpd.conf /usr/local/apache2/conf/httpd.conf
 
-# Copy the dumb-init binary
-COPY --from=builder /usr/bin/dumb-init /usr/bin/dumb-init
-
-# Copy the entrypoint script
-COPY ./docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-
-# Make the entrypoint script executable
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Set the entrypoint script as the entrypoint
-ENTRYPOINT ["/usr/bin/dumb-init", "--", "/usr/local/bin/entrypoint.sh"]
+# Setup s6 services
+RUN mkdir -p /etc/services.d/apache /etc/services.d/nodejs
+COPY ./docker/apache-run /etc/services.d/apache/run
+COPY ./docker/nodejs-run /etc/services.d/nodejs/run
+RUN chmod +x /etc/services.d/apache/run /etc/services.d/nodejs/run
 
 # Expose port 80
 EXPOSE 80
 
-# Start Apache
-CMD ["httpd-foreground"]
+# Use s6-overlay as the entrypoint
+ENTRYPOINT ["/init"]
+
+# s6-overlay's init system will start services defined in /etc/services.d
+CMD []
