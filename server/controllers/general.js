@@ -41,7 +41,7 @@ const knex = require("@container-echoes/core/database");
  *                   type: string
  *                   example: Successfully retrieved system information.
  *       500:
- *         description: Internal Server Error. Something went wrong on our side.
+ *         description: Something went wrong. But it's probably not your fault.
  *         content:
  *           application/json:
  *             schema:
@@ -55,7 +55,7 @@ const knex = require("@container-echoes/core/database");
  *                   example: 500
  *                 message:
  *                   type: string
- *                   example: Internal Server Error. Something went wrong on our side.
+ *                   example: Something went wrong. But it's probably not your fault.
  *                 data:
  *                   type: null
  *                   example: null

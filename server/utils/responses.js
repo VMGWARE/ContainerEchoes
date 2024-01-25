@@ -28,6 +28,23 @@ function genericInternalServerError(res, error, moduleName = "unknown") {
 	});
 }
 
+/**
+ * Sends a standard response with a 200 status code.
+ * @param {Response} res The Express response object
+ * @param {object} data The data to send
+ * @param {number} code The status code to send
+ * @returns {Response} The Express response object
+ */
+function standardResponse(res, message, data, code = 200) {
+	return res.status(code).json({
+		status: code === 200 ? "success" : "error",
+		code,
+		message,
+		data,
+	});
+}
+
 module.exports = {
 	genericInternalServerError,
+	standardResponse,
 };

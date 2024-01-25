@@ -205,8 +205,9 @@ const server = http.createServer(app);
 	// Load & attach routes
 	log.debug("server", "Loading routes");
 	const Routes = require("./routes");
-	app.use("/", Routes.authRoutes);
-	app.use("/", Routes.generalRoutes);
+	Object.keys(Routes).forEach((route) => {
+		app.use("/", Routes[route]);
+	});
 
 	// Swagger documentation
 	log.debug("server", "Loading Swagger documentation");
