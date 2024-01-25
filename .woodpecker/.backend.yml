@@ -9,14 +9,14 @@ variables:
   - &when
     path:
       # related config files
-      - ".woodpecker/.backend.yml"
-      # backend source code
-      - "backend/**"
+      - ".woodpecker/.server.yml"
+      # server source code
+      - "server/**"
 
 steps:
   install-dependencies:
     image: *node_image
-    directory: backend/
+    directory: server/
     commands:
       - npm install --frozen-lockfile
     when: *when
@@ -25,7 +25,7 @@ steps:
     depends_on:
       - install-dependencies
     image: *node_image
-    directory: backend/
+    directory: server/
     commands:
       - npm run lint --if-present
     when: *when
@@ -34,7 +34,7 @@ steps:
     depends_on:
       - install-dependencies
     image: *node_image
-    directory: backend/
+    directory: server/
     commands:
       - npm run test:mocha --if-present
     when: *when

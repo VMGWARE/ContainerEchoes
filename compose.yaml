@@ -33,19 +33,19 @@ services:
     restart: always
     environment:
       - AGENT_SECRET=secret
-      - AGENT_SERVER_URL=http://backend:5000
+      - AGENT_SERVER_URL=http://server:5000
     volumes:
       - echoes-agent-data:/etc/echoes/agent
     networks:
       - default
       - echoes
     depends_on:
-      - backend
+      - server
 
-  backend:
+  server:
     build:
       context: .
-      dockerfile: docker/Dockerfile.backend
+      dockerfile: docker/Dockerfile.server
     restart: always
     environment:
       APP_PORT: 5000

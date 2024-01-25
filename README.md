@@ -29,7 +29,7 @@ ContainerEchoes is an open-source tool designed for efficient real-time Docker l
 
 1. **Server-Side (API and Web Interface)**
 
-   - Backend: Node.js with Express.js
+   - Server: Node.js with Express.js
    - Database: PostgreSQL
    - Frontend: Vue.js
    - Authentication: JWT

@@ -25,7 +25,7 @@ variables:
   - path: &when_path # web source code
       - 'frontend/**'
       # api source code
-      - 'backend/**'
+      - 'server/**'
       # go source code
       - '**/*.go'
       - 'go.*'

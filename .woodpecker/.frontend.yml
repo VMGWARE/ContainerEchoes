@@ -12,8 +12,8 @@ variables:
       - '.woodpecker/.frontend.yml'
       # web source code
       - 'frontend/**'
-      # backend source code
-      - 'backend/**'
+      # server source code
+      - 'server/**'
 
 steps:
   install-dependencies:

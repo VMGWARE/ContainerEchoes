@@ -1092,7 +1092,7 @@ async function generateOtp(req, res) {
 }
 
 // https://codevoweb.com/two-factor-authentication-2fa-in-nodejs/
-// https://github.com/VMGWARE/Camphouse/blob/main/backend/controllers/TwoFAController.js
+// https://github.com/VMGWARE/Camphouse/blob/main/server/controllers/TwoFAController.js
 // Make use of both of these ^^^
 
 /**

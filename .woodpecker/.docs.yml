@@ -3,10 +3,10 @@ variables:
   - path: &when_path
       - "docs/**"
       - ".woodpecker/.docs.yml"
-      - "backend/**"
+      - "server/**"
   - path: &docker_path # web source code
       - "frontend/**"
-      - "backend/**"
+      - "server/**"
       # go source code
       - "**/*.go"
       - "go.*"
