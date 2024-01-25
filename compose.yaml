@@ -32,8 +32,8 @@ services:
       dockerfile: docker/Dockerfile.agent
     restart: always
     environment:
-      - AGENT_SECRET=secret
-      - AGENT_SERVER_URL=http://server:5000
+      - ECHOES_AGENT_SECRET=secret
+      - ECHOES_SERVER=server:5000/api
     volumes:
       - echoes-agent-data:/etc/echoes/agent
     networks:
