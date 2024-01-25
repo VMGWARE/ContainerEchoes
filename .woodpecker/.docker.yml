@@ -7,13 +7,13 @@ when:
 # Only run on amd64 agents
 labels:
   arch: amd64
-  
+
 variables:
-  - &golang_image 'docker.io/golang:1.21.6'
-  - &buildx_plugin 'docker.io/woodpeckerci/plugin-docker-buildx:2.3.0'
-  - &platforms_release 'linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/386,linux/amd64,linux/ppc64le,linux/riscv64,linux/s390x,freebsd/arm64,freebsd/amd64,openbsd/arm64,openbsd/amd64'
-  - &platforms_preview 'linux/amd64'
-  - &build_args 'CI_COMMIT_SHA=${CI_COMMIT_SHA},CI_COMMIT_BRANCH=${CI_COMMIT_BRANCH},CI_COMMIT_TAG=${CI_COMMIT_TAG}'
+  - &golang_image "docker.io/golang:1.21.6"
+  - &buildx_plugin "docker.io/woodpeckerci/plugin-docker-buildx:2.3.0"
+  - &platforms_release "linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/386,linux/amd64,linux/ppc64le,linux/riscv64,linux/s390x,freebsd/arm64,freebsd/amd64,openbsd/arm64,openbsd/amd64"
+  - &platforms_preview "linux/amd64"
+  - &build_args "CI_COMMIT_SHA=${CI_COMMIT_SHA},CI_COMMIT_BRANCH=${CI_COMMIT_BRANCH},CI_COMMIT_TAG=${CI_COMMIT_TAG}"
 
   # vars used on push / tag events only
   - publish_logins: &publish_logins # Default DockerHub login
@@ -21,18 +21,19 @@ variables:
         username: vmgware
         password:
           from_secret: docker_password
-  - &publish_repos_agent 'vmgware/echoes-agent'
+  - &publish_repos_agent "vmgware/echoes-agent"
+  - &publish_repos_server "vmgware/echoes-server"
   - path: &when_path # web source code
-      - 'frontend/**'
+      - "frontend/**"
       # api source code
-      - 'server/**'
+      - "server/**"
       # go source code
-      - '**/*.go'
-      - 'go.*'
+      - "**/*.go"
+      - "go.*"
       # Dockerfile changes
-      - 'docker/**'
+      - "docker/**"
       # pipeline config changes
-      - '.woodpecker/.docker.yml'
+      - ".woodpecker/.docker.yml"
 
 steps:
   vendor:
@@ -49,6 +50,50 @@ steps:
           - ${CI_REPO_DEFAULT_BRANCH}
         event: [push, tag]
         path: *when_path
+
+  ###############
+  # S e r v e r #
+  ###############
+
+  publish-server-preview:
+    image: *buildx_plugin
+    settings:
+      repo: *publish_repos_server
+      dockerfile: docker/Dockerfile.server
+      platforms: *platforms_preview
+      tag: pull_${CI_COMMIT_PULL_REQUEST}
+      build_args: *build_args
+      logins: *publish_logins
+    when:
+      evaluate: 'CI_COMMIT_PULL_REQUEST_LABELS contains "build_pr_images"'
+      event: pull_request
+
+  publish-next-server:
+    image: *buildx_plugin
+    settings:
+      repo: *publish_repos_server
+      dockerfile: docker/Dockerfile.server
+      platforms: *platforms_release
+      tag: [next, "next-${CI_COMMIT_SHA:0:10}"]
+      logins: *publish_logins
+      build_args: *build_args
+    when:
+      branch: ${CI_REPO_DEFAULT_BRANCH}
+      event: push
+      path: *when_path
+
+  release-server:
+    image: *buildx_plugin
+    settings:
+      repo: *publish_repos_server
+      dockerfile: docker/Dockerfile.server
+      platforms: *platforms_release
+      # remove 'latest' on older version branches to avoid accidental downgrade
+      tag: [latest, "${CI_COMMIT_TAG}"]
+      logins: *publish_logins
+      build_args: *build_args
+    when:
+      event: tag
 
   #############
   # A g e n t #
@@ -93,7 +138,7 @@ steps:
       repo: *publish_repos_agent
       dockerfile: docker/Dockerfile.agent
       platforms: *platforms_release
-      tag: [next, 'next-${CI_COMMIT_SHA:0:10}']
+      tag: [next, "next-${CI_COMMIT_SHA:0:10}"]
       logins: *publish_logins
       build_args: *build_args
     when:
@@ -110,7 +155,7 @@ steps:
       dockerfile: docker/Dockerfile.agent
       platforms: *platforms_release
       # remove 'latest' on older version branches to avoid accidental downgrade
-      tag: [latest, '${CI_COMMIT_TAG}']
+      tag: [latest, "${CI_COMMIT_TAG}"]
       logins: *publish_logins
       build_args: *build_args
     when:
