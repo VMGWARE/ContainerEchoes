@@ -43,23 +43,21 @@ RUN apt-get update && \
 # Install s6-overlay
 # First, add the noarch version
 ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
+RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz && rm /tmp/s6-overlay-noarch.tar.xz
 
 # Then add the architecture-specific version
-# Use build arguments to determine the correct architecture
 RUN if [ "$TARGETARCH" = "amd64" ]; then \
-    ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp/s6-overlay.tar.xz; \
+    wget -O /tmp/s6-overlay.tar.xz https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz; \
     elif [ "$TARGETARCH" = "386" ]; then \
-    ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-i486.tar.xz /tmp/s6-overlay.tar.xz; \
+    wget -O /tmp/s6-overlay.tar.xz https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-i486.tar.xz; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
-    ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-aarch64.tar.xz /tmp/s6-overlay.tar.xz; \
+    wget -O /tmp/s6-overlay.tar.xz https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-aarch64.tar.xz; \
     elif [ "$TARGETARCH" = "arm" ]; then \
-    ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-armhf.tar.xz /tmp/s6-overlay.tar.xz; \
-    # Add more elif branches for other architectures as needed
+    wget -O /tmp/s6-overlay.tar.xz https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-armhf.tar.xz; \
     else \
     echo "Unsupported architecture: $TARGETARCH"; exit 1; \
-    fi
-RUN tar -C / -Jxpf /tmp/s6-overlay.tar.xz
+    fi && \
+    tar -C / -Jxpf /tmp/s6-overlay.tar.xz && rm /tmp/s6-overlay.tar.xz
 
 # Copy frontend build output to Apache's htdocs
 COPY --from=builder /app/frontend/dist/ /usr/local/apache2/htdocs/
