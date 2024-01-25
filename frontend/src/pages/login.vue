@@ -39,6 +39,7 @@
 
 <script>
 export default {
+  title: "Login",
   data() {
     return {
       valid: false,

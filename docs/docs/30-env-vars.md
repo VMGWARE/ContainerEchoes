@@ -33,7 +33,7 @@ Environment variables in Container Echoes are used to configure various aspects 
 
 ### Sentry Configuration
 
-- `SENTRY_BACKEND_DSN`: Sentry DSN for backend error tracking.
+- `SENTRY_SERVER_DSN`: Sentry DSN for server error tracking.
 
 ### Email Configuration
 

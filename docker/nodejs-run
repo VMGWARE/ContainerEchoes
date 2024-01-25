@@ -1,0 +1,6 @@
+#!/bin/sh
+# Navigate to the Node.js server directory
+cd /usr/local/server
+
+# Start the Node.js application
+exec node server.js

@@ -5,16 +5,25 @@
  */
 
 // Plugins
-import { registerPlugins } from '@/plugins'
+import { registerPlugins } from "@/plugins";
+
+// Mixins
+import titleMixin from "./mixins/titleMixin";
 
 // Components
-import App from './App.vue'
+import App from "./App.vue";
 
 // Composables
-import { createApp } from 'vue'
+import { createApp } from "vue";
 
-const app = createApp(App)
+// Create app
+const app = createApp(App);
 
-registerPlugins(app)
+// Mixins
+app.mixin(titleMixin);
 
-app.mount('#app')
+// Plugins
+registerPlugins(app);
+
+// Mount
+app.mount("#app");

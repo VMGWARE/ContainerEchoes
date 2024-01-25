@@ -1,4 +1,4 @@
-// Used by: backend/app.js
+// Used by: server/app.js
 // Used for: Auth routes like login, register, etc.
 
 /**

@@ -9,7 +9,7 @@ variables:
   - &trivy_plugin woodpeckerci/plugin-trivy:1.0.1
 
 steps:
-  backend:
+  server:
     depends_on: []
     image: *trivy_plugin
     settings:

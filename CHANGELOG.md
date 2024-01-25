@@ -58,6 +58,6 @@
 - Buggy [[#10](https://github.com/VMGWARE/ContainerEchoes/pull/10)]
 - Update Docker image version and add additional commands for deployment [[#6](https://github.com/VMGWARE/ContainerEchoes/pull/6)]
 - General updates & working on agent [[#4](https://github.com/VMGWARE/ContainerEchoes/pull/4)]
-- Bump follow-redirects from 1.15.3 to 1.15.5 in /backend [[#3](https://github.com/VMGWARE/ContainerEchoes/pull/3)]
+- Bump follow-redirects from 1.15.3 to 1.15.5 in /server [[#3](https://github.com/VMGWARE/ContainerEchoes/pull/3)]
 - Insidious fiddler/my attempt at making it [[#2](https://github.com/VMGWARE/ContainerEchoes/pull/2)]
 - Insidious fiddler/my attempt at making it [[#2](https://github.com/VMGWARE/ContainerEchoes/pull/2)]
