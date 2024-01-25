@@ -41,11 +41,12 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install s6-overlay
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
+# ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
+# RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
 # TODO: !!!THIS IS A MUST!!! In woodpecker CI target specific architecture so we can support ARM !!!THIS IS A MUST!!!
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz
+# ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp
+# RUN tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz
+COPY --from=arpaulnet/s6-overlay-stage:2.0 / /
 
 # Copy frontend build output to Apache's htdocs
 COPY --from=builder /app/frontend/dist/ /usr/local/apache2/htdocs/
