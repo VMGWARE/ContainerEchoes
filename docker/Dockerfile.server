@@ -34,7 +34,7 @@ ARG TARGETOS TARGETARCH
 
 # Install Node.js, curl, and git in the Apache stage
 RUN apt-get update && \
-    apt-get install -y curl git xz-utils && \
+    apt-get install -y curl git xz-utils wget && \
     curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs && \
     apt-get clean && \
