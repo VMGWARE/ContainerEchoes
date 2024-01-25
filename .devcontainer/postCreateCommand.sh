@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Install backend dependencies
-cd backend
+# Install server dependencies
+cd server
 npm install
 
 # Install frontend dependencies

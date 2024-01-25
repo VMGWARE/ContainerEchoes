@@ -96,14 +96,14 @@ class Config {
 
     /**
      * Sentry configuration
-     * @property backend - Sentry DSN for backend.
+     * @property server - Sentry DSN for server.
      * @property cron - Sentry DSN for cron.
      */
     this.sentry = {
       /**
-       * Sentry DSN for backend
+       * Sentry DSN for server
        */
-      backend: process.env.SENTRY_BACKEND_DSN,
+      server: process.env.SENTRY_SERVER_DSN,
     };
 
     /**

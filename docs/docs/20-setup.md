@@ -17,7 +17,7 @@ Before installing Container Echoes, ensure you have the following:
 ### Server Setup
 
 1. Clone the Container Echoes repository.
-2. Navigate to the backend directory.
+2. Navigate to the server directory.
 3. Run `npm install` to install dependencies.
 4. Configure the database connection in the `.env` file.
 5. Start the server using `npm start`.

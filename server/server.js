@@ -29,7 +29,7 @@ if (process.env.APP_LOG_LEVEL) {
 let Exceptionless;
 const initializeExceptionless = require("@container-echoes/core/services/exceptionlessConfig");
 
-log.info("server", "Container Echoes backend service starting");
+log.info("server", "Container Echoes server service starting");
 
 // Create the Express app
 log.debug("server", "Creating Express app");
@@ -146,7 +146,7 @@ const server = http.createServer(app);
 	// Sentry
 	log.debug("server", "Initializing Sentry");
 	Sentry.init({
-		dsn: config.sentry.backend,
+		dsn: config.sentry.server,
 		integrations: [
 			// enable HTTP calls tracing
 			new Sentry.Integrations.Http({
