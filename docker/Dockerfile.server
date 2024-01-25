@@ -49,10 +49,12 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
 # Use build arguments to determine the correct architecture
 RUN if [ "$TARGETARCH" = "amd64" ]; then \
     ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp/s6-overlay.tar.xz; \
+    elif [ "$TARGETARCH" = "386" ]; then \
+    ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-i486.tar.xz /tmp/s6-overlay.tar.xz; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
-    ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-arm64.tar.xz /tmp/s6-overlay.tar.xz; \
+    ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-aarch64.tar.xz /tmp/s6-overlay.tar.xz; \
     elif [ "$TARGETARCH" = "arm" ]; then \
-    ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-arm.tar.xz /tmp/s6-overlay.tar.xz; \
+    ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-armhf.tar.xz /tmp/s6-overlay.tar.xz; \
     # Add more elif branches for other architectures as needed
     else \
     echo "Unsupported architecture: $TARGETARCH"; exit 1; \
