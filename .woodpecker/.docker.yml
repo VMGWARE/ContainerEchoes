@@ -61,7 +61,8 @@ steps:
     settings:
       repo: *publish_repos_server
       dockerfile: docker/Dockerfile.server
-      platforms: *platforms_preview
+      # TODO: Change back to *platforms_preview once we have a multi-arch build (as I need to test it)
+      platforms: *platforms_server
       tag: pull_${CI_COMMIT_PULL_REQUEST}
       build_args: *build_args
       logins: *publish_logins
