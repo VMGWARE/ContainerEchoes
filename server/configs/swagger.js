@@ -16,7 +16,7 @@ const options = {
 		},
 		servers: [
 			{
-				url: "https://echoes.vmgware.dev",
+				url: "https://echoes.vmgware.dev/api",
 				description: "Production server (uses live data)",
 			},
 			{
