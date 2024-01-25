@@ -1,5 +1,5 @@
 # Use node as the base image for building both server and backend
-FROM node:18.17 AS builder
+FROM --platform=$BUILDPLATFORM node:18.17 AS builder
 
 # Specify --no-install-recommends to skip unused dependencies, make the base much smaller!
 # dumb-init = avoid zombie processes (#480)
@@ -28,8 +28,9 @@ COPY frontend/ ./
 RUN npm run build
 
 # Use Apache to serve the frontend and proxy to the server
-FROM httpd:2.4
+FROM --platform=$BUILDPLATFORM httpd:2.4
 ARG S6_OVERLAY_VERSION=3.1.6.2
+ARG TARGETOS TARGETARCH
 
 # Install Node.js, curl, and git in the Apache stage
 RUN apt-get update && \
