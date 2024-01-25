@@ -8,6 +8,11 @@ const WebSocketMessageHandler = require("./messageHandler");
  */
 class WebSocketManager {
 	/**
+	 * The WebSocketManager instance
+	 */
+	static instance;
+
+	/**
 	 * The WebSocket server
 	 */
 	wss;
@@ -30,6 +35,12 @@ class WebSocketManager {
 	 * @param {*} wss - The WebSocket server
 	 */
 	constructor(wss, serverPublicKey, serverPrivateKey) {
+		if (WebSocketManager.instance) {
+			throw new Error(
+				"Instance already created. Use WebSocketManager.getInstance()"
+			);
+		}
+
 		this.wss = wss;
 		this.server.publicKey = serverPublicKey;
 		this.server.privateKey = serverPrivateKey;
@@ -74,6 +85,24 @@ class WebSocketManager {
 		this.wss.on("close", () => {
 			log.debug("WebSocketManager", "WebSocket closed");
 		});
+
+		// Set the static instance
+		WebSocketManager.instance = this;
+	}
+
+	/**
+	 * Static method to get the instance of WebSocketManager
+	 * @returns {WebSocketManager} instance of the WebSocketManager
+	 */
+	static getInstance(wss, serverPublicKey, serverPrivateKey) {
+		if (!WebSocketManager.instance) {
+			WebSocketManager.instance = new WebSocketManager(
+				wss,
+				serverPublicKey,
+				serverPrivateKey
+			);
+		}
+		return WebSocketManager.instance;
 	}
 
 	/**

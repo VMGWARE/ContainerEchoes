@@ -143,6 +143,11 @@ const server = http.createServer(app);
 	app.set("trust proxy", 1);
 	app.use(express.static("public"));
 
+	// Initialize the WebSocket manager
+	log.debug("server", "Initializing WebSocket server");
+	const wss = new WebSocket.Server({ server, path: "/ws" });
+	WebSocketManager.getInstance(wss, publicKey, privateKey);
+
 	// Sentry
 	log.debug("server", "Initializing Sentry");
 	Sentry.init({
@@ -251,11 +256,6 @@ const server = http.createServer(app);
 			data: null,
 		});
 	});
-
-	// Initialize the WebSocket manager
-	log.debug("server", "Initializing WebSocket server");
-	const wss = new WebSocket.Server({ server, path: "/ws" });
-	new WebSocketManager(wss, publicKey, privateKey);
 
 	// Start listening for requests
 	server.listen(port, async () => {
