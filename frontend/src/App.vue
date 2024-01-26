@@ -18,6 +18,7 @@
 import DefaultLayout from "./layouts/default.vue";
 import BlankLayout from "./layouts/blank.vue";
 import { useUserStore } from "./store/user";
+import { useAppStore } from "@/store/app";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
@@ -42,17 +43,14 @@ export default {
         let redirect = window.location.pathname;
 
         // Don't redirect to login page if already on login page
-        if (redirect == "/login" || redirect == "/register") {
+        if (useAppStore().publicRoutes.includes(redirect)) {
+          console.log("Not redirecting to login page");
           this.isLoading = false;
           return;
         }
 
         // If redirect does not contain login or signup, redirect to login
-        if (
-          redirect != "/login" &&
-          redirect != "/register" &&
-          redirect != "/about"
-        ) {
+        if (!useAppStore().publicRoutes.includes(redirect)) {
           redirect = "/login?redirect=" + redirect;
         }
 
