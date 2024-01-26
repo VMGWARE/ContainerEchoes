@@ -134,8 +134,8 @@ export default {
             const user = resp.data.user;
 
             // Set the values
-            useUserStore().setToken(token);
-            useUserStore().setUser(user);
+            useUserStore().token = token;
+            useUserStore().user = user;
 
             // Store the token and user in localStorage
             localStorage.setItem("token", token);
@@ -147,7 +147,7 @@ export default {
             // Set the token cookie for aslong as the token is valid, default is 1 day
             const date = new Date();
             date.setDate(date.getDate() + 1);
-            document.cookie = `token=${token}; expires=${date.toUTCString()}`;
+            document.cookie = `token=${token}; expires=${date.toUTCString()};sameSite=strict;path=/`;
 
             let urlParams = new URLSearchParams(window.location.search);
             let redirect = urlParams.get("redirect");

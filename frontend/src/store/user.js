@@ -78,4 +78,5 @@ export const useUserStore = defineStore("user", {
       this.loggedIn = false;
     },
   },
+  persist: true,
 });
