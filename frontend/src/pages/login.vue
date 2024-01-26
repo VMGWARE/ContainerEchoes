@@ -7,7 +7,7 @@
             <v-card-title class="headline">
               <v-img
                 src="@/assets/logo.png"
-                alt="Vuetify Logo"
+                alt="Echoes Logo"
                 height="150px"
                 style="
                   background-color: white;
