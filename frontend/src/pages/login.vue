@@ -51,6 +51,8 @@
               </v-btn>
             </v-card-actions>
 
+            <v-card-text v-dompurify-html="redirectMessage"></v-card-text>
+
             <!-- Loading icon when processing -->
             <v-card-actions v-if="processing" class="justify-center">
               <v-progress-circular
