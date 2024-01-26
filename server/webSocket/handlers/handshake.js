@@ -22,10 +22,9 @@ class HandleHandshake extends MessageHandlerBase {
 	 */
 	async handle(ws, messageObj) {
 		ws.publicKey = messageObj.data.publicKey;
-		this.webSocketManager.publicKey = messageObj.data.publicKey;
 		this.webSocketManager.sendMessage(
 			ws,
-			this.webSocketManager.buildMessage("ok", "agentInfo")
+			this.webSocketManager.buildMessage("ok", "agentInfo", true, ws.publicKey)
 		);
 	}
 }

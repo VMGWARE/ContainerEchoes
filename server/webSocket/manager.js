@@ -18,17 +18,14 @@ class WebSocketManager {
 	wss;
 
 	/**
-	 * The public key of the agent
-	 */
-	publicKey;
-
-	/**
 	 * The public and private keys of the server
 	 */
 	server = {
 		publicKey: "",
 		privateKey: "",
 	};
+
+	agents = [];
 
 	/**
 	 * New WebSocketManager
@@ -125,71 +122,79 @@ class WebSocketManager {
 	 * @param {*} event - The event of the message
 	 * @param {*} data - The data to send
 	 * @param {boolean} encrypted - Whether or not the message should be encrypted
+	 * @param {string} publicKey - The public key to encrypt the message with
 	 * @returns {string} The message to send
 	 */
-	buildMessage(status = "ok", event, data = {}, encrypted = true) {
+	buildMessage(
+		status = "ok",
+		event,
+		data = {},
+		encrypted = true,
+		publicKey = ""
+	) {
 		let message = {
 			status: status,
 			event: event,
 			data: data,
 		};
 
-		if (encrypted) {
-			message.data = rsa.encrypt(JSON.stringify(message.data), this.publicKey);
+		if (encrypted && publicKey) {
+			message.data = rsa.encrypt(JSON.stringify(message.data), publicKey);
 		}
 
 		return JSON.stringify(message);
 	}
 
-	/**
-	 * Sends a message to all connected clients
-	 * @param {*} type - The type of message
-	 * @param {*} data - The data to send
-	 * @returns {void}
-	 */
-	broadcastMessage(type, data) {
-		this.wss.clients.forEach((client) => {
-			if (client.readyState === WebSocket.OPEN) {
-				this.sendMessage(client, this.buildMessage(type, data));
-			}
-		});
+	// FIXME: These don't work
+	// /**
+	//  * Sends a message to all connected clients
+	//  * @param {*} type - The type of message
+	//  * @param {*} data - The data to send
+	//  * @returns {void}
+	//  */
+	// broadcastMessage(type, data) {
+	// 	this.wss.clients.forEach((client) => {
+	// 		if (client.readyState === WebSocket.OPEN) {
+	// 			this.sendMessage(client, this.buildMessage(type, data));
+	// 		}
+	// 	});
 
-		log.debug("WebSocketManager", "Sent message to all clients");
-	}
+	// 	log.debug("WebSocketManager", "Sent message to all clients");
+	// }
 
-	/**
-	 * Sends a message to a specific client
-	 * @param {*} id - The id of the client to send the message to
-	 * @param {*} type - The type of message
-	 * @param {*} data - The data to send
-	 * @returns {void}
-	 */
-	sendMessageToClient(id, type, data) {
-		this.wss.clients.forEach((client) => {
-			if (client.id === id && client.readyState === WebSocket.OPEN) {
-				this.sendMessage(client, this.buildMessage(type, data));
-			}
-		});
+	// /**
+	//  * Sends a message to a specific client
+	//  * @param {*} id - The id of the client to send the message to
+	//  * @param {*} type - The type of message
+	//  * @param {*} data - The data to send
+	//  * @returns {void}
+	//  */
+	// sendMessageToClient(id, type, data) {
+	// 	this.wss.clients.forEach((client) => {
+	// 		if (client.id === id && client.readyState === WebSocket.OPEN) {
+	// 			this.sendMessage(client, this.buildMessage(type, data));
+	// 		}
+	// 	});
 
-		log.debug("WebSocketManager", "Sent message to client " + id);
-	}
+	// 	log.debug("WebSocketManager", "Sent message to client " + id);
+	// }
 
-	/**
-	 * Sends a message to all clients except the one specified
-	 * @param {*} id - The id of the client to exclude
-	 * @param {*} type - The type of message
-	 * @param {*} data - The data to send
-	 * @returns {void}
-	 */
-	broadcastMessageExcept(id, type, data) {
-		this.wss.clients.forEach((client) => {
-			if (client.id !== id && client.readyState === WebSocket.OPEN) {
-				this.sendMessage(client, this.buildMessage(type, data));
-			}
-		});
+	// /**
+	//  * Sends a message to all clients except the one specified
+	//  * @param {*} id - The id of the client to exclude
+	//  * @param {*} type - The type of message
+	//  * @param {*} data - The data to send
+	//  * @returns {void}
+	//  */
+	// broadcastMessageExcept(id, type, data) {
+	// 	this.wss.clients.forEach((client) => {
+	// 		if (client.id !== id && client.readyState === WebSocket.OPEN) {
+	// 			this.sendMessage(client, this.buildMessage(type, data));
+	// 		}
+	// 	});
 
-		log.debug("WebSocketManager", "Sent message to all clients except " + id);
-	}
+	// 	log.debug("WebSocketManager", "Sent message to all clients except " + id);
+	// }
 
 	/**
 	 * Sends a message to a specific client and waits for a response
@@ -199,11 +204,13 @@ class WebSocketManager {
 	 * @returns {Promise<string>} The response from the client
 	 */
 	async sendMessageAndWaitForResponse(id, type, data) {
-		// TODO: Test this
 		return new Promise((resolve) => {
-			this.wss.clients.forEach((client) => {
-				if (client.id === id && client.readyState === WebSocket.OPEN) {
-					this.sendMessage(client, this.buildMessage(type, data));
+			this.agents.forEach((client) => {
+				if (client.id == id && client.readyState === WebSocket.OPEN) {
+					this.sendMessage(
+						client,
+						this.buildMessage("ok", type, data, true, client.publicKey)
+					);
 
 					client.on("message", (message) => {
 						resolve(message);

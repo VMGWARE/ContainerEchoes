@@ -68,7 +68,8 @@ class HandleHandshake extends MessageHandlerBase {
 
 		// Store the agent's id
 		ws.id = agent.agentId;
-		ws.publicKey = agent.publickey;
+
+		this.webSocketManager.agents[agent.agentId] = ws;
 
 		log.debug("WebSocketManager", `Authenticated agent ${agent.agentId}`);
 
@@ -81,7 +82,8 @@ class HandleHandshake extends MessageHandlerBase {
 				{
 					agentId: agent.agentId,
 				},
-				true
+				true,
+				ws.publicKey
 			)
 		);
 	}
