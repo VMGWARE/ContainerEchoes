@@ -19,10 +19,10 @@
             <v-card-text>
               <v-form v-model="valid">
                 <v-text-field
-                  label="Username"
+                  label="Email"
                   prepend-icon="mdi-account"
-                  v-model="username"
-                  :rules="usernameRules"
+                  v-model="email"
+                  :rules="emailRules"
                   required
                 ></v-text-field>
                 <v-text-field
@@ -66,17 +66,22 @@
 </template>
 
 <script>
+import { useUserStore } from "@/store/user";
+import axios from "axios";
+import { useToast } from "vue-toastification";
+const toast = useToast();
+
 export default {
   title: "Login",
   data() {
     return {
       valid: false,
-      username: "",
+      email: "",
       password: "",
       showPassword: false,
-      usernameRules: [
-        (v) => !!v || "Username is required",
-        (v) => (v && v.length >= 3) || "Username must be at least 3 characters",
+      emailRules: [
+        (v) => !!v || "Email is required",
+        // (v) => (v && v.length >= 3) || "Email must be at least 3 characters",
       ],
       passwordRules: [
         (v) => !!v || "Password is required",
@@ -104,10 +109,62 @@ export default {
     },
   },
   methods: {
-    login() {
+    async login() {
+      // Set processing to true
+      this.processing = true;
+
       if (this.valid) {
-        // Perform login logic here
-        console.log("Logging in:", this.username);
+        try {
+          const response = await axios.post("/auth/login", {
+            email: this.email,
+            password: this.password,
+          });
+          var resp = response.data;
+
+          if (resp.code != 200) {
+            // Set processing to true
+            this.processing = false;
+
+            // Show the error
+            toast.error(resp.response.data.message);
+          } else {
+            const token = resp.data.token;
+            const user = resp.data.user;
+
+            // Set the values
+            useUserStore().setToken(token);
+            useUserStore().setUser(user);
+
+            // Store the token and user in localStorage
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(user));
+
+            // Set the axios defaults for headers
+            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+            // Set the token cookie for aslong as the token is valid, default is 1 day
+            const date = new Date();
+            date.setDate(date.getDate() + 1);
+            document.cookie = `token=${token}; expires=${date.toUTCString()}`;
+
+            let urlParams = new URLSearchParams(window.location.search);
+            let redirect = urlParams.get("redirect");
+            if (redirect) {
+              this.$router.push(redirect);
+            } else {
+              this.$router.push("/");
+            }
+          }
+        } catch (error) {
+          // Set processing to true
+          this.processing = false;
+
+          // Show the error
+          toast.error(error.response.data.message);
+        }
+      } else {
+        // Set processing to true
+        this.processing = false;
       }
     },
   },
