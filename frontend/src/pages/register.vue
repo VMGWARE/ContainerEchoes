@@ -16,14 +16,16 @@
                 "
               ></v-img>
             </v-card-title>
+
+            <!-- Form -->
             <v-card-text>
               <v-form v-model="valid">
-                <!-- Username -->
+                <!-- Name -->
                 <v-text-field
-                  label="Username"
+                  label="Name"
                   prepend-icon="mdi-account"
-                  v-model="username"
-                  :rules="usernameRules"
+                  v-model="name"
+                  :rules="nameRules"
                   required
                 ></v-text-field>
 
@@ -61,6 +63,8 @@
                 ></v-text-field>
               </v-form>
             </v-card-text>
+
+            <!-- Register button -->
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
@@ -96,14 +100,14 @@ export default {
   data() {
     return {
       valid: false,
-      username: "",
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
       showPassword: false,
-      usernameRules: [
-        (v) => !!v || "Username is required",
-        // (v) => (v && v.length >= 3) || "Username must be at least 3 characters",
+      nameRules: [
+        (v) => !!v || "Name is required",
+        // (v) => (v && v.length >= 3) || "Name must be at least 3 characters",
       ],
       emailRules: [
         (v) => !!v || "Email is required",
@@ -117,7 +121,41 @@ export default {
     };
   },
   methods: {
-    async register() {},
+    async register() {
+      // Set processing to true
+      this.processing = true;
+
+      if (this.valid) {
+        try {
+          const response = await axios.post("/auth/register", {
+            name: this.name,
+            email: this.email,
+            password: this.password,
+            password_confirmation: this.confirmPassword,
+          });
+          var resp = response.data;
+
+          if (resp.code != 201) {
+            // Set processing to true
+            this.processing = false;
+
+            // Show the error
+            toast.error(resp.response.data.message);
+          } else {
+            this.$router.push("/login");
+          }
+        } catch (error) {
+          // Set processing to true
+          this.processing = false;
+
+          // Show the error
+          toast.error(error.response.data.message);
+        }
+      } else {
+        // Set processing to true
+        this.processing = false;
+      }
+    },
   },
 };
 </script>
