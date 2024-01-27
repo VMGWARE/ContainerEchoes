@@ -114,16 +114,18 @@ const passwordRequirements = [
     </VCol>
     <!-- !SECTION -->
 
-    <!-- SECTION Two-steps verification -->
+    <!-- SECTION Multi-factor authentication -->
     <VCol cols="12">
-      <VCard title="Two-steps verification">
+      <VCard title="Multi-factor authentication">
         <VCardText>
-          <p class="font-weight-semibold">Two factor authentication is not enabled yet.</p>
+          <p class="font-weight-semibold">Multi factor authentication is not enabled yet.</p>
           <p>
-            Two-factor authentication adds an additional layer of security to your account by requiring more than just a
-            password to log in.
+            Multi-factor authentication adds an additional layer of security to your account by requiring more than just
+            a password to log in. It uses your phone to provide a second layer of security to your account.
             <a
-              href="javascript:void(0)"
+              href="https://support.microsoft.com/en-us/topic/what-is-multifactor-authentication-e5e39437-121c-be60-d123-eda06bddf661"
+              target="_blank"
+              rel="noopener noreferrer"
               class="text-decoration-none"
               >Learn more.</a
             >
