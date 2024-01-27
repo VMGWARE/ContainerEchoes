@@ -1,7 +1,8 @@
 <script setup>
 import { useUserStore } from '@/store/user'
 import md5 from 'md5'
-const user = useUserStore().user
+const userStore = useUserStore()
+const user = userStore.user
 
 // Generate the gravatar URL from the user's email
 const gravatar = email => {
@@ -88,42 +89,20 @@ const gravatar = email => {
             <VListItemTitle>Settings</VListItemTitle>
           </VListItem>
 
-          <!-- 👉 Pricing -->
-          <VListItem link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="ri-money-dollar-circle-line"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>Pricing</VListItemTitle>
-          </VListItem>
-
-          <!-- 👉 FAQ -->
-          <VListItem link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="ri-question-line"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>FAQ</VListItemTitle>
-          </VListItem>
-
           <!-- Divider -->
           <VDivider class="my-2" />
 
           <!-- 👉 Logout -->
-          <VListItem to="/login">
+          <VListItem
+            to="/login"
+            link
+          >
             <template #prepend>
               <VIcon
                 class="me-2"
                 icon="ri-logout-box-r-line"
                 size="22"
+                @click="userStore.logout()"
               />
             </template>
 

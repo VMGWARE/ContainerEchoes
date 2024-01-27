@@ -22,8 +22,8 @@ export default {
     check_token() {
       console.log('Checking JWT token')
       const token = this.user.token
-      if (!token || token == null) {
-        console.log('No token found')
+      if (!token || token == null || !this.user.user || this.user.user == null) {
+        console.log('No token or user found')
         let redirect = window.location.pathname
 
         // Don't redirect to login page if already on login page
