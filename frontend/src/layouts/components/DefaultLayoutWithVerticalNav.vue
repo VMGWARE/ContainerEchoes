@@ -38,7 +38,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
 
         <VSpacer />
 
-        <IconBtn
+        <!-- <IconBtn
           class="me-2"
           href="https://github.com/themeselection/materio-vuetify-vuejs-admin-template-free"
           target="_blank"
@@ -49,7 +49,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
 
         <IconBtn class="me-2">
           <VIcon icon="ri-notification-line" />
-        </IconBtn>
+        </IconBtn> -->
 
         <NavbarThemeSwitcher class="me-2" />
 
