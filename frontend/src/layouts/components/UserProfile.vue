@@ -1,5 +1,7 @@
 <script setup>
 import { useUserStore } from '@/store/user'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 import md5 from 'md5'
 const userStore = useUserStore()
 const user = userStore.user
@@ -8,6 +10,11 @@ const user = userStore.user
 const gravatar = email => {
   const hash = md5(email.trim().toLowerCase())
   return `https://www.gravatar.com/avatar/${hash}`
+}
+
+const logout = () => {
+  userStore.logout()
+  router.push({ path: '/login', query: { redirect: router.currentRoute.value.fullPath } })
 }
 </script>
 
@@ -94,15 +101,14 @@ const gravatar = email => {
 
           <!-- 👉 Logout -->
           <VListItem
-            to="/login"
             link
+            @click="logout"
           >
             <template #prepend>
               <VIcon
                 class="me-2"
                 icon="ri-logout-box-r-line"
                 size="22"
-                @click="userStore.logout()"
               />
             </template>
 
