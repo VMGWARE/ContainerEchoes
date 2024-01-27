@@ -67,17 +67,18 @@ async function getSystemInformation(req, res) {
 		const osInfo = await si.osInfo();
 
 		// Get latest version from github
-		const latestVersion = await axios
+		const latestRelease = await axios
 			.get("https://api.github.com/repos/VMGWARE/ContainerEchoes/releases/latest")
 			.then((response) => {
-				return response.data.tag_name;
+				return response.data;
 			});
 
 		const echoes = {
 			version: getVersion(),
-			latestVersion: latestVersion,
-			needsUpdate: semver.gt(latestVersion, getVersion()),
+			latestRelease: latestRelease.tag_name,
+			needsUpdate: semver.gt(latestRelease.tag_name, getVersion()),
 			nodeVersion: process.version,
+			latestReleaseBody: latestRelease.body,
 		};
 
 		const database = {
