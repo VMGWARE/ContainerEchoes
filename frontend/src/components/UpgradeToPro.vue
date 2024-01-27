@@ -20,9 +20,9 @@
     >
       <VCard>
         <VImg src="https://cdn.jsdelivr.net/gh/themeselection/ts-assets/materio/materio-vuetify-vuejs-admin-template/banner/banner.png" />
-        <VCardTitle>Materio - Vuetify Admin Template</VCardTitle>
+        <VCardTitle>Container Echoes - Vuetify Admin Template</VCardTitle>
         <VCardText>
-          Materio Admin is the most developer friendly & highly customisable Admin Dashboard Template based on Vuetify.
+          Container Echoes Admin is the most developer friendly & highly customisable Admin Dashboard Template based on Vuetify.
         </VCardText>
         <VCardText>Click on below button to explore PRO version.</VCardText>
         <VCardText>

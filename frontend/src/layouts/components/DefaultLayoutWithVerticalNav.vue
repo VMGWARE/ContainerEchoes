@@ -68,7 +68,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
         />
 
         <h1 class="font-weight-medium leading-normal text-xl text-uppercase">
-          Materio
+          Container Echoes
         </h1>
       </RouterLink>
 

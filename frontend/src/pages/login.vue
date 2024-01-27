@@ -1,185 +1,264 @@
-<template>
-  <v-container style="height: 100vh" class="login-page" fluid>
-    <v-container fluid>
-      <v-row justify="center">
-        <v-col cols="12" sm="8" md="4">
-          <v-card>
-            <v-card-title class="headline">
-              <v-img
-                src="@/assets/logo.png"
-                alt="Echoes Logo"
-                height="150px"
-                style="
-                  background-color: white;
-                  border-radius: 5px;
-                  margin-bottom: 10px;
-                "
-              ></v-img>
-            </v-card-title>
-            <v-card-text>
-              <v-form v-model="valid">
-                <v-text-field
-                  label="Email"
-                  prepend-icon="mdi-account"
-                  v-model="email"
-                  :rules="emailRules"
-                  required
-                ></v-text-field>
-                <v-text-field
-                  label="Password"
-                  prepend-icon="mdi-lock"
-                  v-model="password"
-                  :type="showPassword ? 'text' : 'password'"
-                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  @click:append="showPassword = !showPassword"
-                  :rules="passwordRules"
-                  required
-                ></v-text-field>
-              </v-form>
-            </v-card-text>
-            <v-card-actions>
-              <router-link to="/forgot-password">
-                <v-btn color="primary" href="/register"> Register </v-btn>
-              </router-link>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="primary"
-                :disabled="!valid || processing"
-                @click="login"
-              >
-                Login
-              </v-btn>
-            </v-card-actions>
-
-            <v-card-text v-dompurify-html="redirectMessage"></v-card-text>
-
-            <!-- Loading icon when processing -->
-            <v-card-actions v-if="processing" class="justify-center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-container>
-</template>
-
 <script>
-import { useUserStore } from "@/store/user";
-import axios from "axios";
-import { useToast } from "vue-toastification";
-const toast = useToast();
+import { useTheme } from 'vuetify'
+import logo from '@images/logo.svg?raw'
+import authV1MaskDark from '@images/pages/auth-v1-mask-dark.png'
+import authV1MaskLight from '@images/pages/auth-v1-mask-light.png'
+import authV1Tree2 from '@images/pages/auth-v1-tree-2.png'
+import authV1Tree from '@images/pages/auth-v1-tree.png'
+import { useUserStore } from '@/store/user'
+import axios from 'axios'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 
 export default {
-  title: "Login",
+  title: 'Login',
   data() {
     return {
       valid: false,
-      email: "",
-      password: "",
+      email: '',
+      password: '',
       showPassword: false,
       emailRules: [
-        (v) => !!v || "Email is required",
+        v => !!v || 'Email is required',
         // (v) => (v && v.length >= 3) || "Email must be at least 3 characters",
       ],
       passwordRules: [
-        (v) => !!v || "Password is required",
-        (v) => (v && v.length >= 6) || "Password must be at least 6 characters",
+        v => !!v || 'Password is required',
+        v => (v && v.length >= 6) || 'Password must be at least 6 characters',
       ],
       processing: false,
-    };
+    }
   },
   computed: {
     redirectMessage() {
-      let urlParams = new URLSearchParams(window.location.search);
-      let redirect = urlParams.get("redirect");
+      let urlParams = new URLSearchParams(window.location.search)
+      let redirect = urlParams.get('redirect')
       // Remove harmful characters from the redirect URL
-      redirect = redirect ? redirect.replace(/<|>/g, "") : null;
+      redirect = redirect ? redirect.replace(/<|>/g, '') : null
       // Encode the URL to safely display it to the user
-      const sanitizedRedirect = redirect ? encodeURIComponent(redirect) : null;
-      let readableRedirect = sanitizedRedirect;
+      const sanitizedRedirect = redirect ? encodeURIComponent(redirect) : null
+      let readableRedirect = sanitizedRedirect
       // Replace the encoded / with a slash
-      readableRedirect = readableRedirect
-        ? readableRedirect.replace(/%2F/g, "/")
-        : null;
+      readableRedirect = readableRedirect ? readableRedirect.replace(/%2F/g, '/') : null
       return sanitizedRedirect
         ? `You will be redirected to <a href="${sanitizedRedirect}">${readableRedirect}</a> upon successful login.`
-        : "";
+        : ''
+    },
+    authThemeMask() {
+      return this.vuetifyTheme.global.name.value === 'light' ? authV1MaskLight : authV1MaskDark
     },
   },
   methods: {
     async login() {
       // Set processing to true
-      this.processing = true;
+      this.processing = true
 
       if (this.valid) {
         try {
-          const response = await axios.post("/auth/login", {
+          const response = await axios.post('/auth/login', {
             email: this.email,
             password: this.password,
-          });
-          var resp = response.data;
+          })
+          var resp = response.data
 
           if (resp.code != 200) {
             // Set processing to true
-            this.processing = false;
+            this.processing = false
 
             // Show the error
-            toast.error(resp.response.data.message);
+            toast.error(resp.response.data.message)
           } else {
-            const token = resp.data.token;
-            const user = resp.data.user;
+            const token = resp.data.token
+            const user = resp.data.user
 
             // Set the values
-            useUserStore().token = token;
-            useUserStore().user = user;
+            useUserStore().token = token
+            useUserStore().user = user
 
             // Store the token and user in localStorage
-            localStorage.setItem("token", token);
-            localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem('token', token)
+            localStorage.setItem('user', JSON.stringify(user))
 
             // Set the axios defaults for headers
-            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
             // Set the token cookie for aslong as the token is valid, default is 1 day
-            const date = new Date();
-            date.setDate(date.getDate() + 1);
-            document.cookie = `token=${token}; expires=${date.toUTCString()};sameSite=strict;path=/`;
+            const date = new Date()
+            date.setDate(date.getDate() + 1)
+            document.cookie = `token=${token}; expires=${date.toUTCString()};sameSite=strict;path=/`
 
-            let urlParams = new URLSearchParams(window.location.search);
-            let redirect = urlParams.get("redirect");
+            let urlParams = new URLSearchParams(window.location.search)
+            let redirect = urlParams.get('redirect')
             if (redirect) {
-              this.$router.push(redirect);
+              this.$router.push(redirect)
             } else {
-              this.$router.push("/");
+              this.$router.push('/')
             }
           }
         } catch (error) {
           // Set processing to true
-          this.processing = false;
+          this.processing = false
 
           // Show the error
-          toast.error(error.response.data.message);
+          toast.error(error.response.data.message)
         }
       } else {
         // Set processing to true
-        this.processing = false;
+        this.processing = false
       }
     },
   },
-};
+  setup() {
+    const vuetifyTheme = useTheme()
+
+    return {
+      vuetifyTheme,
+      logo,
+      authV1Tree,
+      authV1Tree2,
+    }
+  },
+}
 </script>
 
-<style scoped>
-.login-page,
-.register-page {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  justify-content: center;
-}
+<template>
+  <!-- eslint-disable vue/no-v-html -->
+
+  <div class="auth-wrapper d-flex align-center justify-center pa-4">
+    <VCard
+      class="auth-card pa-4 pt-7"
+      max-width="448"
+    >
+      <VCardItem class="justify-center">
+        <template #prepend>
+          <div class="d-flex">
+            <div v-html="logo" />
+          </div>
+        </template>
+
+        <VCardTitle class="font-weight-semibold text-2xl text-uppercase"> Container Echoes </VCardTitle>
+      </VCardItem>
+
+      <VCardText class="pt-2">
+        <h5 class="text-h5 font-weight-semibold mb-1">Welcome to Container Echoes! 👋🏻</h5>
+        <p class="mb-0">Please sign-in to your account and start the adventure</p>
+      </VCardText>
+
+      <VCardText>
+        <VForm
+          @submit.prevent="() => {}"
+          v-model="valid"
+        >
+          <VRow>
+            <!-- email -->
+            <VCol cols="12">
+              <VTextField
+                label="Email"
+                v-model="email"
+                :rules="emailRules"
+                required
+              />
+            </VCol>
+
+            <!-- password -->
+            <VCol cols="12">
+              <VTextField
+                v-model="password"
+                label="Password"
+                placeholder="············"
+                :type="showPassword ? 'text' : 'password'"
+                :append-inner-icon="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"
+                @click:append-inner="showPassword = !showPassword"
+                :rules="passwordRules"
+                required
+              />
+
+              <!-- remember me checkbox -->
+              <!-- <div class="d-flex align-center justify-space-between flex-wrap mt-1 mb-4">
+                <VCheckbox
+                  v-model="form.remember"
+                  label="Remember me"
+                />
+
+                <a
+                  class="ms-2 mb-1"
+                  href="javascript:void(0)"
+                >
+                  Forgot Password?
+                </a>
+              </div> -->
+
+              <!-- login button -->
+              <VBtn
+                block
+                color="primary"
+                :disabled="!valid || processing"
+                @click="login"
+                class="mt-4"
+              >
+                <v-progress-circular
+                  indeterminate
+                  color="primary"
+                  class="mr-2"
+                  size="20"
+                  v-if="processing"
+                ></v-progress-circular>
+                Login
+              </VBtn>
+            </VCol>
+
+            <!-- create account -->
+            <VCol
+              cols="12"
+              class="text-center text-base"
+            >
+              <span>New on our platform?</span>
+              <RouterLink
+                class="text-primary ms-2"
+                to="/register"
+              >
+                Create an account
+              </RouterLink>
+            </VCol>
+
+            <VCol
+              cols="12"
+              class="d-flex align-center"
+            >
+              <VDivider />
+              <VDivider />
+            </VCol>
+
+            <!-- redirect message -->
+            <VCardText class="text-center">
+              <!-- TODO: Use v-dompurify-html -->
+              <span v-html="redirectMessage" />
+            </VCardText>
+          </VRow>
+        </VForm>
+      </VCardText>
+    </VCard>
+
+    <VImg
+      class="auth-footer-start-tree d-none d-md-block"
+      :src="authV1Tree"
+      :width="250"
+    />
+
+    <VImg
+      :src="authV1Tree2"
+      class="auth-footer-end-tree d-none d-md-block"
+      :width="350"
+    />
+
+    <!-- bg img -->
+    <VImg
+      class="auth-footer-mask d-none d-md-block"
+      :src="authThemeMask"
+    />
+  </div>
+</template>
+
+<style lang="scss">
+@use '@core/scss/pages/page-auth.scss';
 </style>
