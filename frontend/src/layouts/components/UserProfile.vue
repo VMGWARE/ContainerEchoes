@@ -19,107 +19,90 @@ const logout = () => {
 </script>
 
 <template>
-  <VBadge
-    dot
-    location="bottom right"
-    offset-x="3"
-    offset-y="3"
-    color="success"
-    bordered
+  <VAvatar
+    class="cursor-pointer"
+    color="primary"
+    variant="tonal"
   >
-    <VAvatar
-      class="cursor-pointer"
-      color="primary"
-      variant="tonal"
+    <VImg :src="gravatar(user.email)" />
+
+    <!-- SECTION Menu -->
+    <VMenu
+      activator="parent"
+      width="230"
+      location="bottom end"
+      offset="14px"
     >
-      <VImg :src="gravatar(user.email)" />
+      <VList>
+        <!-- 👉 User Avatar & Name -->
+        <VListItem>
+          <template #prepend>
+            <VListItemAction start>
+              <VAvatar
+                color="primary"
+                variant="tonal"
+              >
+                <VImg :src="gravatar(user.email)" />
+              </VAvatar>
+            </VListItemAction>
+          </template>
 
-      <!-- SECTION Menu -->
-      <VMenu
-        activator="parent"
-        width="230"
-        location="bottom end"
-        offset="14px"
-      >
-        <VList>
-          <!-- 👉 User Avatar & Name -->
-          <VListItem>
-            <template #prepend>
-              <VListItemAction start>
-                <VBadge
-                  dot
-                  location="bottom right"
-                  offset-x="3"
-                  offset-y="3"
-                  color="success"
-                >
-                  <VAvatar
-                    color="primary"
-                    variant="tonal"
-                  >
-                    <VImg :src="gravatar(user.email)" />
-                  </VAvatar>
-                </VBadge>
-              </VListItemAction>
-            </template>
+          <VListItemTitle class="font-weight-semibold"> {{ user.name }} </VListItemTitle>
+          <VListItemSubtitle>
+            {{ user.superuser ? 'Superuser' : 'User' }}
+          </VListItemSubtitle>
+        </VListItem>
+        <VDivider class="my-2" />
 
-            <VListItemTitle class="font-weight-semibold"> {{ user.name }} </VListItemTitle>
-            <VListItemSubtitle>
-              {{ user.superuser ? 'Superuser' : 'User' }}
-            </VListItemSubtitle>
-          </VListItem>
-          <VDivider class="my-2" />
+        <!-- 👉 My account -->
+        <VListItem
+          link
+          to="/my-account"
+        >
+          <template #prepend>
+            <VIcon
+              class="me-2"
+              icon="ri-user-line"
+              size="22"
+            />
+          </template>
 
-          <!-- 👉 My account -->
-          <VListItem
-            link
-            to="/my-account"
-          >
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="ri-user-line"
-                size="22"
-              />
-            </template>
+          <VListItemTitle>My account</VListItemTitle>
+        </VListItem>
 
-            <VListItemTitle>My account</VListItemTitle>
-          </VListItem>
+        <!-- 👉 Admin Settings -->
+        <VListItem link>
+          <template #prepend>
+            <VIcon
+              class="me-2"
+              icon="ri-settings-4-line"
+              size="22"
+            />
+          </template>
 
-          <!-- 👉 Admin Settings -->
-          <VListItem link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="ri-settings-4-line"
-                size="22"
-              />
-            </template>
+          <VListItemTitle>Admin Settings</VListItemTitle>
+        </VListItem>
 
-            <VListItemTitle>Admin Settings</VListItemTitle>
-          </VListItem>
+        <!-- Divider -->
+        <VDivider class="my-2" />
 
-          <!-- Divider -->
-          <VDivider class="my-2" />
+        <!-- 👉 Logout -->
+        <VListItem
+          link
+          @click="logout"
+        >
+          <template #prepend>
+            <VIcon
+              class="me-2"
+              icon="ri-logout-box-r-line"
+              size="22"
+            />
+          </template>
 
-          <!-- 👉 Logout -->
-          <VListItem
-            link
-            @click="logout"
-          >
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="ri-logout-box-r-line"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>Logout</VListItemTitle>
-          </VListItem>
-        </VList>
-      </VMenu>
-      <!-- !SECTION -->
-    </VAvatar>
-  </VBadge>
+          <VListItemTitle>Logout</VListItemTitle>
+        </VListItem>
+      </VList>
+    </VMenu>
+    <!-- !SECTION -->
+  </VAvatar>
 </template>
