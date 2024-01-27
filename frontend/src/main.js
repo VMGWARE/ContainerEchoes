@@ -1,53 +1,16 @@
-/**
- * main.js
- *
- * Bootstraps Vuetify and other plugins then mounts the App`
- */
+import { createApp } from 'vue'
+import App from '@/App.vue'
+import { registerPlugins } from '@core/utils/plugins'
 
-// Plugins
-import { registerPlugins } from "@/plugins";
+// Styles
+import '@core/scss/template/index.scss'
+import '@layouts/styles/index.scss'
 
-// DOMPurify
-import VueDOMPurifyHTML from "vue-dompurify-html";
+// Create vue app
+const app = createApp(App)
 
-// Vue Toastification
-import Toast from "vue-toastification";
-import "vue-toastification/dist/index.css";
+// Register plugins
+registerPlugins(app)
 
-// Vue Toastification Options
-const ToastOptions = {
-  position: "bottom-right",
-  timeout: 3000,
-  closeOnClick: true,
-  pauseOnFocusLoss: true,
-  pauseOnHover: true,
-  draggable: true,
-  draggablePercent: 0.7,
-};
-
-// Mixins
-import titleMixin from "./mixins/titleMixin";
-
-// Components
-import App from "./App.vue";
-
-// Composables
-import { createApp } from "vue";
-
-// Create app
-const app = createApp(App);
-
-// Mixins
-app.mixin(titleMixin);
-
-// Plugins
-registerPlugins(app);
-
-// Vue Toastification
-app.use(Toast, ToastOptions);
-
-// DOMPurify
-app.use(VueDOMPurifyHTML);
-
-// Mount
-app.mount("#app");
+// Mount vue app
+app.mount('#app')
