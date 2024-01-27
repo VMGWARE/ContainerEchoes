@@ -1,172 +1,225 @@
 <template>
-  <v-container style="height: 100vh" class="register-page" fluid>
-    <v-container fluid>
-      <v-row justify="center">
-        <v-col cols="12" sm="8" md="4">
-          <v-card>
-            <v-card-title class="headline">
-              <v-img
-                src="@/assets/logo.png"
-                alt="Echoes Logo"
-                height="150px"
-                style="
-                  background-color: white;
-                  border-radius: 5px;
-                  margin-bottom: 10px;
-                "
-              ></v-img>
-            </v-card-title>
+  <!-- eslint-disable vue/no-v-html -->
 
-            <!-- Form -->
-            <v-card-text>
-              <v-form v-model="valid">
-                <!-- Name -->
-                <v-text-field
-                  label="Name"
-                  prepend-icon="mdi-account"
-                  v-model="name"
-                  :rules="nameRules"
-                  required
-                ></v-text-field>
+  <div class="auth-wrapper d-flex align-center justify-center pa-4">
+    <VCard
+      class="auth-card pa-4 pt-7"
+      max-width="448"
+    >
+      <VCardItem class="justify-center">
+        <VCardTitle class="font-weight-semibold text-2xl text-uppercase">
+          <img
+            src="@images/logo.png"
+            alt="Echoes Logo"
+            height="150px"
+            width="150px"
+            style="background-color: white; border-radius: 5px; margin-bottom: 10px"
+          />
+        </VCardTitle>
+      </VCardItem>
 
-                <!-- Email -->
-                <v-text-field
-                  label="Email"
-                  prepend-icon="mdi-email"
-                  v-model="email"
-                  :rules="emailRules"
-                  required
-                ></v-text-field>
+      <VCardText>
+        <VForm
+          @submit.prevent="() => {}"
+          v-model="valid"
+        >
+          <VRow>
+            <!-- name -->
+            <VCol cols="12">
+              <VTextField
+                v-model="name"
+                :rules="nameRules"
+                required
+                label="Name"
+                placeholder="John Doe"
+              />
+            </VCol>
 
-                <!-- Password -->
-                <v-text-field
-                  label="Password"
-                  prepend-icon="mdi-lock"
-                  v-model="password"
-                  :type="showPassword ? 'text' : 'password'"
-                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  @click:append="showPassword = !showPassword"
-                  :rules="passwordRules"
-                  required
-                ></v-text-field>
+            <!-- email -->
+            <VCol cols="12">
+              <VTextField
+                v-model="email"
+                :rules="emailRules"
+                required
+                label="Email"
+                placeholder="johndoe@email.com"
+                type="email"
+              />
+            </VCol>
 
-                <!-- Confirm Password -->
-                <v-text-field
-                  label="Confirm Password"
-                  prepend-icon="mdi-lock"
-                  v-model="confirmPassword"
-                  :type="showPassword ? 'text' : 'password'"
-                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  @click:append="showPassword = !showPassword"
-                  :rules="passwordRules"
-                  required
-                ></v-text-field>
-              </v-form>
-            </v-card-text>
+            <!-- password -->
+            <VCol cols="12">
+              <VTextField
+                v-model="password"
+                label="Password"
+                placeholder="············"
+                :type="showPassword ? 'text' : 'password'"
+                :append-inner-icon="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"
+                @click:append-inner="showPassword = !showPassword"
+                :rules="passwordRules"
+                required
+              />
 
-            <!-- Register button -->
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
+              <!-- <div class="d-flex align-center mt-1 mb-4">
+                <VCheckbox
+                  id="privacy-policy"
+                  v-model="form.privacyPolicies"
+                  inline
+                />
+                <VLabel
+                  for="privacy-policy"
+                  style="opacity: 1"
+                >
+                  <span class="me-1">I agree to</span>
+                  <a
+                    href="javascript:void(0)"
+                    class="text-primary"
+                    >privacy policy & terms</a
+                  >
+                </VLabel>
+              </div> -->
+            </VCol>
+
+            <!-- confirm password -->
+            <VCol cols="12">
+              <VTextField
+                v-model="confirmPassword"
+                label="Confirm Password"
+                placeholder="············"
+                :type="showPassword ? 'text' : 'password'"
+                :append-inner-icon="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"
+                @click:append-inner="showPassword = !showPassword"
+                :rules="passwordRules"
+                required
+              />
+
+              <VBtn
+                block
                 color="primary"
                 :disabled="!valid || processing"
                 @click="register"
+                class="mt-4"
               >
-                Register
-              </v-btn>
-            </v-card-actions>
+                <v-progress-circular
+                  indeterminate
+                  color="primary"
+                  class="mr-2"
+                  size="20"
+                  v-if="processing"
+                ></v-progress-circular>
+                Sign up
+              </VBtn>
+            </VCol>
 
-            <!-- Loading icon when processing -->
-            <v-card-actions v-if="processing" class="justify-center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-container>
+            <!-- login instead -->
+            <VCol
+              cols="12"
+              class="text-center text-base"
+            >
+              <span>Already have an account?</span>
+              <RouterLink
+                class="text-primary ms-2"
+                to="login"
+              >
+                Sign in instead
+              </RouterLink>
+            </VCol>
+          </VRow>
+        </VForm>
+      </VCardText>
+    </VCard>
+  </div>
 </template>
 
 <script>
-import axios from "axios";
-import { useToast } from "vue-toastification";
-const toast = useToast();
+import { useTheme } from 'vuetify'
+import authV1MaskDark from '@images/pages/auth-v1-mask-dark.png'
+import authV1MaskLight from '@images/pages/auth-v1-mask-light.png'
+import authV1Tree2 from '@images/pages/auth-v1-tree-2.png'
+import authV1Tree from '@images/pages/auth-v1-tree.png'
+import axios from 'axios'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 
 export default {
-  title: "Register",
+  title: 'Register',
   data() {
     return {
       valid: false,
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
       showPassword: false,
       nameRules: [
-        (v) => !!v || "Name is required",
+        v => !!v || 'Name is required',
         // (v) => (v && v.length >= 3) || "Name must be at least 3 characters",
       ],
       emailRules: [
-        (v) => !!v || "Email is required",
+        v => !!v || 'Email is required',
         // (v) => (v && v.length >= 3) || "Email must be at least 3 characters",
       ],
       passwordRules: [
-        (v) => !!v || "Password is required",
-        (v) => (v && v.length >= 6) || "Password must be at least 6 characters",
+        v => !!v || 'Password is required',
+        v => (v && v.length >= 6) || 'Password must be at least 6 characters',
       ],
       processing: false,
-    };
+    }
+  },
+  computed: {
+    authThemeMask() {
+      return this.vuetifyTheme.global.name.value === 'light' ? authV1MaskLight : authV1MaskDark
+    },
   },
   methods: {
     async register() {
       // Set processing to true
-      this.processing = true;
+      this.processing = true
 
       if (this.valid) {
         try {
-          const response = await axios.post("/auth/register", {
+          const response = await axios.post('/auth/register', {
             name: this.name,
             email: this.email,
             password: this.password,
             password_confirmation: this.confirmPassword,
-          });
-          var resp = response.data;
+          })
+          var resp = response.data
 
           if (resp.code != 201) {
             // Set processing to true
-            this.processing = false;
+            this.processing = false
 
             // Show the error
-            toast.error(resp.response.data.message);
+            toast.error(resp.response.data.message)
           } else {
-            this.$router.push("/login");
+            this.$router.push('/login')
           }
         } catch (error) {
           // Set processing to true
-          this.processing = false;
+          this.processing = false
 
           // Show the error
-          toast.error(error.response.data.message);
+          toast.error(error.response.data.message)
         }
       } else {
         // Set processing to true
-        this.processing = false;
+        this.processing = false
       }
     },
   },
-};
+  setup() {
+    const vuetifyTheme = useTheme()
+
+    return {
+      vuetifyTheme,
+      authV1Tree,
+      authV1Tree2,
+    }
+  },
+}
 </script>
 
-<style scoped>
-.register-page,
-.register-page {
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  justify-content: center;
-}
+<style lang="scss">
+@use '@core/scss/pages/page-auth.scss';
 </style>
