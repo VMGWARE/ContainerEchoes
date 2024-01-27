@@ -1,16 +1,3 @@
-<script setup>
-import { useTheme } from 'vuetify'
-import miscMaskDark from '@images/pages/misc-mask-dark.png'
-import miscMaskLight from '@images/pages/misc-mask-light.png'
-import tree from '@images/pages/tree.png'
-
-const vuetifyTheme = useTheme()
-
-const authThemeMask = computed(() => {
-  return vuetifyTheme.global.name.value === 'light' ? miscMaskLight : miscMaskDark
-})
-</script>
-
 <template>
   <div class="misc-wrapper">
     <ErrorHeader
@@ -19,7 +6,6 @@ const authThemeMask = computed(() => {
       description="We couldn't find the page you are looking for."
     />
 
-    <!-- 👉 Image -->
     <div class="misc-avatar w-100 text-center">
       <VBtn
         to="/"
@@ -28,17 +14,6 @@ const authThemeMask = computed(() => {
         Back to Home
       </VBtn>
     </div>
-
-    <!-- 👉 Footer -->
-    <VImg
-      :src="tree"
-      class="misc-footer-tree d-none d-md-block"
-    />
-
-    <VImg
-      :src="authThemeMask"
-      class="misc-footer-img d-none d-md-block"
-    />
   </div>
 </template>
 
