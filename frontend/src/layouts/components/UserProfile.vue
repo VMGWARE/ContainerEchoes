@@ -86,7 +86,7 @@ const logout = () => {
             <VListItemTitle>My account</VListItemTitle>
           </VListItem>
 
-          <!-- 👉 Settings -->
+          <!-- 👉 Admin Settings -->
           <VListItem link>
             <template #prepend>
               <VIcon
@@ -96,7 +96,7 @@ const logout = () => {
               />
             </template>
 
-            <VListItemTitle>Settings</VListItemTitle>
+            <VListItemTitle>Admin Settings</VListItemTitle>
           </VListItem>
 
           <!-- Divider -->

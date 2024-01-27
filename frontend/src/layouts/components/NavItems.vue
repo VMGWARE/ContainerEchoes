@@ -23,20 +23,6 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
 
   <VerticalNavLink
     :item="{
-      title: 'Login',
-      icon: 'ri-login-box-line',
-      to: '/login',
-    }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Register',
-      icon: 'ri-user-add-line',
-      to: '/register',
-    }"
-  />
-  <VerticalNavLink
-    :item="{
       title: 'Error',
       icon: 'ri-information-line',
       to: '/no-existence',
@@ -47,13 +33,6 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
   <VerticalNavSectionTitle
     :item="{
       heading: 'User Interface',
-    }"
-  />
-  <VerticalNavLink
-    :item="{
-      title: 'Typography',
-      icon: 'ri-text',
-      to: '/typography',
     }"
   />
   <VerticalNavLink
