@@ -9,8 +9,8 @@ export const routes = [
         component: () => import('@/pages/dashboard.vue'),
       },
       {
-        path: 'account-settings',
-        component: () => import('@/pages/account-settings.vue'),
+        path: 'my-account',
+        component: () => import('@/pages/my-account.vue'),
       },
       {
         path: 'typography',

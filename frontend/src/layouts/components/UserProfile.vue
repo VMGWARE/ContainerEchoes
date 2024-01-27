@@ -70,8 +70,11 @@ const logout = () => {
           </VListItem>
           <VDivider class="my-2" />
 
-          <!-- 👉 Profile -->
-          <VListItem link>
+          <!-- 👉 My account -->
+          <VListItem
+            link
+            to="/my-account"
+          >
             <template #prepend>
               <VIcon
                 class="me-2"
@@ -80,7 +83,7 @@ const logout = () => {
               />
             </template>
 
-            <VListItemTitle>Profile</VListItemTitle>
+            <VListItemTitle>My account</VListItemTitle>
           </VListItem>
 
           <!-- 👉 Settings -->
