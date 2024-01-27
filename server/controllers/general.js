@@ -11,6 +11,8 @@ const { getVersion } = require("../utils/general");
 const log = require("@vmgware/js-logger").getInstance();
 const si = require("systeminformation");
 const knex = require("@container-echoes/core/database");
+const axios = require("axios");
+const semver = require("semver");
 
 // System Information: current version, latest version (github), nodejs version, database version, OS, hostname, cpu cors, total ram, working dir.
 /**
@@ -64,9 +66,17 @@ async function getSystemInformation(req, res) {
 	try {
 		const osInfo = await si.osInfo();
 
+		// Get latest version from github
+		const latestVersion = await axios
+			.get("https://api.github.com/repos/VMGWARE/ContainerEchoes/releases/latest")
+			.then((response) => {
+				return response.data.tag_name;
+			});
+
 		const echoes = {
 			version: getVersion(),
-			latestVersion: "1.0.0",
+			latestVersion: latestVersion,
+			needsUpdate: semver.gt(latestVersion, getVersion()),
 			nodeVersion: process.version,
 		};
 
