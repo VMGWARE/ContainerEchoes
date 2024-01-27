@@ -1,29 +1,76 @@
-<script setup>
+<script>
 import { useUserStore } from '@/store/user'
-import { ref } from 'vue'
 import md5 from 'md5'
 const userStore = useUserStore()
 const user = userStore.user
+import axios from 'axios'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 
-const userDataLocal = ref(
-  structuredClone({
-    name: user.name,
-    email: user.email,
-  }),
-)
-const isAccountDeleted = ref(false)
+export default {
+  title: 'My Account',
+  data() {
+    return {
+      valid: false,
+      user,
+      userDataLocal: {
+        name: user.name,
+        email: user.email,
+      },
+      isAccountDeleted: false,
+      nameRules: [v => !!v || 'Name is required'],
+      emailRules: [v => !!v || 'Email is required'],
+      processing: false,
+    }
+  },
+  methods: {
+    resetForm() {
+      this.userDataLocal = structuredClone({
+        name: user.name,
+        email: user.email,
+      })
+    },
+    gravatar(email) {
+      const hash = md5(email.trim().toLowerCase())
+      return `https://www.gravatar.com/avatar/${hash}`
+    },
+    async update() {
+      // Set processing to true
+      this.processing = true
 
-const resetForm = () => {
-  userDataLocal.value = structuredClone({
-    name: user.name,
-    email: user.email,
-  })
-}
+      if (this.valid) {
+        try {
+          // Add the Authorization header
+          axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`
 
-// Generate the gravatar URL from the user's email
-const gravatar = email => {
-  const hash = md5(email.trim().toLowerCase())
-  return `https://www.gravatar.com/avatar/${hash}`
+          const response = await axios.patch('/auth/me', {
+            name: this.userDataLocal.name,
+            email: this.userDataLocal.email,
+          })
+          var resp = response.data
+
+          if (resp.code != 200) {
+            // Set processing to true
+            this.processing = false
+            toast.error(resp.message)
+          } else {
+            // Set processing to true
+            this.processing = false
+            toast.success(resp.message)
+            user.name = this.userDataLocal.name
+            user.email = this.userDataLocal.email
+            this.resetForm()
+
+            // TODO: Update user data in the store
+          }
+        } catch (error) {
+          // Set processing to true
+          this.processing = false
+          toast.error(error.message)
+        }
+      }
+    },
+  },
 }
 </script>
 
@@ -45,7 +92,11 @@ const gravatar = email => {
 
         <VCardText>
           <!-- 👉 Form -->
-          <VForm class="mt-6">
+          <VForm
+            class="mt-6"
+            @submit.prevent="() => {}"
+            v-model="this.valid"
+          >
             <VRow>
               <!-- Name -->
               <VCol
@@ -56,6 +107,8 @@ const gravatar = email => {
                   v-model="userDataLocal.name"
                   label="Name"
                   placeholder="John Doe"
+                  :rules="nameRules"
+                  required
                 />
               </VCol>
 
@@ -69,6 +122,8 @@ const gravatar = email => {
                   label="E-mail"
                   placeholder="johndoe@gmail.com"
                   type="email"
+                  :rules="emailRules"
+                  required
                 />
               </VCol>
 
@@ -77,13 +132,25 @@ const gravatar = email => {
                 cols="12"
                 class="d-flex flex-wrap gap-4"
               >
-                <VBtn>Save changes</VBtn>
+                <VBtn
+                  :disabled="!this.valid || this.processing"
+                  @click="this.update"
+                >
+                  <v-progress-circular
+                    indeterminate
+                    color="primary"
+                    class="mr-2"
+                    size="20"
+                    v-if="processing"
+                  />
+                  Save changes</VBtn
+                >
 
                 <VBtn
                   color="secondary"
                   variant="outlined"
                   type="reset"
-                  @click.prevent="resetForm"
+                  @click.prevent="this.resetForm"
                 >
                   Reset
                 </VBtn>
@@ -94,8 +161,7 @@ const gravatar = email => {
       </VCard>
     </VCol>
 
-    <VCol cols="12">
-      <!-- 👉 Delete Account -->
+    <!-- <VCol cols="12">
       <VCard title="Delete Account">
         <VCardText>
           <div>
@@ -114,6 +180,6 @@ const gravatar = email => {
           </VBtn>
         </VCardText>
       </VCard>
-    </VCol>
+    </VCol> -->
   </VRow>
 </template>
