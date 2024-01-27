@@ -15,14 +15,13 @@ export default {
     return {
       isLoading: true,
       tokenRefreshTimer: null,
-      user: {},
     }
   },
   methods: {
     check_token() {
       console.log('Checking JWT token')
-      const token = this.user.token
-      if (!token || token == null || !this.user.user || this.user.user == null) {
+      const token = useUserStore().token
+      if (!token || token == null || !useUserStore().user || useUserStore().user == null) {
         console.log('No token or user found')
         let redirect = window.location.pathname
 
@@ -90,7 +89,7 @@ export default {
       }
 
       // Setup new timer
-      const token = this.user.token
+      const token = useUserStore().token
       const { exp } = jwtDecode(token)
       const newTimerId = setTimeout(this.check_token, (exp - Date.now() / 1000 - 600) * 1000)
 
@@ -101,7 +100,7 @@ export default {
     },
     logout() {
       this.isLoading = true
-      this.user.logout()
+      useUserStore().logout()
 
       // Redirect to login page
       this.isLoading = false
@@ -109,7 +108,6 @@ export default {
     },
   },
   mounted() {
-    this.user = useUserStore()
     this.check_token()
   },
   unmounted() {
