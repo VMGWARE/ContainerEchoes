@@ -73,6 +73,7 @@ export default {
             // Set the values
             useUserStore().token = token
             useUserStore().user = user
+            useUserStore().loggedIn = true
 
             // Store the token and user in localStorage
             localStorage.setItem('token', token)

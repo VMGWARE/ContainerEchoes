@@ -9,7 +9,7 @@ const router = createRouter({
 })
 
 const handleAuthRedirection = (to, from, next) => {
-  const isLoggedIn = useUserStore().isLoggedIn
+  const isLoggedIn = useUserStore().loggedIn
 
   const publicPaths = useAppStore().publicRoutes
 
