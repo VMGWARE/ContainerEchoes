@@ -503,7 +503,7 @@ async function login(req, res) {
 			.where({
 				email: validator.getPassedFields().email,
 			})
-			.select("id", "name", "email", "password")
+			.select("id", "name", "email", "password", "superuser")
 			.first();
 
 		// If the user does not exist, return an error

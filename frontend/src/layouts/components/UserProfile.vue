@@ -1,5 +1,13 @@
 <script setup>
-import avatar1 from '@images/avatars/avatar-1.png'
+import { useUserStore } from '@/store/user'
+import md5 from 'md5'
+const user = useUserStore().user
+
+// Generate the gravatar URL from the user's email
+const gravatar = email => {
+  const hash = md5(email.trim().toLowerCase())
+  return `https://www.gravatar.com/avatar/${hash}`
+}
 </script>
 
 <template>
@@ -16,7 +24,7 @@ import avatar1 from '@images/avatars/avatar-1.png'
       color="primary"
       variant="tonal"
     >
-      <VImg :src="avatar1" />
+      <VImg :src="gravatar(user.email)" />
 
       <!-- SECTION Menu -->
       <VMenu
@@ -41,16 +49,16 @@ import avatar1 from '@images/avatars/avatar-1.png'
                     color="primary"
                     variant="tonal"
                   >
-                    <VImg :src="avatar1" />
+                    <VImg :src="gravatar(user.email)" />
                   </VAvatar>
                 </VBadge>
               </VListItemAction>
             </template>
 
-            <VListItemTitle class="font-weight-semibold">
-              John Doe
-            </VListItemTitle>
-            <VListItemSubtitle>Admin</VListItemSubtitle>
+            <VListItemTitle class="font-weight-semibold"> {{ user.name }} </VListItemTitle>
+            <VListItemSubtitle>
+              {{ user.superuser ? 'Superuser' : 'User' }}
+            </VListItemSubtitle>
           </VListItem>
           <VDivider class="my-2" />
 
