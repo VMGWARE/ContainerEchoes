@@ -1,6 +1,5 @@
 <script setup>
 import { useTheme } from 'vuetify'
-import misc404 from '@images/pages/404.png'
 import miscMaskDark from '@images/pages/misc-mask-dark.png'
 import miscMaskLight from '@images/pages/misc-mask-light.png'
 import tree from '@images/pages/tree.png'
@@ -22,12 +21,6 @@ const authThemeMask = computed(() => {
 
     <!-- 👉 Image -->
     <div class="misc-avatar w-100 text-center">
-      <VImg
-        :src="misc404"
-        alt="Coming Soon"
-        :max-width="800"
-        class="mx-auto"
-      />
       <VBtn
         to="/"
         class="mt-10"
@@ -50,7 +43,7 @@ const authThemeMask = computed(() => {
 </template>
 
 <style lang="scss">
-@use "@core/scss/pages/misc.scss";
+@use '@core/scss/pages/misc.scss';
 
 .misc-footer-tree {
   inline-size: 15.625rem;
