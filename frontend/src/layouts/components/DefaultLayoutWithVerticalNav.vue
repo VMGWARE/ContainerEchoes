@@ -21,11 +21,10 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
         </IconBtn>
 
         <!-- 👉 Search -->
-        <div
+        <!-- <div
           class="d-flex align-center cursor-pointer"
           style="user-select: none;"
         >
-          <!-- 👉 Search Trigger button -->
           <IconBtn>
             <VIcon icon="ri-search-line" />
           </IconBtn>
@@ -34,7 +33,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
             <span class="me-3">Search</span>
             <span class="meta-key">&#8984;K</span>
           </span>
-        </div>
+        </div> -->
 
         <VSpacer />
 
@@ -67,9 +66,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
           v-html="logo"
         />
 
-        <h1 class="font-weight-medium leading-normal text-xl text-uppercase">
-          Container Echoes
-        </h1>
+        <h1 class="font-weight-medium leading-normal text-xl text-uppercase">Container Echoes</h1>
       </RouterLink>
 
       <IconBtn
