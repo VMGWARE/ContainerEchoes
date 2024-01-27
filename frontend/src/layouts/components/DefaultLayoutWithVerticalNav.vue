@@ -1,6 +1,5 @@
 <script setup>
 import NavItems from '@/layouts/components/NavItems.vue'
-import logo from '@images/logo.svg?raw'
 import VerticalNavLayout from '@layouts/components/VerticalNavLayout.vue'
 import Footer from '@/layouts/components/Footer.vue'
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
@@ -61,12 +60,15 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
         to="/"
         class="app-logo app-title-wrapper"
       >
-        <div
-          class="d-flex"
-          v-html="logo"
+        <img
+          src="@images/logo.png"
+          alt="Echoes Logo"
+          height="30px"
+          width="30px"
+          style="background-color: white; border-radius: 5px"
         />
 
-        <h1 class="font-weight-medium leading-normal text-xl text-uppercase">Container Echoes</h1>
+        <h1 class="font-weight-medium leading-normal text-xl text-uppercase">Echoes</h1>
       </RouterLink>
 
       <IconBtn

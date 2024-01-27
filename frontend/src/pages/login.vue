@@ -1,6 +1,5 @@
 <script>
 import { useTheme } from 'vuetify'
-import logo from '@images/logo.svg?raw'
 import authV1MaskDark from '@images/pages/auth-v1-mask-dark.png'
 import authV1MaskLight from '@images/pages/auth-v1-mask-light.png'
 import authV1Tree2 from '@images/pages/auth-v1-tree-2.png'
@@ -113,7 +112,6 @@ export default {
 
     return {
       vuetifyTheme,
-      logo,
       authV1Tree,
       authV1Tree2,
     }
@@ -130,13 +128,15 @@ export default {
       max-width="448"
     >
       <VCardItem class="justify-center">
-        <template #prepend>
-          <div class="d-flex">
-            <div v-html="logo" />
-          </div>
-        </template>
-
-        <VCardTitle class="font-weight-semibold text-2xl text-uppercase">Container Echoes </VCardTitle>
+        <VCardTitle class="font-weight-semibold text-2xl text-uppercase">
+          <img
+            src="@images/logo.png"
+            alt="Echoes Logo"
+            height="150px"
+            width="150px"
+            style="background-color: white; border-radius: 5px; margin-bottom: 10px"
+          />
+        </VCardTitle>
       </VCardItem>
 
       <VCardText class="pt-2">
