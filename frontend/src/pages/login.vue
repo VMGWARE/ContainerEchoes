@@ -213,18 +213,19 @@ export default {
               cols="12"
               class="text-center text-base"
             >
-              <span>New on our platform?</span>
+              <span>Don't have an account?</span>
               <RouterLink
                 class="text-primary ms-2"
                 to="/register"
               >
-                Create an account
+                Create one here
               </RouterLink>
             </VCol>
 
             <VCol
               cols="12"
               class="d-flex align-center"
+              v-if="redirectMessage"
             >
               <VDivider />
               <VDivider />
