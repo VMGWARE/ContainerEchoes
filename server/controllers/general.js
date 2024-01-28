@@ -11,6 +11,8 @@ const { getVersion } = require("../utils/general");
 const log = require("@vmgware/js-logger").getInstance();
 const si = require("systeminformation");
 const knex = require("@container-echoes/core/database");
+const axios = require("axios");
+const semver = require("semver");
 
 // System Information: current version, latest version (github), nodejs version, database version, OS, hostname, cpu cors, total ram, working dir.
 /**
@@ -41,7 +43,7 @@ const knex = require("@container-echoes/core/database");
  *                   type: string
  *                   example: Successfully retrieved system information.
  *       500:
- *         description: Internal Server Error. Something went wrong on our side.
+ *         description: Something went wrong. But it's probably not your fault.
  *         content:
  *           application/json:
  *             schema:
@@ -55,7 +57,7 @@ const knex = require("@container-echoes/core/database");
  *                   example: 500
  *                 message:
  *                   type: string
- *                   example: Internal Server Error. Something went wrong on our side.
+ *                   example: Something went wrong. But it's probably not your fault.
  *                 data:
  *                   type: null
  *                   example: null
@@ -64,10 +66,19 @@ async function getSystemInformation(req, res) {
 	try {
 		const osInfo = await si.osInfo();
 
+		// Get latest version from github
+		const latestRelease = await axios
+			.get("https://api.github.com/repos/VMGWARE/ContainerEchoes/releases/latest")
+			.then((response) => {
+				return response.data;
+			});
+
 		const echoes = {
 			version: getVersion(),
-			latestVersion: "1.0.0",
+			latestRelease: latestRelease.tag_name,
+			needsUpdate: semver.gt(latestRelease.tag_name, getVersion()),
 			nodeVersion: process.version,
+			latestReleaseBody: latestRelease.body,
 		};
 
 		const database = {
