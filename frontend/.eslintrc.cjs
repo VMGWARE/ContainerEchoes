@@ -48,9 +48,6 @@ module.exports = {
     // Enforce consistent spacing inside braces of object (Already present in TypeScript)
     'object-curly-spacing': ['error', 'always'],
 
-    // Enforce camelCase naming convention
-    'camelcase': 'error',
-
     // Disable max-len
     'max-len': 'off',
 
@@ -135,7 +132,8 @@ module.exports = {
 
     // ESLint plugin vue
     'vue/block-tag-newline': 'error',
-    'vue/component-api-style': 'error',
+
+    // 'vue/component-api-style': 'error',
     'vue/component-name-in-template-casing': ['error', 'PascalCase', { registeredComponentsOnly: false, ignores: ['/^swiper-/'] }],
     'vue/custom-event-name-casing': ['error', 'camelCase', {
       ignores: [
@@ -161,7 +159,8 @@ module.exports = {
     'vue/prefer-separate-static-class': 'error',
     'vue/prefer-true-attribute-shorthand': 'error',
     'vue/v-on-function-call': 'error',
-    'vue/no-restricted-class': ['error', '/^(p|m)(l|r)-/'],
+
+    // 'vue/no-restricted-class': ['error', '/^(p|m)(l|r)-/'],
     'vue/valid-v-slot': ['error', {
       allowModifiers: true,
     }],
