@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-25
+## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-28
 
 ### ❤️ Thanks to all contributors! ❤️
 
@@ -13,6 +13,7 @@
 
 ### 📈 Enhancement
 
+- Comprehensive Application Update: Enhancements, Refactoring, and New Features [[#36](https://github.com/VMGWARE/ContainerEchoes/pull/36)]
 - Switch name to server and build server image [[#30](https://github.com/VMGWARE/ContainerEchoes/pull/30)]
 - Switch to vuetify UI [[#28](https://github.com/VMGWARE/ContainerEchoes/pull/28)]
 - Update agent to use CLI flags along with new version of the logger [[#22](https://github.com/VMGWARE/ContainerEchoes/pull/22)]
