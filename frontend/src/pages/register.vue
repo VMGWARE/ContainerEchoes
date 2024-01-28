@@ -14,14 +14,14 @@
             height="150px"
             width="150px"
             style="background-color: white; border-radius: 5px; margin-bottom: 10px"
-          />
+          >
         </VCardTitle>
       </VCardItem>
 
       <VCardText>
         <VForm
-          @submit.prevent="() => {}"
           v-model="valid"
+          @submit.prevent="() => {}"
         >
           <VRow>
             <!-- name -->
@@ -55,29 +55,31 @@
                 placeholder="············"
                 :type="showPassword ? 'text' : 'password'"
                 :append-inner-icon="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"
-                @click:append-inner="showPassword = !showPassword"
                 :rules="passwordRules"
                 required
+                @click:append-inner="showPassword = !showPassword"
               />
 
-              <!-- <div class="d-flex align-center mt-1 mb-4">
+              <!--
+                <div class="d-flex align-center mt-1 mb-4">
                 <VCheckbox
-                  id="privacy-policy"
-                  v-model="form.privacyPolicies"
-                  inline
+                id="privacy-policy"
+                v-model="form.privacyPolicies"
+                inline
                 />
                 <VLabel
-                  for="privacy-policy"
-                  style="opacity: 1"
+                for="privacy-policy"
+                style="opacity: 1"
                 >
-                  <span class="me-1">I agree to</span>
-                  <a
-                    href="javascript:void(0)"
-                    class="text-primary"
-                    >privacy policy & terms</a
-                  >
+                <span class="me-1">I agree to</span>
+                <a
+                href="javascript:void(0)"
+                class="text-primary"
+                >privacy policy & terms</a
+                >
                 </VLabel>
-              </div> -->
+                </div> 
+              -->
             </VCol>
 
             <!-- confirm password -->
@@ -88,25 +90,25 @@
                 placeholder="············"
                 :type="showPassword ? 'text' : 'password'"
                 :append-inner-icon="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"
-                @click:append-inner="showPassword = !showPassword"
                 :rules="passwordRules"
                 required
+                @click:append-inner="showPassword = !showPassword"
               />
 
               <VBtn
                 block
                 color="primary"
                 :disabled="!valid || processing"
-                @click="register"
                 class="mt-4"
+                @click="register"
               >
-                <v-progress-circular
+                <VProgressCircular
+                  v-if="processing"
                   indeterminate
                   color="primary"
                   class="mr-2"
                   size="20"
-                  v-if="processing"
-                ></v-progress-circular>
+                />
                 Sign up
               </VBtn>
             </VCol>
@@ -139,10 +141,20 @@ import authV1Tree2 from '@images/pages/auth-v1-tree-2.png'
 import authV1Tree from '@images/pages/auth-v1-tree.png'
 import axios from 'axios'
 import { useToast } from 'vue-toastification'
+
 const toast = useToast()
 
 export default {
   title: 'Register',
+  setup() {
+    const vuetifyTheme = useTheme()
+
+    return {
+      vuetifyTheme,
+      authV1Tree,
+      authV1Tree2,
+    }
+  },
   data() {
     return {
       valid: false,
@@ -153,10 +165,12 @@ export default {
       showPassword: false,
       nameRules: [
         v => !!v || 'Name is required',
+
         // (v) => (v && v.length >= 3) || "Name must be at least 3 characters",
       ],
       emailRules: [
         v => !!v || 'Email is required',
+
         // (v) => (v && v.length >= 3) || "Email must be at least 3 characters",
       ],
       passwordRules: [
@@ -184,6 +198,7 @@ export default {
             password: this.password,
             password_confirmation: this.confirmPassword,
           })
+
           var resp = response.data
 
           if (resp.code != 201) {
@@ -207,15 +222,6 @@ export default {
         this.processing = false
       }
     },
-  },
-  setup() {
-    const vuetifyTheme = useTheme()
-
-    return {
-      vuetifyTheme,
-      authV1Tree,
-      authV1Tree2,
-    }
   },
 }
 </script>

@@ -1,5 +1,6 @@
 import Toast from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
+
 const ToastOptions = {
   position: 'bottom-right',
   timeout: 3000,
@@ -9,6 +10,7 @@ const ToastOptions = {
   draggable: true,
   draggablePercent: 0.7,
 }
+
 export default function (app) {
   app.use(Toast, ToastOptions)
 }

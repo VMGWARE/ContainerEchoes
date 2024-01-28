@@ -1,124 +1,132 @@
 <template>
-  <v-row
+  <VRow
     align="center"
     justify="center"
   >
-    <v-col>
-      <v-row>
+    <VCol>
+      <VRow>
         <!-- Echoes Section -->
-        <v-col
+        <VCol
           cols="12"
           md="6"
         >
-          <v-card
+          <VCard
             class="pa-3"
             outlined
             tile
           >
-            <v-card-title class="headline">Container Echoes</v-card-title>
-            <v-list>
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title><b>Current Version</b></v-list-item-title>
-                  <v-list-item-subtitle>{{ data.echoes.version }}</v-list-item-subtitle>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title><b>Latest Version</b></v-list-item-title>
-                  <v-list-item-subtitle>{{ data.echoes.latestRelease }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-action
-                  class="mt-5"
+            <VCardTitle class="headline">
+              Container Echoes
+            </VCardTitle>
+            <VList>
+              <VListItem>
+                <VListItemContent>
+                  <VListItemTitle><b>Current Version</b></VListItemTitle>
+                  <VListItemSubtitle>{{ data.echoes.version }}</VListItemSubtitle>
+                </VListItemContent>
+              </VListItem>
+              <VListItem>
+                <VListItemContent>
+                  <VListItemTitle><b>Latest Version</b></VListItemTitle>
+                  <VListItemSubtitle>{{ data.echoes.latestRelease }}</VListItemSubtitle>
+                </VListItemContent>
+                <VListItemAction
                   v-if="data.echoes.needsUpdate"
+                  class="mt-5"
                 >
-                  <v-chip :color="data.echoes.needsUpdate ? 'red' : 'green'">
+                  <VChip :color="data.echoes.needsUpdate ? 'red' : 'green'">
                     {{ data.echoes.needsUpdate ? 'Update Required' : 'Updated' }}
-                  </v-chip>
-                </v-list-item-action>
-              </v-list-item>
-            </v-list>
-          </v-card>
-        </v-col>
+                  </VChip>
+                </VListItemAction>
+              </VListItem>
+            </VList>
+          </VCard>
+        </VCol>
 
         <!-- Node.js and Database Section -->
-        <v-col
+        <VCol
           cols="12"
           md="6"
         >
-          <v-card
+          <VCard
             class="pa-3"
             outlined
             tile
           >
-            <v-card-title class="headline">Node.js</v-card-title>
-            <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title><b>Version:</b>{{ data.echoes.nodeVersion }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
+            <VCardTitle class="headline">
+              Node.js
+            </VCardTitle>
+            <VListItem>
+              <VListItemContent>
+                <VListItemTitle><b>Version:</b>{{ data.echoes.nodeVersion }}</VListItemTitle>
+              </VListItemContent>
+            </VListItem>
 
-            <v-card-title class="headline">Database</v-card-title>
-            <v-list-item>
-              <v-list-item-content>
-                <v-list-item-title><b>Version:</b> {{ data.database.version }}</v-list-item-title>
-                <v-list-item-content
-                  ><b>Type:</b> {{ data.database.type === 'mysql2' ? 'MySQL' : 'PostgreSQL' }}</v-list-item-content
-                >
-              </v-list-item-content>
-            </v-list-item>
-          </v-card>
-        </v-col>
-      </v-row>
+            <VCardTitle class="headline">
+              Database
+            </VCardTitle>
+            <VListItem>
+              <VListItemContent>
+                <VListItemTitle><b>Version:</b> {{ data.database.version }}</VListItemTitle>
+                <VListItemContent>
+                  <b>Type:</b> {{ data.database.type === 'mysql2' ? 'MySQL' : 'PostgreSQL' }}
+                </VListItemContent>
+              </VListItemContent>
+            </VListItem>
+          </VCard>
+        </VCol>
+      </VRow>
 
-      <v-row>
+      <VRow>
         <!-- Host Information Section -->
-        <v-col cols="12">
-          <v-card
+        <VCol cols="12">
+          <VCard
             class="pa-3"
             outlined
             tile
           >
-            <v-card-title class="headline">Host Information</v-card-title>
-            <v-list>
-              <v-list-item-group>
-                <v-list-item>
-                  <v-list-item-content>
-                    <v-list-item-title><b>Operating System</b></v-list-item-title>
-                    <v-list-item-subtitle>{{ data.host.os }}</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-content>
-                    <v-list-item-title><b>Hostname</b></v-list-item-title>
-                    <v-list-item-subtitle>{{ data.host.hostname }}</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-content>
-                    <v-list-item-title><b>CPU Cores</b></v-list-item-title>
-                    <v-list-item-subtitle>{{ data.host.cpuCores }}</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-content>
-                    <v-list-item-title><b>Total RAM</b></v-list-item-title>
-                    <v-list-item-subtitle>{{ formatBytes(data.host.totalRam) }}</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-content>
-                    <v-list-item-title><b>Working Directory</b></v-list-item-title>
-                    <v-list-item-subtitle>{{ data.host.workingDir }}</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-col>
-  </v-row>
+            <VCardTitle class="headline">
+              Host Information
+            </VCardTitle>
+            <VList>
+              <VListItemGroup>
+                <VListItem>
+                  <VListItemContent>
+                    <VListItemTitle><b>Operating System</b></VListItemTitle>
+                    <VListItemSubtitle>{{ data.host.os }}</VListItemSubtitle>
+                  </VListItemContent>
+                </VListItem>
+                <VListItem>
+                  <VListItemContent>
+                    <VListItemTitle><b>Hostname</b></VListItemTitle>
+                    <VListItemSubtitle>{{ data.host.hostname }}</VListItemSubtitle>
+                  </VListItemContent>
+                </VListItem>
+                <VListItem>
+                  <VListItemContent>
+                    <VListItemTitle><b>CPU Cores</b></VListItemTitle>
+                    <VListItemSubtitle>{{ data.host.cpuCores }}</VListItemSubtitle>
+                  </VListItemContent>
+                </VListItem>
+                <VListItem>
+                  <VListItemContent>
+                    <VListItemTitle><b>Total RAM</b></VListItemTitle>
+                    <VListItemSubtitle>{{ formatBytes(data.host.totalRam) }}</VListItemSubtitle>
+                  </VListItemContent>
+                </VListItem>
+                <VListItem>
+                  <VListItemContent>
+                    <VListItemTitle><b>Working Directory</b></VListItemTitle>
+                    <VListItemSubtitle>{{ data.host.workingDir }}</VListItemSubtitle>
+                  </VListItemContent>
+                </VListItem>
+              </VListItemGroup>
+            </VList>
+          </VCard>
+        </VCol>
+      </VRow>
+    </VCol>
+  </VRow>
 </template>
 
 <script>
@@ -151,6 +159,12 @@ export default {
       processing: true,
     }
   },
+  beforeMount() {
+    // Fetch data from API
+    this.getSystemInfo().then(data => {
+      this.data = data
+    })
+  },
   methods: {
     formatBytes(bytes, decimals = 2) {
       if (bytes === 0) return '0 Bytes'
@@ -168,20 +182,16 @@ export default {
     },
     async getSystemInfo() {
       this.processing = true
+
       // Add the Authorization header
       axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`
 
       const response = await axios.get('/general/system-information')
       var resp = response.data.data
       this.processing = false
+      
       return resp
     },
-  },
-  beforeMount() {
-    // Fetch data from API
-    this.getSystemInfo().then(data => {
-      this.data = data
-    })
   },
 }
 </script>

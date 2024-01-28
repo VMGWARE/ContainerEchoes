@@ -68,9 +68,11 @@ const handleNavScroll = evt => {
             height="30px"
             width="30px"
             style="background-color: white; border-radius: 5px"
-          />
+          >
 
-          <h1 class="font-weight-medium leading-normal text-xl text-uppercase">Container Echoes</h1>
+          <h1 class="font-weight-medium leading-normal text-xl text-uppercase">
+            Container Echoes
+          </h1>
         </RouterLink>
       </slot>
     </div>

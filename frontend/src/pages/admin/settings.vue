@@ -1,200 +1,210 @@
 <template>
-  <v-row
+  <VRow
     align="center"
     justify="center"
   >
-    <v-col>
-      <v-row>
+    <VCol>
+      <VRow>
         <!-- Email Settings Section -->
-        <v-col
+        <VCol
           cols="12"
           md="6"
         >
-          <v-card
+          <VCard
             class="pa-4"
             outlined
             tile
           >
-            <v-card-title class="headline mb-3">Configuration</v-card-title>
+            <VCardTitle class="headline mb-3">
+              Configuration
+            </VCardTitle>
 
             <!-- Sender Section -->
-            <v-subheader>Sender</v-subheader>
+            <VSubheader>Sender</VSubheader>
 
             <!-- Sender Name -->
             <VCol cols="12">
-              <v-text-field
-                label="Sender Name"
+              <VTextField
                 v-model="data.email.fromName"
+                label="Sender Name"
                 outlined
                 dense
-              ></v-text-field>
+              />
             </VCol>
 
             <!-- Sender Email -->
             <VCol cols="12">
-              <v-text-field
-                label="Sender Email"
+              <VTextField
                 v-model="data.email.fromAddress"
+                label="Sender Email"
                 outlined
                 dense
-              ></v-text-field>
+              />
             </VCol>
 
             <!-- SMTP Settings Section -->
-            <v-subheader>SMTP Settings</v-subheader>
+            <VSubheader>SMTP Settings</VSubheader>
 
             <!-- SMTP Host -->
             <VCol cols="12">
-              <v-text-field
-                label="Host"
+              <VTextField
                 v-model="data.email.host"
+                label="Host"
                 outlined
                 dense
-              ></v-text-field>
+              />
             </VCol>
 
             <!-- SMTP Port -->
             <VCol cols="12">
-              <v-text-field
-                label="Port"
+              <VTextField
                 v-model="data.email.port"
+                label="Port"
                 type="number"
                 outlined
                 dense
                 hint="Usually 465 (recommended), 587 or 25."
                 persistent-hint
-              ></v-text-field>
+              />
             </VCol>
 
             <!-- Authentication -->
 
             <!-- SMTP Username -->
             <VCol cols="12">
-              <v-text-field
-                label="Username"
+              <VTextField
                 v-model="data.email.user"
+                label="Username"
                 outlined
                 dense
-              ></v-text-field>
+              />
             </VCol>
 
             <!-- SMTP Password -->
             <VCol cols="12">
-              <v-text-field
-                label="Password"
+              <VTextField
                 v-model="data.email.pass"
+                label="Password"
                 :type="showPassword ? 'text' : 'password'"
                 outlined
                 dense
                 :append-inner-icon="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"
                 @click:append-inner="showPassword = !showPassword"
-              ></v-text-field>
+              />
             </VCol>
 
             <VCol cols="12">
-              <v-btn
+              <VBtn
                 color="primary"
                 @click="updateEmailSettings"
-                >Update Settings</v-btn
-              ></VCol
-            >
-          </v-card>
-        </v-col>
+              >
+                Update Settings
+              </VBtn>
+            </VCol>
+          </VCard>
+        </VCol>
 
         <!-- RSA Keys Section -->
-        <v-col
+        <VCol
           cols="12"
           md="6"
         >
-          <v-card
+          <VCard
             class="pa-3"
             outlined
             tile
           >
-            <v-card-title class="headline">RSA Keys</v-card-title>
-            <v-form
+            <VCardTitle class="headline">
+              RSA Keys
+            </VCardTitle>
+            <VForm
               ref="rsaForm"
               @submit.prevent="updateRSAKeys"
             >
               <VCol cols="12">
-                <v-textarea
-                  label="Private Key"
+                <VTextarea
                   v-model="data.rsa.privateKey"
+                  label="Private Key"
                   outlined
                   dense
-                ></v-textarea
-              ></VCol>
+                />
+              </VCol>
 
               <VCol cols="12">
-                <v-textarea
-                  label="Public Key"
+                <VTextarea
                   v-model="data.rsa.publicKey"
+                  label="Public Key"
                   outlined
                   dense
-                ></v-textarea
-              ></VCol>
+                />
+              </VCol>
 
               <VCol cols="12">
-                <v-btn
+                <VBtn
                   color="primary"
                   type="submit"
-                  >Update RSA Keys</v-btn
-                ></VCol
-              >
-            </v-form>
-          </v-card>
-        </v-col>
-      </v-row>
+                >
+                  Update RSA Keys
+                </VBtn>
+              </VCol>
+            </VForm>
+          </VCard>
+        </VCol>
+      </VRow>
 
-      <v-row>
+      <VRow>
         <!-- Exceptionless Settings Section -->
-        <v-col cols="12">
-          <v-card
+        <VCol cols="12">
+          <VCard
             class="pa-3"
             outlined
             tile
           >
-            <v-card-title class="headline">Exceptionless Settings</v-card-title>
-            <v-form
+            <VCardTitle class="headline">
+              Exceptionless Settings
+            </VCardTitle>
+            <VForm
               ref="exceptionlessForm"
               @submit.prevent="updateExceptionlessSettings"
             >
               <VCol cols="12">
-                <v-text-field
-                  label="API Key"
+                <VTextField
                   v-model="data.exceptionless.apiKey"
+                  label="API Key"
                   outlined
                   dense
-                ></v-text-field
-              ></VCol>
+                />
+              </VCol>
 
               <VCol cols="12">
-                <v-text-field
-                  label="Server URL"
+                <VTextField
                   v-model="data.exceptionless.serverUrl"
+                  label="Server URL"
                   outlined
                   dense
-                ></v-text-field
-              ></VCol>
+                />
+              </VCol>
 
               <VCol cols="12">
-                <v-btn
+                <VBtn
                   color="primary"
                   type="submit"
-                  >Update Exceptionless Settings</v-btn
-                ></VCol
-              >
-            </v-form>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-col>
-  </v-row>
+                >
+                  Update Exceptionless Settings
+                </VBtn>
+              </VCol>
+            </VForm>
+          </VCard>
+        </VCol>
+      </VRow>
+    </VCol>
+  </VRow>
 </template>
 
 <script>
 import axios from 'axios'
 import { useToast } from 'vue-toastification'
+
 const toast = useToast()
 
 export default {
@@ -222,6 +232,9 @@ export default {
       showPassword: false,
       processing: false,
     }
+  },
+  mounted() {
+    this.getSettings()
   },
   methods: {
     async updateEmailSettings() {
@@ -320,12 +333,14 @@ export default {
     },
     async getSettings() {
       this.processing = true
+
       // Add the Authorization header
       axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`
 
       try {
         const response = await axios.get('/admin/settings')
         const settings = response.data.data
+
         this.processing = false
 
         // Dynamically update settings
@@ -352,9 +367,6 @@ export default {
         currentLevel[path[path.length - 1]] = setting.value
       })
     },
-  },
-  mounted() {
-    this.getSettings()
   },
 }
 </script>

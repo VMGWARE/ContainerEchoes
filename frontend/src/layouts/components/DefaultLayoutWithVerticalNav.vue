@@ -20,19 +20,21 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
         </IconBtn>
 
         <!-- 👉 Search -->
-        <!-- <div
+        <!--
+          <div
           class="d-flex align-center cursor-pointer"
           style="user-select: none;"
-        >
+          >
           <IconBtn>
-            <VIcon icon="ri-search-line" />
+          <VIcon icon="ri-search-line" />
           </IconBtn>
 
           <span class="d-none d-md-flex align-center text-disabled">
-            <span class="me-3">Search</span>
-            <span class="meta-key">&#8984;K</span>
+          <span class="me-3">Search</span>
+          <span class="meta-key">&#8984;K</span>
           </span>
-        </div> -->
+          </div> 
+        -->
 
         <VSpacer />
 
@@ -44,10 +46,11 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
         >
           <VIcon icon="ri-github-fill" />
         </IconBtn>
-<!-- 
-        <IconBtn class="me-2">
+        <!-- 
+          <IconBtn class="me-2">
           <VIcon icon="ri-notification-line" />
-        </IconBtn> -->
+          </IconBtn> 
+        -->
 
         <NavbarThemeSwitcher class="me-2" />
 
@@ -66,9 +69,11 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
           height="30px"
           width="30px"
           style="background-color: white; border-radius: 5px"
-        />
+        >
 
-        <h1 class="font-weight-medium leading-normal text-xl text-uppercase">Echoes</h1>
+        <h1 class="font-weight-medium leading-normal text-xl text-uppercase">
+          Echoes
+        </h1>
       </RouterLink>
 
       <IconBtn

@@ -1,10 +1,12 @@
 <script>
 import { useUserStore } from '@/store/user'
 import md5 from 'md5'
+
 const userStore = useUserStore()
 const user = userStore.user
 import axios from 'axios'
 import { useToast } from 'vue-toastification'
+
 const toast = useToast()
 
 export default {
@@ -32,6 +34,7 @@ export default {
     },
     gravatar(email) {
       const hash = md5(email.trim().toLowerCase())
+      
       return `https://www.gravatar.com/avatar/${hash}`
     },
     async update() {
@@ -47,6 +50,7 @@ export default {
             name: this.userDataLocal.name,
             email: this.userDataLocal.email,
           })
+
           var resp = response.data
 
           if (resp.code != 200) {
@@ -93,9 +97,9 @@ export default {
         <VCardText>
           <!-- 👉 Form -->
           <VForm
+            v-model="valid"
             class="mt-6"
             @submit.prevent="() => {}"
-            v-model="this.valid"
           >
             <VRow>
               <!-- Name -->
@@ -133,24 +137,24 @@ export default {
                 class="d-flex flex-wrap gap-4"
               >
                 <VBtn
-                  :disabled="!this.valid || this.processing"
-                  @click="this.update"
+                  :disabled="!valid || processing"
+                  @click="update"
                 >
-                  <v-progress-circular
+                  <VProgressCircular
+                    v-if="processing"
                     indeterminate
                     color="primary"
                     class="mr-2"
                     size="20"
-                    v-if="processing"
                   />
-                  Save changes</VBtn
-                >
+                  Save changes
+                </VBtn>
 
                 <VBtn
                   color="secondary"
                   variant="outlined"
                   type="reset"
-                  @click.prevent="this.resetForm"
+                  @click.prevent="resetForm"
                 >
                   Reset
                 </VBtn>
@@ -161,25 +165,27 @@ export default {
       </VCard>
     </VCol>
 
-    <!-- <VCol cols="12">
+    <!--
+      <VCol cols="12">
       <VCard title="Delete Account">
-        <VCardText>
-          <div>
-            <VCheckbox
-              v-model="isAccountDeleted"
-              label="I confirm my account deletion"
-            />
-          </div>
+      <VCardText>
+      <div>
+      <VCheckbox
+      v-model="isAccountDeleted"
+      label="I confirm my account deletion"
+      />
+      </div>
 
-          <VBtn
-            :disabled="!isAccountDeleted"
-            color="error"
-            class="mt-3"
-          >
-            Delete Account
-          </VBtn>
-        </VCardText>
+      <VBtn
+      :disabled="!isAccountDeleted"
+      color="error"
+      class="mt-3"
+      >
+      Delete Account
+      </VBtn>
+      </VCardText>
       </VCard>
-    </VCol> -->
+      </VCol> 
+    -->
   </VRow>
 </template>

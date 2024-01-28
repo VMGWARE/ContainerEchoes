@@ -15,6 +15,7 @@ const handleAuthRedirection = (to, from, next) => {
 
   if (!isLoggedIn && !publicPaths.includes(to.path)) {
     console.log('Redirecting to login')
+    
     return next({
       path: '/login',
       query: { redirect: to.fullPath },
@@ -23,6 +24,7 @@ const handleAuthRedirection = (to, from, next) => {
 
   if (isLoggedIn && publicPaths.includes(to.path)) {
     console.log('Redirecting to home')
+    
     return next({ path: '/' })
   }
 

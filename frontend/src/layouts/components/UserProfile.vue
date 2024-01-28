@@ -1,14 +1,17 @@
 <script setup>
 import { useUserStore } from '@/store/user'
 import { useRouter } from 'vue-router'
+
 const router = useRouter()
 import md5 from 'md5'
+
 const userStore = useUserStore()
 const user = userStore.user
 
 // Generate the gravatar URL from the user's email
 const gravatar = email => {
   const hash = md5(email.trim().toLowerCase())
+  
   return `https://www.gravatar.com/avatar/${hash}`
 }
 
@@ -47,7 +50,9 @@ const logout = () => {
             </VListItemAction>
           </template>
 
-          <VListItemTitle class="font-weight-semibold"> {{ user.name }} </VListItemTitle>
+          <VListItemTitle class="font-weight-semibold">
+            {{ user.name }}
+          </VListItemTitle>
           <VListItemSubtitle>
             {{ user.superuser ? 'Superuser' : 'User' }}
           </VListItemSubtitle>

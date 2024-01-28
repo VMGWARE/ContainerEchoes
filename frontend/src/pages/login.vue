@@ -7,10 +7,20 @@ import authV1Tree from '@images/pages/auth-v1-tree.png'
 import { useUserStore } from '@/store/user'
 import axios from 'axios'
 import { useToast } from 'vue-toastification'
+
 const toast = useToast()
 
 export default {
   title: 'Login',
+  setup() {
+    const vuetifyTheme = useTheme()
+
+    return {
+      vuetifyTheme,
+      authV1Tree,
+      authV1Tree2,
+    }
+  },
   data() {
     return {
       valid: false,
@@ -19,6 +29,7 @@ export default {
       showPassword: false,
       emailRules: [
         v => !!v || 'Email is required',
+
         // (v) => (v && v.length >= 3) || "Email must be at least 3 characters",
       ],
       passwordRules: [
@@ -32,13 +43,18 @@ export default {
     redirectMessage() {
       let urlParams = new URLSearchParams(window.location.search)
       let redirect = urlParams.get('redirect')
+
       // Remove harmful characters from the redirect URL
       redirect = redirect ? redirect.replace(/<|>/g, '') : null
+
+
       // Encode the URL to safely display it to the user
       const sanitizedRedirect = redirect ? encodeURIComponent(redirect) : null
       let readableRedirect = sanitizedRedirect
+
       // Replace the encoded / with a slash
       readableRedirect = readableRedirect ? readableRedirect.replace(/%2F/g, '/') : null
+      
       return sanitizedRedirect
         ? `You will be redirected to <a href="${sanitizedRedirect}">${readableRedirect}</a> upon successful login.`
         : ''
@@ -58,6 +74,7 @@ export default {
             email: this.email,
             password: this.password,
           })
+
           var resp = response.data
 
           if (resp.code != 200) {
@@ -84,6 +101,7 @@ export default {
 
             // Set the token cookie for aslong as the token is valid, default is 1 day
             const date = new Date()
+
             date.setDate(date.getDate() + 1)
             document.cookie = `token=${token}; expires=${date.toUTCString()};sameSite=strict;path=/`
 
@@ -108,15 +126,6 @@ export default {
       }
     },
   },
-  setup() {
-    const vuetifyTheme = useTheme()
-
-    return {
-      vuetifyTheme,
-      authV1Tree,
-      authV1Tree2,
-    }
-  },
 }
 </script>
 
@@ -136,26 +145,30 @@ export default {
             height="150px"
             width="150px"
             style="background-color: white; border-radius: 5px; margin-bottom: 10px"
-          />
+          >
         </VCardTitle>
       </VCardItem>
 
       <VCardText class="pt-2">
-        <h5 class="text-h5 font-weight-semibold mb-1">Welcome to Container Echoes! 👋🏻</h5>
-        <p class="mb-0">Please sign-in to your account and start the adventure</p>
+        <h5 class="text-h5 font-weight-semibold mb-1">
+          Welcome to Container Echoes! 👋🏻
+        </h5>
+        <p class="mb-0">
+          Please sign-in to your account and start the adventure
+        </p>
       </VCardText>
 
       <VCardText>
         <VForm
-          @submit.prevent="() => {}"
           v-model="valid"
+          @submit.prevent="() => {}"
         >
           <VRow>
             <!-- email -->
             <VCol cols="12">
               <VTextField
-                label="Email"
                 v-model="email"
+                label="Email"
                 :rules="emailRules"
                 required
               />
@@ -169,41 +182,43 @@ export default {
                 placeholder="············"
                 :type="showPassword ? 'text' : 'password'"
                 :append-inner-icon="showPassword ? 'ri-eye-off-line' : 'ri-eye-line'"
-                @click:append-inner="showPassword = !showPassword"
                 :rules="passwordRules"
                 required
+                @click:append-inner="showPassword = !showPassword"
               />
 
               <!-- remember me checkbox -->
-              <!-- <div class="d-flex align-center justify-space-between flex-wrap mt-1 mb-4">
+              <!--
+                <div class="d-flex align-center justify-space-between flex-wrap mt-1 mb-4">
                 <VCheckbox
-                  v-model="form.remember"
-                  label="Remember me"
+                v-model="form.remember"
+                label="Remember me"
                 />
 
                 <a
-                  class="ms-2 mb-1"
-                  href="javascript:void(0)"
+                class="ms-2 mb-1"
+                href="javascript:void(0)"
                 >
-                  Forgot Password?
+                Forgot Password?
                 </a>
-              </div> -->
+                </div> 
+              -->
 
               <!-- login button -->
               <VBtn
                 block
                 color="primary"
                 :disabled="!valid || processing"
-                @click="login"
                 class="mt-4"
+                @click="login"
               >
-                <v-progress-circular
+                <VProgressCircular
+                  v-if="processing"
                   indeterminate
                   color="primary"
                   class="mr-2"
                   size="20"
-                  v-if="processing"
-                ></v-progress-circular>
+                />
                 Login
               </VBtn>
             </VCol>
@@ -223,9 +238,9 @@ export default {
             </VCol>
 
             <VCol
+              v-if="redirectMessage"
               cols="12"
               class="d-flex align-center"
-              v-if="redirectMessage"
             >
               <VDivider />
               <VDivider />

@@ -1,6 +1,7 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import AccountSettingsAccount from '@/views/pages/my-account/AccountSettingsAccount.vue'
+
 // import AccountSettingsNotification from '@/views/pages/my-account/AccountSettingsNotification.vue'
 import AccountSettingsSecurity from '@/views/pages/my-account/AccountSettingsSecurity.vue'
 
@@ -19,6 +20,7 @@ const tabs = [
     icon: 'ri-lock-line',
     tab: 'security',
   },
+
   // {
   //   title: 'Notifications',
   //   icon: 'ri-notification-3-line',
@@ -63,9 +65,11 @@ const tabs = [
       </VWindowItem>
 
       <!-- Notification -->
-      <!-- <VWindowItem value="notification">
+      <!--
+        <VWindowItem value="notification">
         <AccountSettingsNotification />
-      </VWindowItem> -->
+        </VWindowItem> 
+      -->
     </VWindow>
   </div>
 </template>

@@ -17,9 +17,33 @@ export default {
       tokenRefreshTimer: null,
     }
   },
+  watch: {
+    $route() {
+      this.check_token()
+    },
+    useUserStore: {
+      handler() {
+        this.check_token()
+      },
+      deep: true,
+    },
+  },
+  mounted() {
+    this.check_token()
+  },
+  unmounted() {
+    console.log('Remove token refresh timer')
+
+    const timerId = localStorage.getItem('tokenRefreshTimer')
+    if (timerId) {
+      clearTimeout(timerId)
+      localStorage.removeItem('tokenRefreshTimer')
+    }
+  },
   methods: {
     check_token() {
       console.log('Checking JWT token')
+
       const token = useUserStore().token
       if (!token || token == null || !useUserStore().user || useUserStore().user == null) {
         console.log('No token or user found')
@@ -29,6 +53,7 @@ export default {
         if (useAppStore().publicRoutes.includes(redirect)) {
           console.log('Not redirecting to login page')
           this.isLoading = false
+          
           return
         }
 
@@ -38,18 +63,22 @@ export default {
         }
 
         this.isLoading = false
+
         // Redirect to login page
         this.$router.push(redirect)
+        
         return
       }
       let exp
       try {
         const { exp: fixAttemptExp } = jwtDecode(token)
+
         exp = fixAttemptExp
       } catch (e) {
         console.log('Invalid token')
         this.isLoading = false
         this.logout()
+        
         return
       }
       console.log('Your JWT is', exp - Date.now() / 1000, 'seconds to expiry')
@@ -58,6 +87,7 @@ export default {
         clearTimeout(this.tokenRefreshTimer)
         this.isLoading = false
         this.logout()
+        
         return
       }
       if (exp - Date.now() / 1000 < 600 && exp - Date.now() / 1000 > 0) {
@@ -105,28 +135,6 @@ export default {
       // Redirect to login page
       this.isLoading = false
       this.$router.push('/login')
-    },
-  },
-  mounted() {
-    this.check_token()
-  },
-  unmounted() {
-    console.log('Remove token refresh timer')
-    const timerId = localStorage.getItem('tokenRefreshTimer')
-    if (timerId) {
-      clearTimeout(timerId)
-      localStorage.removeItem('tokenRefreshTimer')
-    }
-  },
-  watch: {
-    $route() {
-      this.check_token()
-    },
-    useUserStore: {
-      handler() {
-        this.check_token()
-      },
-      deep: true,
     },
   },
 }

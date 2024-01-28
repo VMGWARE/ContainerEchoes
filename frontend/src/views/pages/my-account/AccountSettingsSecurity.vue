@@ -77,7 +77,9 @@ const passwordRequirements = [
 
           <!-- 👉 Password Requirements -->
           <VCardText>
-            <p class="text-base font-weight-medium mt-2">Password Requirements:</p>
+            <p class="text-base font-weight-medium mt-2">
+              Password Requirements:
+            </p>
 
             <ul class="d-flex flex-column gap-y-3">
               <li
@@ -118,7 +120,9 @@ const passwordRequirements = [
     <VCol cols="12">
       <VCard title="Multi-factor authentication">
         <VCardText>
-          <p class="font-weight-semibold">Multi factor authentication is not enabled yet.</p>
+          <p class="font-weight-semibold">
+            Multi factor authentication is not enabled yet.
+          </p>
           <p>
             Multi-factor authentication adds an additional layer of security to your account by requiring more than just
             a password to log in. It uses your phone to provide a second layer of security to your account.
@@ -127,8 +131,7 @@ const passwordRequirements = [
               target="_blank"
               rel="noopener noreferrer"
               class="text-decoration-none"
-              >Learn more.</a
-            >
+            >Learn more.</a>
           </p>
 
           <VBtn> Enable two-factor authentication </VBtn>
