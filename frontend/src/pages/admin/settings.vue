@@ -99,83 +99,6 @@
               ></VCol
             >
           </v-card>
-
-          <!-- <v-card
-            class="pa-3"
-            outlined
-            tile
-          >
-            <v-card-title class="headline">Email Settings</v-card-title>
-            <v-form
-              ref="emailForm"
-              @submit.prevent="updateEmailSettings"
-            >
-              <VRow>
-                <VCol cols="12">
-                  <v-text-field
-                    label="Host"
-                    v-model="data.email.host"
-                    outlined
-                    dense
-                  ></v-text-field>
-                </VCol>
-
-                <VCol cols="12">
-                  <v-text-field
-                    label="Port"
-                    v-model="data.email.port"
-                    outlined
-                    dense
-                  ></v-text-field>
-                </VCol>
-
-                <VCol cols="12">
-                  <v-text-field
-                    label="Username"
-                    v-model="data.email.user"
-                    outlined
-                    dense
-                  ></v-text-field>
-                </VCol>
-
-                <VCol cols="12">
-                  <v-text-field
-                    label="Password"
-                    v-model="data.email.pass"
-                    type="password"
-                    outlined
-                    dense
-                  ></v-text-field>
-                </VCol>
-
-                <VCol cols="12">
-                  <v-text-field
-                    label="From Address"
-                    v-model="data.email.fromAddress"
-                    outlined
-                    dense
-                  ></v-text-field>
-                </VCol>
-
-                <VCol cols="12">
-                  <v-text-field
-                    label="From Name"
-                    v-model="data.email.fromName"
-                    outlined
-                    dense
-                  ></v-text-field>
-                </VCol>
-
-                <VCol cols="12">
-                  <v-btn
-                    color="primary"
-                    type="submit"
-                    >Update Email Settings</v-btn
-                  >
-                </VCol>
-              </VRow>
-            </v-form>
-          </v-card> -->
         </v-col>
 
         <!-- RSA Keys Section -->
@@ -271,6 +194,8 @@
 
 <script>
 import axios from 'axios'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 
 export default {
   title: 'Settings - Admin',
@@ -300,13 +225,98 @@ export default {
   },
   methods: {
     async updateEmailSettings() {
-      // Logic to update email settings
+      this.processing = true
+
+      // Prepare the settings to be updated
+      const updatedSettings = {
+        'email.host': this.data.email.host,
+        'email.port': this.data.email.port,
+        'email.user': this.data.email.user,
+        'email.pass': this.data.email.pass,
+        'email.fromAddress': this.data.email.fromAddress,
+        'email.fromName': this.data.email.fromName,
+      }
+
+      try {
+        // Add the Authorization header
+        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`
+
+        // Send the PUT request to the backend
+        const response = await axios.put('/admin/settings', updatedSettings)
+
+        if (response.data.status === 'success') {
+          // Handle success
+          toast.success(response.data.message)
+        } else {
+          // Handle any other status
+          toast.error(response.data.message)
+        }
+      } catch (error) {
+        console.error('Failed to update settings:', error)
+        toast.error(error.message)
+      } finally {
+        this.processing = false
+      }
     },
     async updateRSAKeys() {
-      // Logic to update RSA keys
+      this.processing = true
+
+      // Prepare the settings to be updated
+      const updatedSettings = {
+        'rsa.privateKey': this.data.rsa.privateKey,
+        'rsa.publicKey': this.data.rsa.publicKey,
+      }
+
+      try {
+        // Add the Authorization header
+        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`
+
+        // Send the PUT request to the backend
+        const response = await axios.put('/admin/settings', updatedSettings)
+
+        if (response.data.status === 'success') {
+          // Handle success
+          toast.success(response.data.message)
+        } else {
+          // Handle any other status
+          toast.error(response.data.message)
+        }
+      } catch (error) {
+        console.error('Failed to update settings:', error)
+        toast.error(error.message)
+      } finally {
+        this.processing = false
+      }
     },
     async updateExceptionlessSettings() {
-      // Logic to update Exceptionless settings
+      this.processing = true
+
+      // Prepare the settings to be updated
+      const updatedSettings = {
+        'exceptionless.apiKey': this.data.exceptionless.apiKey,
+        'exceptionless.serverUrl': this.data.exceptionless.serverUrl,
+      }
+
+      try {
+        // Add the Authorization header
+        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`
+
+        // Send the PUT request to the backend
+        const response = await axios.put('/admin/settings', updatedSettings)
+
+        if (response.data.status === 'success') {
+          // Handle success
+          toast.success(response.data.message)
+        } else {
+          // Handle any other status
+          toast.error(response.data.message)
+        }
+      } catch (error) {
+        console.error('Failed to update settings:', error)
+        toast.error(error.message)
+      } finally {
+        this.processing = false
+      }
     },
     async getSettings() {
       this.processing = true
@@ -348,7 +358,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-/* Add any additional styling here */
-</style>

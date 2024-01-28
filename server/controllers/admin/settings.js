@@ -14,7 +14,7 @@ const {
 	standardResponse,
 } = require("../../utils/responses");
 // const AuditLog = require("@container-echoes/core/helpers/auditLog");
-// const config = require("@container-echoes/core/config").getInstance();
+const config = require("@container-echoes/core/config").getInstance();
 
 // Database
 const knex = require("@container-echoes/core/database");
@@ -116,18 +116,50 @@ async function getAll(req, res) {
 async function updateAll(req, res) {
 	try {
 		const updates = req.body;
-		const updatePromises = Object.keys(updates).map((key) => {
-			return knex("setting")
-				.where({ key })
-				.update({ value: updates[key], updatedAt: new Date() });
-		});
+		const keys = Object.keys(updates);
 
-		await Promise.all(updatePromises);
+		for (const key of keys) {
+			const exists = await knex("setting").where({ key }).first();
+
+			if (exists) {
+				// If we are setting the value to null, delete the setting
+				if (updates[key] == null || updates[key] === "") {
+					await knex("setting").where({ key }).delete();
+					continue;
+				} else {
+					// If the setting exists, update it
+					await knex("setting")
+						.where({ key })
+						.update({ value: updates[key], updatedAt: new Date() });
+				}
+			} else {
+				// If the setting value is null, skip it
+				if (!updates[key] || updates[key] == null) {
+					continue;
+				}
+
+				// if it is not in the list of allowed keys, skip it
+				if (!config.allowedSettings.includes(key)) {
+					continue;
+				}
+
+				// If the setting does not exist, insert it
+				await knex("setting").insert({
+					key,
+					value: updates[key],
+					createdAt: new Date(),
+					updatedAt: new Date(),
+				});
+			}
+		}
+
+		// Update the configuration
+		await config.getDatabaseConfiguration();
 
 		return standardResponse(res, "Successfully updated settings");
 	} catch (error) {
-		log.error("admin.settings.update", error);
-		return genericInternalServerError(res, error, "admin.settings.update");
+		log.error("admin.settings.updateAll", error);
+		return genericInternalServerError(res, error, "admin.settings.updateAll");
 	}
 }
 
