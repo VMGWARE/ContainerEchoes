@@ -25,18 +25,62 @@ class WebSocketMessageHandler {
 		const handlersPath = path.join(__dirname, "handlers");
 		fs.readdirSync(handlersPath).forEach((file) => {
 			if (file.endsWith(".js")) {
-				const HandlerClass = require(path.join(handlersPath, file));
+				try {
+					const HandlerClass = require(path.join(handlersPath, file));
 
-				// Only if the file name is not "messageHandlerBase"
-				if (HandlerClass.name === "MessageHandlerBase") {
-					return;
+					// Only if the file name is not "messageHandlerBase"
+					if (HandlerClass.name === "MessageHandlerBase") {
+						return;
+					}
+
+					// Check if it even exports a class
+					if (!HandlerClass.prototype) {
+						log.error(
+							"ws.loadHandlers",
+							`Handler file ${file} does not export a class. This handler will not be available.`
+						);
+						return;
+					}
+
+					const handlerInstance = new HandlerClass(this.webSocketManager);
+					const eventType = handlerInstance.getEventType();
+					this.handlers[eventType] = handlerInstance.handle.bind(handlerInstance);
+				} catch (err) {
+					if (err.code === "MODULE_NOT_FOUND") {
+						log.error("ws.loadHandlers", `Could not find handler file ${file}`);
+					}
+					if (err instanceof SyntaxError) {
+						log.error(
+							"ws.loadHandlers",
+							`Syntax error in handler file ${file}: ${err.message}`
+						);
+					}
+					if (err instanceof TypeError) {
+						log.error(
+							"ws.loadHandlers",
+							`Type error in handler file ${file}: ${err.message}`
+						);
+					} else {
+						log.error(
+							"ws.loadHandlers",
+							`Unknown error in handler file ${file}: ${err.message}`
+						);
+					}
+
+					log.warn(
+						"ws.loadHandlers",
+						`Failed to load handler file ${file}. This handler will not be available.`
+					);
 				}
-
-				const handlerInstance = new HandlerClass(this.webSocketManager);
-				const eventType = handlerInstance.getEventType();
-				this.handlers[eventType] = handlerInstance.handle.bind(handlerInstance);
+			} else {
+				log.warn(
+					"ws.loadHandlers",
+					`File ${file} should not be in the handlers directory. This file will be ignored.`
+				);
 			}
 		});
+
+		log.debug("ws.loadHandlers", "Loaded handlers");
 	}
 
 	/**

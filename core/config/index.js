@@ -1,6 +1,19 @@
 require("dotenv").config();
 
 class Config {
+  allowedSettings = [
+    "email.host",
+    "email.port",
+    "email.user",
+    "email.pass",
+    "email.fromAddress",
+    "email.fromName",
+    "exceptionless.apiKey",
+    "exceptionless.serverUrl",
+    "rsa.privateKey",
+    "rsa.publicKey",
+  ];
+
   /**
    * @class Config
    * @description The Config class is a singleton class that holds all the configuration variables for the application.

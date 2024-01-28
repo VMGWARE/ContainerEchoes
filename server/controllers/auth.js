@@ -265,11 +265,23 @@ async function register(req, res) {
 
 		// Check if no users exist, if so, make the user an admin
 		const users = await knex("user").select("id");
+
+		// If users exist through error as we don't currently support multiple users
+		if (users.length > 0) {
+			return res.status(500).json({
+				status: "error",
+				code: 500,
+				message: "Hey! We don't currently support multiple users.",
+				data: null,
+			});
+		}
+
 		const isAdmin = users.length === 0;
 
 		// Generate a hashed password
 		const hashedPassword = hashPassword(validator.getPassedFields().password);
-		const userId = generateUniqueId(12);
+		const userId = await generateUniqueId(12);
+		console.log(userId);
 
 		// Create the user
 		await knex("user").insert({
@@ -491,7 +503,7 @@ async function login(req, res) {
 			.where({
 				email: validator.getPassedFields().email,
 			})
-			.select("id", "name", "email", "password")
+			.select("id", "name", "email", "password", "superuser")
 			.first();
 
 		// If the user does not exist, return an error

@@ -1,10 +1,12 @@
+const WebSocketManager = require("../manager"); // eslint-disable-line no-unused-vars
+
 /**
  * Abstract base class for message handlers in a WebSocket context.
  */
 class MessageHandlerBase {
 	/**
 	 * Constructs an instance of a message handler.
-	 * @param {Object} webSocketManager - The WebSocketManager instance for managing WebSocket connections.
+	 * @param {WebSocketManager} webSocketManager - The WebSocketManager instance for managing WebSocket connections.
 	 * @param {string} eventType - The event type that this handler will manage.
 	 * @throws {Error} If attempted to instantiate directly or without an eventType.
 	 */
@@ -19,6 +21,10 @@ class MessageHandlerBase {
 			throw new Error("Event type must be provided");
 		}
 
+		/**
+		 * The WebSocketManager instance for managing WebSocket connections.
+		 * @type {WebSocketManager}
+		 */
 		this.webSocketManager = webSocketManager;
 		this.eventType = eventType;
 	}
@@ -37,7 +43,8 @@ class MessageHandlerBase {
 	 * @param {Object} messageObj - The message object received from the WebSocket.
 	 * @throws {Error} If this method is not implemented by the subclass.
 	 */
-	async handle(ws, messageObj) { // eslint-disable-line no-unused-vars
+	// eslint-disable-next-line no-unused-vars
+	async handle(ws, messageObj) {
 		throw new Error("Method 'handle()' must be implemented.");
 	}
 }
