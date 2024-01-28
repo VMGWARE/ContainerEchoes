@@ -70,4 +70,13 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
       to: '/tables',
     }"
   />
+
+  <!-- 👉 Admin -->
+  <VerticalNavSectionTitle
+    :item="{
+      heading: 'Admin',
+    }"
+  />
+
+  <VerticalNavLink :item="{ title: 'System Info', icon: 'ri-information-line', to: '/admin/system' }" />
 </template>
