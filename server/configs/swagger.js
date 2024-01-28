@@ -23,7 +23,7 @@ const options = {
 			},
 		],
 	},
-	apis: [`${controllersPath}/*.js`, `${routesPath}/*.js`],
+	apis: [`${controllersPath}/**/*.js`, `${routesPath}/**/*.js`],
 };
 
 module.exports = options;

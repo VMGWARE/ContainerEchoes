@@ -295,6 +295,7 @@ export default {
         },
       },
       showPassword: false,
+      processing: false,
     }
   },
   methods: {
@@ -307,9 +308,43 @@ export default {
     async updateExceptionlessSettings() {
       // Logic to update Exceptionless settings
     },
+    async getSettings() {
+      this.processing = true
+      // Add the Authorization header
+      axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`
+
+      try {
+        const response = await axios.get('/admin/settings')
+        const settings = response.data.data
+        this.processing = false
+
+        // Dynamically update settings
+        this.updateSettings(settings)
+      } catch (error) {
+        console.error('Failed to get settings:', error)
+        this.processing = false
+      }
+    },
+    updateSettings(settings) {
+      settings.forEach(setting => {
+        // Dynamically find the correct property path
+        const path = setting.key.split('.')
+        let currentLevel = this.data
+
+        // Traverse the path to find the correct object to update
+        for (let i = 0; i < path.length - 1; i++) {
+          // Create nested objects if they don't exist
+          currentLevel[path[i]] = currentLevel[path[i]] || {}
+          currentLevel = currentLevel[path[i]]
+        }
+
+        // Set the value to the last key in the path
+        currentLevel[path[path.length - 1]] = setting.value
+      })
+    },
   },
   mounted() {
-    // Fetch current settings from API and populate the form fields
+    this.getSettings()
   },
 }
 </script>
