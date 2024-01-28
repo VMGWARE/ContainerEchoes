@@ -121,7 +121,7 @@ module.exports = {
         'virtual:generated-layouts',
 
         // Ignore vite's ?raw imports
-        '.*\?raw',
+        '.*?raw',
       ],
     }],
 
@@ -139,7 +139,7 @@ module.exports = {
     'vue/component-name-in-template-casing': ['error', 'PascalCase', { registeredComponentsOnly: false, ignores: ['/^swiper-/'] }],
     'vue/custom-event-name-casing': ['error', 'camelCase', {
       ignores: [
-        '/^(click):[a-z]+((\d)|([A-Z0-9][a-z0-9]+))*([A-Z])?/',
+        '/^(click):[a-z]+((d)|([A-Z0-9][a-z0-9]+))*([A-Z])?/',
       ],
     }],
     'vue/define-macros-order': 'error',
@@ -222,7 +222,7 @@ module.exports = {
       ],
 
       // Ignore files
-      '\.eslintrc\.cjs',
+      '.eslintrc.cjs',
     ],
   },
   settings: {

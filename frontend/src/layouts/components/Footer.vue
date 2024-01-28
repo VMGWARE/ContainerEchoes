@@ -17,6 +17,7 @@
       <a
         href="https://github.com/VMGWARE"
         target="_blank"
+        rel="noopener noreferrer"
         class="text-primary"
       >VMG Ware</a>
     </span>
