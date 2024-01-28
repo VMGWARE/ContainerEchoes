@@ -77,6 +77,61 @@ async function getAll(req, res) {
 	}
 }
 
+/**
+ * @swagger
+ * /admin/settings:
+ *   put:
+ *     tags:
+ *       - Admin - Settings
+ *     summary: Update settings
+ *     description: Update one or more settings
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             additionalProperties:
+ *               type: string
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successfully updated settings
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: number
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully updated settings
+ */
+async function updateAll(req, res) {
+	try {
+		const updates = req.body;
+		const updatePromises = Object.keys(updates).map((key) => {
+			return knex("setting")
+				.where({ key })
+				.update({ value: updates[key], updatedAt: new Date() });
+		});
+
+		await Promise.all(updatePromises);
+
+		return standardResponse(res, "Successfully updated settings");
+	} catch (error) {
+		log.error("admin.settings.update", error);
+		return genericInternalServerError(res, error, "admin.settings.update");
+	}
+}
+
 module.exports = {
 	getAll,
+	updateAll,
 };
