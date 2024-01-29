@@ -26,6 +26,9 @@
 
 ### Misc
 
+- Bump @sentry/node from 7.84.0 to 7.98.0 in /server [[#46](https://github.com/VMGWARE/ContainerEchoes/pull/46)]
+- Bump @vmgware/js-validator from 1.4.6 to 1.6.0 in /server [[#51](https://github.com/VMGWARE/ContainerEchoes/pull/51)]
+- Bump sinon from 7.5.0 to 17.0.1 in /server [[#48](https://github.com/VMGWARE/ContainerEchoes/pull/48)]
 - fix(deps): bump dotenv from 16.3.1 to 16.4.1 in /server [[#57](https://github.com/VMGWARE/ContainerEchoes/pull/57)]
 - fix(deps): bump systeminformation from 5.21.22 to 5.21.24 in /server [[#55](https://github.com/VMGWARE/ContainerEchoes/pull/55)]
 - Update commit message prefixes and include scope [[#54](https://github.com/VMGWARE/ContainerEchoes/pull/54)]
