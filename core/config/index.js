@@ -2,6 +2,7 @@ require("dotenv").config();
 
 class Config {
   allowedSettings = [
+    "app.autoAddAgents",
     "email.host",
     "email.port",
     "email.user",
@@ -238,6 +239,7 @@ class Config {
     // Loop through the configuration variables, the key is the name of the variable and the value is the default value for example email.host
     // Below, are the only configuration variables that can be set in the database
     const configVariables = {
+      "app.autoAddAgents": this.app.autoAddAgents,
       "email.host": this.email.host,
       "email.port": this.email.port,
       "email.user": this.email.user,

@@ -117,6 +117,11 @@ export default {
           // Set processing to true
           this.processing = false
 
+          if (!error.response) {
+            // Show the error
+            toast.error('An unknown error occurred')
+          }
+
           // Show the error
           toast.error(error.response.data.message)
         }
