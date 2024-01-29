@@ -33,7 +33,8 @@ FROM httpd:2.4
 ARG S6_OVERLAY_VERSION=3.1.6.2
 
 # Install Node.js, curl, and git in the Apache stage
-RUN apt-get install -y curl git xz-utils && \
+RUN apt-get update && \
+    apt-get install -y curl git xz-utils && \
     curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs && \
     apt-get clean && \
