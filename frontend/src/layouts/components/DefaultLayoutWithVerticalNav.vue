@@ -71,7 +71,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
           style="background-color: white; border-radius: 5px"
         >
 
-        <h1 class="font-weight-medium leading-normal text-xl">
+        <h1 class="font-weight-medium leading-normal text-xl text-uppercase">
           Echoes
         </h1>
       </RouterLink>

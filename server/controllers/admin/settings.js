@@ -154,7 +154,7 @@ async function updateAll(req, res) {
 		}
 
 		// Update the configuration
-		await config.refreshConfig();
+		await config.getDatabaseConfiguration();
 
 		return standardResponse(res, "Successfully updated settings");
 	} catch (error) {

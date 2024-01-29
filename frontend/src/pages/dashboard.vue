@@ -30,8 +30,6 @@ const newProject = {
 </script>
 
 <template>
-  <h1>Dashboard</h1>
-
   <VRow class="match-height">
     <VCol
       cols="12"

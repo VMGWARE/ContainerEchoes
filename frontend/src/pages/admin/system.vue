@@ -1,7 +1,4 @@
 <template>
-  <!-- Page Header -->
-  <h1>System Information</h1>
-
   <VRow
     align="center"
     justify="center"
@@ -18,7 +15,9 @@
             outlined
             tile
           >
-            <VCardTitle class="headline"> Container Echoes </VCardTitle>
+            <VCardTitle class="headline">
+              Container Echoes
+            </VCardTitle>
             <VList>
               <VListItem>
                 <VListItemContent>
@@ -54,14 +53,18 @@
             outlined
             tile
           >
-            <VCardTitle class="headline"> Node.js </VCardTitle>
+            <VCardTitle class="headline">
+              Node.js
+            </VCardTitle>
             <VListItem>
               <VListItemContent>
                 <VListItemTitle><b>Version:</b>{{ data.echoes.nodeVersion }}</VListItemTitle>
               </VListItemContent>
             </VListItem>
 
-            <VCardTitle class="headline"> Database </VCardTitle>
+            <VCardTitle class="headline">
+              Database
+            </VCardTitle>
             <VListItem>
               <VListItemContent>
                 <VListItemTitle><b>Version:</b> {{ data.database.version }}</VListItemTitle>
@@ -82,7 +85,9 @@
             outlined
             tile
           >
-            <VCardTitle class="headline"> Host Information </VCardTitle>
+            <VCardTitle class="headline">
+              Host Information
+            </VCardTitle>
             <VList>
               <VListItemGroup>
                 <VListItem>
@@ -184,7 +189,7 @@ export default {
       const response = await axios.get('/general/system-information')
       var resp = response.data.data
       this.processing = false
-
+      
       return resp
     },
   },

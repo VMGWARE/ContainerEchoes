@@ -9,10 +9,6 @@ export const routes = [
         component: () => import('@/pages/dashboard.vue'),
       },
       {
-        path: 'agents',
-        component: () => import('@/pages/agents.vue'),
-      },
-      {
         path: 'my-account',
         component: () => import('@/pages/my-account.vue'),
       },
