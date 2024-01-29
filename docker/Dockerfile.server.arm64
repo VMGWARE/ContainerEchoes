@@ -48,7 +48,7 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-aarch64.tar.xz
 
 # Cleanup
 RUN rm -rf /tmp/*
-RUN apt-get purge -y --auto-remove curl xz-utils
+# RUN apt-get purge -y --auto-remove curl xz-utils
 
 # Copy frontend build output to Apache's htdocs
 COPY --from=builder /app/frontend/dist/ /usr/local/apache2/htdocs/
