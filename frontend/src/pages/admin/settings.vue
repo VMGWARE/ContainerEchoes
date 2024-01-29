@@ -1,9 +1,62 @@
 <template>
+  <!-- Page Header -->
+  <h1>Settings</h1>
+
   <VRow
     align="center"
     justify="center"
   >
     <VCol>
+      <!-- Data Sanitization -->
+      <VRow>
+        <VCol cols="12">
+          <VCard
+            class="pa-3"
+            outlined
+            tile
+          >
+            <VCardTitle class="headline"> Data Sanitization </VCardTitle>
+            <VForm ref="sanitizationForm">
+              <!-- Sanitize IP Addresses -->
+              <VCol cols="12">
+                <VSwitch
+                  label="Sanitize IP Addresses"
+                  outlined
+                  dense
+                />
+              </VCol>
+
+              <!-- Sanitize Email Addresses -->
+              <VCol cols="12">
+                <VSwitch
+                  label="Sanitize Email Addresses"
+                  outlined
+                  dense
+                />
+              </VCol>
+
+              <!-- Sanitize Domain Names -->
+              <VCol cols="12">
+                <VSwitch
+                  label="Sanitize Domain Names"
+                  outlined
+                  dense
+                />
+              </VCol>
+
+              <VCol cols="12">
+                <VBtn
+                  color="primary"
+                  type="submit"
+                >
+                  Update Data Sanitization Settings
+                </VBtn>
+              </VCol>
+            </VForm>
+          </VCard>
+        </VCol>
+      </VRow>
+
       <VRow>
         <!-- Email Settings Section -->
         <VCol
@@ -15,9 +68,7 @@
             outlined
             tile
           >
-            <VCardTitle class="headline mb-3">
-              Configuration
-            </VCardTitle>
+            <VCardTitle class="headline mb-3"> Email Configuration </VCardTitle>
 
             <!-- Sender Section -->
             <VSubheader>Sender</VSubheader>
@@ -114,9 +165,7 @@
             outlined
             tile
           >
-            <VCardTitle class="headline">
-              RSA Keys
-            </VCardTitle>
+            <VCardTitle class="headline"> RSA Keys </VCardTitle>
             <VForm
               ref="rsaForm"
               @submit.prevent="updateRSAKeys"
@@ -160,9 +209,7 @@
             outlined
             tile
           >
-            <VCardTitle class="headline">
-              Exceptionless Settings
-            </VCardTitle>
+            <VCardTitle class="headline"> Exceptionless Settings </VCardTitle>
             <VForm
               ref="exceptionlessForm"
               @submit.prevent="updateExceptionlessSettings"
