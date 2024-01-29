@@ -4,7 +4,7 @@
 
 ### ❤️ Thanks to all contributors! ❤️
 
-@dependabot[bot], @Codycody31
+@Codycody31, @dependabot[bot]
 
 ### ✨ Features
 
@@ -13,6 +13,7 @@
 
 ### 📈 Enhancement
 
+- docker: include push to harbor.vmgware.dev [[#67](https://github.com/VMGWARE/ContainerEchoes/pull/67)]
 - Enhancements in Security, Configuration, and UI Components [[#39](https://github.com/VMGWARE/ContainerEchoes/pull/39)]
 - Enhancements in Security, Configuration, and UI Components [[#37](https://github.com/VMGWARE/ContainerEchoes/pull/37)]
 - Comprehensive Application Update: Enhancements, Refactoring, and New Features [[#36](https://github.com/VMGWARE/ContainerEchoes/pull/36)]
@@ -26,6 +27,7 @@
 
 ### Misc
 
+- fix(deps): bump mysql2 from 3.9.0 to 3.9.1 in /core [[#63](https://github.com/VMGWARE/ContainerEchoes/pull/63)]
 - fix(deps): bump apexcharts from 3.37.0 to 3.45.2 in /frontend [[#56](https://github.com/VMGWARE/ContainerEchoes/pull/56)]
 - Bump vuetify from 3.4.9 to 3.5.1 in /frontend [[#47](https://github.com/VMGWARE/ContainerEchoes/pull/47)]
 - Bump @sentry/node from 7.84.0 to 7.98.0 in /server [[#46](https://github.com/VMGWARE/ContainerEchoes/pull/46)]
