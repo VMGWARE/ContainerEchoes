@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-28
+## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-29
 
 ### ❤️ Thanks to all contributors! ❤️
 
@@ -13,6 +13,8 @@
 
 ### 📈 Enhancement
 
+- Enhancements in Security, Configuration, and UI Components [[#39](https://github.com/VMGWARE/ContainerEchoes/pull/39)]
+- Enhancements in Security, Configuration, and UI Components [[#37](https://github.com/VMGWARE/ContainerEchoes/pull/37)]
 - Comprehensive Application Update: Enhancements, Refactoring, and New Features [[#36](https://github.com/VMGWARE/ContainerEchoes/pull/36)]
 - Switch name to server and build server image [[#30](https://github.com/VMGWARE/ContainerEchoes/pull/30)]
 - Switch to vuetify UI [[#28](https://github.com/VMGWARE/ContainerEchoes/pull/28)]
@@ -24,6 +26,7 @@
 
 ### Misc
 
+- Revert "Enhancements in Security, Configuration, and UI Components" [[#38](https://github.com/VMGWARE/ContainerEchoes/pull/38)]
 - Update frontend [[#29](https://github.com/VMGWARE/ContainerEchoes/pull/29)]
 - Add support for amd64 agents in Woodpecker configuration files [[#27](https://github.com/VMGWARE/ContainerEchoes/pull/27)]
 
