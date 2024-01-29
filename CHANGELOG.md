@@ -4,7 +4,7 @@
 
 ### ❤️ Thanks to all contributors! ❤️
 
-@Codycody31
+@dependabot[bot], @Codycody31
 
 ### ✨ Features
 
@@ -26,6 +26,10 @@
 
 ### Misc
 
+- Bump mysql2 from 3.7.0 to 3.9.0 in /core [[#40](https://github.com/VMGWARE/ContainerEchoes/pull/40)]
+- Bump stylelint-use-logical-spec from 5.0.0 to 5.0.1 in /frontend [[#41](https://github.com/VMGWARE/ContainerEchoes/pull/41)]
+- Bump @scalar/express-api-reference from 0.0.1 to 0.2.31 in /server [[#44](https://github.com/VMGWARE/ContainerEchoes/pull/44)]
+- Bump dotenv from 16.3.1 to 16.4.1 in /core [[#42](https://github.com/VMGWARE/ContainerEchoes/pull/42)]
 - Revert "Enhancements in Security, Configuration, and UI Components" [[#38](https://github.com/VMGWARE/ContainerEchoes/pull/38)]
 - Update frontend [[#29](https://github.com/VMGWARE/ContainerEchoes/pull/29)]
 - Add support for amd64 agents in Woodpecker configuration files [[#27](https://github.com/VMGWARE/ContainerEchoes/pull/27)]
