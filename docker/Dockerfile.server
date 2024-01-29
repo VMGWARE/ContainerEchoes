@@ -23,8 +23,8 @@ COPY server/ ./
 WORKDIR /app/frontend
 COPY frontend/package.json ./
 COPY frontend/package-lock.json ./
-RUN npm install
 COPY frontend/ ./
+RUN npm install
 RUN npm run build:icons
 RUN npm run build
 
