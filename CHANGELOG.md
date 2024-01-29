@@ -26,6 +26,10 @@
 
 ### Misc
 
+- fix(deps): bump dotenv from 16.3.1 to 16.4.1 in /server [[#57](https://github.com/VMGWARE/ContainerEchoes/pull/57)]
+- fix(deps): bump systeminformation from 5.21.22 to 5.21.24 in /server [[#55](https://github.com/VMGWARE/ContainerEchoes/pull/55)]
+- Update commit message prefixes and include scope [[#54](https://github.com/VMGWARE/ContainerEchoes/pull/54)]
+- Remove chalk dependency [[#53](https://github.com/VMGWARE/ContainerEchoes/pull/53)]
 - Bump mysql2 from 3.7.0 to 3.9.0 in /core [[#40](https://github.com/VMGWARE/ContainerEchoes/pull/40)]
 - Bump stylelint-use-logical-spec from 5.0.0 to 5.0.1 in /frontend [[#41](https://github.com/VMGWARE/ContainerEchoes/pull/41)]
 - Bump @scalar/express-api-reference from 0.0.1 to 0.2.31 in /server [[#44](https://github.com/VMGWARE/ContainerEchoes/pull/44)]
