@@ -26,6 +26,8 @@
 
 ### Misc
 
+- fix(deps): bump apexcharts from 3.37.0 to 3.45.2 in /frontend [[#56](https://github.com/VMGWARE/ContainerEchoes/pull/56)]
+- Bump vuetify from 3.4.9 to 3.5.1 in /frontend [[#47](https://github.com/VMGWARE/ContainerEchoes/pull/47)]
 - Bump @sentry/node from 7.84.0 to 7.98.0 in /server [[#46](https://github.com/VMGWARE/ContainerEchoes/pull/46)]
 - Bump @vmgware/js-validator from 1.4.6 to 1.6.0 in /server [[#51](https://github.com/VMGWARE/ContainerEchoes/pull/51)]
 - Bump sinon from 7.5.0 to 17.0.1 in /server [[#48](https://github.com/VMGWARE/ContainerEchoes/pull/48)]
