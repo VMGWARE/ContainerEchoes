@@ -19,7 +19,7 @@
 		"@sentry/node": "^7.66.0",
 		"@types/node": "^20.8.3",
 		"@vmgware/js-logger": "^1.2.0",
-		"@vmgware/js-validator": "^1.4.6",
+		"@vmgware/js-validator": "^1.6.0",
 		"axios": "^1.6.7",
 		"bcrypt": "^5.1.0",
 		"dotenv": "^16.4.1",
