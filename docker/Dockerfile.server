@@ -1,5 +1,5 @@
 # Use node as the base image for building both server and backend
-FROM node:18.17 AS builder
+FROM node:21.6 AS builder
 
 # Specify --no-install-recommends to skip unused dependencies, make the base much smaller!
 # dumb-init = avoid zombie processes (#480)
