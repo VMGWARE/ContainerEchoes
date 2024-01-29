@@ -1,4 +1,7 @@
 <template>
+  <!-- Page Header -->
+  <h1>Settings</h1>
+
   <VRow
     align="center"
     justify="center"
