@@ -85,12 +85,22 @@ class WebSocketMessageHandler {
 
 	/**
 	 * Handles incoming WebSocket messages by delegating them to the appropriate handler based on the event type.
+	 * Additionally, it checks for response messages and handles them.
 	 * @param {WebSocket} ws - The WebSocket connection instance.
 	 * @param {string} message - The raw message received from the WebSocket connection.
 	 */
 	async handleMessage(ws, message) {
 		log.debug("ws.handleMessage", "Received message and delegating to handler");
 		const messageObj = JSON.parse(message);
+
+		// Check if the message is a response to a previous request
+		if (messageObj.messageId) {
+			this.webSocketManager.handleMessageResponse(
+				messageObj.messageId,
+				messageObj
+			);
+			return;
+		}
 
 		if (this.handlers[messageObj.event]) {
 			await this.handlers[messageObj.event](ws, messageObj);

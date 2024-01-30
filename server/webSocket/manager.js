@@ -25,7 +25,15 @@ class WebSocketManager {
 		privateKey: "",
 	};
 
+	/**
+	 * The connected agents
+	 */
 	agents = [];
+
+	/**
+	 * The message resolvers
+	 */
+	messageResolvers = new Map();
 
 	/**
 	 * New WebSocketManager
@@ -123,6 +131,7 @@ class WebSocketManager {
 	 * @param {*} data - The data to send
 	 * @param {boolean} encrypted - Whether or not the message should be encrypted
 	 * @param {string} publicKey - The public key to encrypt the message with
+	 * @param {string} messageId - The id of the message
 	 * @returns {string} The message to send
 	 */
 	buildMessage(
@@ -130,13 +139,18 @@ class WebSocketManager {
 		event,
 		data = {},
 		encrypted = true,
-		publicKey = ""
+		publicKey = "",
+		messageId = ""
 	) {
 		let message = {
 			status: status,
 			event: event,
 			data: data,
 		};
+
+		if (messageId) {
+			message.messageId = messageId;
+		}
 
 		if (encrypted && publicKey) {
 			message.data = rsa.encrypt(JSON.stringify(message.data), publicKey);
@@ -204,20 +218,51 @@ class WebSocketManager {
 	 * @returns {Promise<string>} The response from the client
 	 */
 	async sendMessageAndWaitForResponse(id, type, data) {
-		return new Promise((resolve) => {
-			this.agents.forEach((client) => {
-				if (client.id == id && client.readyState === WebSocket.OPEN) {
-					this.sendMessage(
-						client,
-						this.buildMessage("ok", type, data, true, client.publicKey)
-					);
+		return new Promise((resolve, reject) => {
+			const messageId = this.generateUniqueId();
+			this.messageResolvers.set(messageId, resolve);
 
-					client.on("message", (message) => {
-						resolve(message);
-					});
-				}
-			});
+			const agent = this.agents[id];
+			if (agent && agent.readyState === WebSocket.OPEN) {
+				// Modify your message structure to include messageId
+				const message = this.buildMessage(
+					"ok",
+					type,
+					data,
+					true,
+					agent.publicKey,
+					messageId
+				);
+
+				this.sendMessage(agent, message);
+			} else {
+				reject(new Error("Agent not found or not connected"));
+			}
 		});
+	}
+
+	/**
+	 * Generates a unique id
+	 * @returns {string} The unique id
+	 */
+	generateUniqueId() {
+		return this.wss.getUniqueID();
+	}
+
+	/**
+	 * Call this method in your message handler when a response is received
+	 */
+	handleMessageResponse(messageId, messageObj) {
+		const resolve = this.messageResolvers.get(messageId);
+		if (resolve) {
+			resolve(messageObj); // Assuming messageObj contains the response data
+			this.messageResolvers.delete(messageId);
+		} else {
+			log.error(
+				"WebSocketManager",
+				"No resolver found for message id " + messageId
+			);
+		}
 	}
 
 	/**

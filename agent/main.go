@@ -23,9 +23,10 @@ import (
 )
 
 type response struct {
-	Status string      `json:"status"`
-	Event  string      `json:"event"`
-	Data   interface{} `json:"data"`
+	Status    string      `json:"status"`
+	Event     string      `json:"event"`
+	Data      interface{} `json:"data"`
+	MessageId string      `json:"messageId"`
 }
 
 // Create a custom struct for PublicKey and Token
@@ -272,8 +273,14 @@ func handleServerCommunication(agent *Agent, log Logger) {
 
 			// Build container list message
 			containerList := response{
-				Event: "containerList",
-				Data:  list,
+				Status: "ok",
+				Event:  "containerList",
+				Data:   list,
+			}
+
+			// If a message ID is present, add it to the response
+			if resp.MessageId != "" {
+				containerList.MessageId = resp.MessageId
 			}
 
 			// Convert the containerList struct to a JSON string
