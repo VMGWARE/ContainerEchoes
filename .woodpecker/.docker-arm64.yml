@@ -41,21 +41,6 @@ steps:
   # S e r v e r #
   ###############
 
-  # TODO: If this works, then we can remove this before merging
-  publish-server-preview-arm64:
-    depends_on: []
-    image: *buildx_plugin
-    settings:
-      repo: *publish_repos_server
-      dockerfile: docker/Dockerfile.server.arm64
-      platforms: "linux/arm64/v8"
-      tag: pull_${CI_COMMIT_PULL_REQUEST}-arm64
-      build_args: *build_args
-      logins: *publish_logins
-    when:
-      evaluate: 'CI_COMMIT_PULL_REQUEST_LABELS contains "build_pr_images"'
-      event: pull_request
-
   publish-next-server-arm64:
     depends_on: []
     image: *buildx_plugin
