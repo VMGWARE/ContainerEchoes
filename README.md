@@ -24,6 +24,16 @@ ContainerEchoes is an open-source tool designed for efficient real-time Docker l
 - **Web Interface and API**: Manage, query, and display logs through a user-friendly web interface and a robust API.
 - **Flexible Log Retention**: Automatic log deletion after 48 hours, with options for longer retention.
 - **Secure and Scalable**: Implements TLS/SSL for secure data transfer and is designed for scalability.
+  
+## Docker Image Support
+
+ContainerEchoes provides Docker images for both its agent and server components, ensuring wide compatibility across different systems:
+
+- **Agent Docker Images**: The agent, responsible for log collection, supports a broad range of architectures, including `linux/arm/v6`, `linux/arm/v7`, `linux/arm64/v8`, `linux/386`, `linux/amd64`, `linux/ppc64le`, `linux/riscv64`, `linux/s390x`, `freebsd/arm64`, `freebsd/amd64`, `openbsd/arm64`, and `openbsd/amd64`. This wide support ensures that ContainerEchoes can be deployed in diverse environments, from traditional x86 servers to IoT devices.
+
+- **Server Docker Images**: The server component, which handles log storage, querying, and web interface, provides images for `amd64` and `arm64` architectures. The `arm64` image is available with a specific tag, such as `next-arm64`, to facilitate easy deployment on ARM-based systems.
+
+You can find the latest Docker images on [Docker Hub](https://hub.docker.com/u/vmgware) but also on [Harbor](https://harbor.vmgware.dev/harbor/projects/3/repositories) (VMGWARE's self-hosted registry).
 
 ## Technology Stack
 
@@ -65,3 +75,5 @@ We welcome contributions! Please read our [Contributing Guide](LINK-TO-CONTRIBUT
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+To update the description of ContainerEchoes to include information about Docker images and their supported architectures, the revised document might look something like this:
