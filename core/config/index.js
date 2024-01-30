@@ -33,7 +33,7 @@ class Config {
      * @property port - The port number for the application server.
      * @property env - The environment in which the app is running, e.g., 'development', 'production'.
      * @property url - The base URL of the application.
-     * @property frontendUrl - The base URL of the frontend application.
+     * @property webUrl - The base URL of the web application.
      */
     this.app = {
       /**
@@ -51,9 +51,9 @@ class Config {
         process.env.APP_URL ||
         "http://localhost:" + (process.env.APP_PORT || 5000),
       /**
-       * Base URL of the frontend application
+       * Base URL of the web application
        */
-      frontendUrl: process.env.FRONTEND_URL || "http://localhost:3000",
+      webUrl: process.env.FRONTEND_URL || "http://localhost:3000",
       /**
        * Auto add agents
        * When a new agent is added to the system, it will automatically be integrated with the system.

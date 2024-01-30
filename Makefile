@@ -95,7 +95,7 @@ clean: ## Clean build artifacts
 
 .PHONY: clean-all
 clean-all: clean ## Clean all artifacts
-	rm -rf dist server/node_modules core/node_modules docs/node_modules frontend/node_modules
+	rm -rf dist server/node_modules core/node_modules docs/node_modules web/node_modules
 
 .PHONY: version
 version: ## Print the current version
@@ -109,8 +109,8 @@ install-tools: ## Install development tools
 		go install mvdan.cc/gofumpt@latest; \
 	fi ;
 
-frontend-dependencies: ## Install frontend dependencies
-	(cd frontend/; npm install --frozen-lockfile)
+web-dependencies: ## Install web dependencies
+	(cd web/; npm install --frozen-lockfile)
 
 server-dependencies: ## Install server dependencies
 	(cd server/; npm install --frozen-lockfile)
@@ -122,17 +122,17 @@ lint: install-tools ## Lint code
 	@echo "Running golangci-lint"
 	golangci-lint run
 
-test-frontend: frontend-dependencies ## Test frontend code
-	(cd frontend/; npm run lint)
-	(cd frontend/; npm run format:check)
-	(cd frontend/; npm run test:unit)
+test-web: web-dependencies ## Test web code
+	(cd web/; npm run lint)
+	(cd web/; npm run format:check)
+	(cd web/; npm run test:unit)
 
 test-server: server-dependencies ## Test server code
 	(cd server/; npm run lint --if-present)
 	(cd server/; npm run test:mocha --if-present)
 
 .PHONY: test
-test: test-frontend test-server ## Run all tests
+test: test-web test-server ## Run all tests
 
 ##@ Build
 

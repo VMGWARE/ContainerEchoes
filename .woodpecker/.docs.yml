@@ -5,7 +5,7 @@ variables:
       - ".woodpecker/.docs.yml"
       - "server/**"
   - path: &docker_path # web source code
-      - "frontend/**"
+      - "web/**"
       - "server/**"
       # go source code
       - "**/*.go"

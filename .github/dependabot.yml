@@ -16,7 +16,7 @@ updates:
       include: scope
   # Frontend: Vue 3
   - package-ecosystem: "npm"
-    directory: "frontend/"
+    directory: "web/"
     schedule:
       interval: "weekly"
     commit-message:
