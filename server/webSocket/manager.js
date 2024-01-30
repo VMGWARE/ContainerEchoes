@@ -16,6 +16,7 @@ class WebSocketManager {
 	 * The events
 	 */
 	events = {
+		HANDSHAKE: "handshake",
 		AGENT_INFO: "agentInfo",
 		AGENT_ID: "agentId",
 		CONTAINER_LIST: "containerList",
