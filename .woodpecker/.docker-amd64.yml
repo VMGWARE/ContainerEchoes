@@ -19,11 +19,15 @@ variables:
   # vars used on push / tag events only
   - publish_logins: &publish_logins # Default DockerHub login
       - registry: https://index.docker.io/v1/
-        username: vmgware
+        username: "vmgware"
         password:
           from_secret: docker_password
-  - &publish_repos_agent "vmgware/echoes-agent"
-  - &publish_repos_server "vmgware/echoes-server"
+      - registry: https://harbor.vmgware.dev
+        username: "robot$vmgware"
+        password:
+          from_secret: harbor_password
+  - &publish_repos_agent "vmgware/echoes-agent,harbor.vmgware.dev/echoes/agent"
+  - &publish_repos_server "vmgware/echoes-server,harbor.vmgware.dev/echoes/server"
   - path: &when_path # web source code
       - "frontend/**"
       # api source code
