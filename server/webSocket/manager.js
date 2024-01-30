@@ -169,56 +169,26 @@ class WebSocketManager {
 		return JSON.stringify(message);
 	}
 
-	// FIXME: These don't work
-	// /**
-	//  * Sends a message to all connected clients
-	//  * @param {*} type - The type of message
-	//  * @param {*} data - The data to send
-	//  * @returns {void}
-	//  */
-	// broadcastMessage(type, data) {
-	// 	this.wss.clients.forEach((client) => {
-	// 		if (client.readyState === WebSocket.OPEN) {
-	// 			this.sendMessage(client, this.buildMessage(type, data));
-	// 		}
-	// 	});
+	/**
+	 * Sends a message to a specific client
+	 * @param {*} id - The id of the client to send the message to
+	 * @param {*} type - The type of message
+	 * @param {*} data - The data to send
+	 * @returns {void}
+	 */
+	sendMessageToClient(id, type, data) {
+		const agent = this.agents[id];
+		if (agent && agent.readyState === WebSocket.OPEN) {
+			this.sendMessage(
+				agent,
+				this.buildMessage("ok", type, data, true, agent.publicKey)
+			);
 
-	// 	log.debug("WebSocketManager", "Sent message to all clients");
-	// }
-
-	// /**
-	//  * Sends a message to a specific client
-	//  * @param {*} id - The id of the client to send the message to
-	//  * @param {*} type - The type of message
-	//  * @param {*} data - The data to send
-	//  * @returns {void}
-	//  */
-	// sendMessageToClient(id, type, data) {
-	// 	this.wss.clients.forEach((client) => {
-	// 		if (client.id === id && client.readyState === WebSocket.OPEN) {
-	// 			this.sendMessage(client, this.buildMessage(type, data));
-	// 		}
-	// 	});
-
-	// 	log.debug("WebSocketManager", "Sent message to client " + id);
-	// }
-
-	// /**
-	//  * Sends a message to all clients except the one specified
-	//  * @param {*} id - The id of the client to exclude
-	//  * @param {*} type - The type of message
-	//  * @param {*} data - The data to send
-	//  * @returns {void}
-	//  */
-	// broadcastMessageExcept(id, type, data) {
-	// 	this.wss.clients.forEach((client) => {
-	// 		if (client.id !== id && client.readyState === WebSocket.OPEN) {
-	// 			this.sendMessage(client, this.buildMessage(type, data));
-	// 		}
-	// 	});
-
-	// 	log.debug("WebSocketManager", "Sent message to all clients except " + id);
-	// }
+			log.debug("WebSocketManager", "Sent message to client " + id);
+		} else {
+			log.error("WebSocketManager", "Agent not found or not connected");
+		}
+	}
 
 	/**
 	 * Sends a message to a specific client and waits for a response
