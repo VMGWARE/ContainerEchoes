@@ -23,9 +23,9 @@ steps:
       skip-dirs: node_modules/
       dir: docs/
 
-  frontend:
+  web:
     depends_on: []
     image: *trivy_plugin
     settings:
       skip-dirs: node_modules/
-      dir: frontend/
+      dir: web/
