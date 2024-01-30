@@ -103,6 +103,12 @@ class WebSocketMessageHandler {
 		}
 
 		if (this.handlers[messageObj.event]) {
+			// Check if the handler only needs the ws instance
+			if (this.handlers[messageObj.event].length === 1) {
+				await this.handlers[messageObj.event](ws);
+				return;
+			}
+
 			await this.handlers[messageObj.event](ws, messageObj);
 		} else {
 			log.warn(

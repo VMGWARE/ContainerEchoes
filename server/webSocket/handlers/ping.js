@@ -16,10 +16,9 @@ class HandleHandshake extends MessageHandlerBase {
 	/**
 	 * Returns a pong
 	 * @param {WebSocket} ws - The WebSocket connection instance.
-	 * @param {Object} messageObj - The received message object.
 	 * @returns {Promise<void>} A Promise that resolves when the handling is complete.
 	 */
-	async handle(ws, messageObj) {
+	async handle(ws) {
 		this.webSocketManager.sendMessage(
 			ws,
 			this.webSocketManager.buildMessage("ok", "pong")
