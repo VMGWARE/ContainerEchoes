@@ -1,34 +1,29 @@
 # Use node as the base image for building both server and backend
 FROM node:18.17 AS builder
 
-# Specify --no-install-recommends to skip unused dependencies, make the base much smaller!
-# dumb-init = avoid zombie processes (#480)
-RUN echo "deb http://deb.debian.org/debian testing main" >> /etc/apt/sources.list && \
-    apt update && \
-    apt --yes --no-install-recommends -t stable install  \
-    dumb-init && \
+# Install dumb-init to avoid zombie processes and ensure minimal installation
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends dumb-init && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    apt --yes autoremove
+    apt-get autoremove -y
 
 # Build the server
 WORKDIR /app/server
-COPY server/package.json ./
-COPY server/package-lock.json ./
+COPY server/package*.json ./
 RUN npm ci --omit=dev
 COPY core /app/core
-RUN npm install /app/core
 COPY server/ ./
+RUN npm install /app/core
 
-# Build the frontend
+# Build the frontend, including the fix for @rollup/rollup-linux-arm64-gnu
 WORKDIR /app/frontend
-COPY frontend/package.json ./
-COPY frontend/package-lock.json ./
+COPY frontend/package*.json ./
 COPY frontend/ ./
-RUN npm install
-RUN npm run build:icons
-# Fix error with @rollup/rollup-linux-arm64-gnu
-RUN npm install --save-dev @rollup/rollup-linux-arm64-gnu
-RUN npm run build
+RUN npm install && \
+    npm run build:icons && \
+    npm install --save-dev @rollup/rollup-linux-arm64-gnu && \
+    npm run build
 
 # Use Apache to serve the frontend and proxy to the server
 FROM httpd:2.4
@@ -42,15 +37,12 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Install s6-overlay
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-aarch64.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-aarch64.tar.xz 
-
-# Cleanup
-RUN rm -rf /tmp/*
-# RUN apt-get purge -y --auto-remove curl xz-utils
+# Install s6-overlay compatible with ARM64
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp/
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-aarch64.tar.xz /tmp/
+RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz && \
+    tar -C / -Jxpf /tmp/s6-overlay-aarch64.tar.xz && \
+    rm /tmp/s6-overlay-noarch.tar.xz /tmp/s6-overlay-aarch64.tar.xz
 
 # Copy frontend build output to Apache's htdocs
 COPY --from=builder /app/frontend/dist/ /usr/local/apache2/htdocs/
@@ -58,11 +50,10 @@ COPY --from=builder /app/frontend/dist/ /usr/local/apache2/htdocs/
 # Copy the core, server, and other configuration files
 COPY --from=builder /app/core/ /usr/local/core/
 COPY --from=builder /app/server/ /usr/local/server/
-COPY ./docker/.htaccess /usr/local/apache2/htdocs/.htaccess
-COPY ./docker/my-httpd.conf /usr/local/apache2/conf/httpd.conf
+COPY ./docker/.htaccess /usr/local/apache2/htdocs/
+COPY ./docker/my-httpd.conf /usr/local/apache2/conf/
 
 # Setup s6 services
-RUN mkdir -p /etc/services.d/apache /etc/services.d/nodejs
 COPY ./docker/apache-run /etc/services.d/apache/run
 COPY ./docker/nodejs-run /etc/services.d/nodejs/run
 RUN chmod +x /etc/services.d/apache/run /etc/services.d/nodejs/run
@@ -72,6 +63,3 @@ EXPOSE 80
 
 # Use s6-overlay as the entrypoint
 ENTRYPOINT ["/init"]
-
-# s6-overlay's init system will start services defined in /etc/services.d
-CMD []

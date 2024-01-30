@@ -13,7 +13,8 @@ steps:
     depends_on: []
     image: *trivy_plugin
     settings:
-      skip-dirs: frontend/,docs/
+      skip-dirs: node_modules/
+      dir: server/
 
   docs:
     depends_on: []
