@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-29
+## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-30
 
 ### ❤️ Thanks to all contributors! ❤️
 
@@ -13,6 +13,7 @@
 
 ### 📈 Enhancement
 
+- Add support for arm64 [[#68](https://github.com/VMGWARE/ContainerEchoes/pull/68)]
 - docker: include push to harbor.vmgware.dev [[#67](https://github.com/VMGWARE/ContainerEchoes/pull/67)]
 - Enhancements in Security, Configuration, and UI Components [[#39](https://github.com/VMGWARE/ContainerEchoes/pull/39)]
 - Enhancements in Security, Configuration, and UI Components [[#37](https://github.com/VMGWARE/ContainerEchoes/pull/37)]
