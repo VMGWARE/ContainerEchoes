@@ -13,6 +13,8 @@
 
 ### 📈 Enhancement
 
+- [#54] Remove CI secuity scanning [[#76](https://github.com/VMGWARE/ContainerEchoes/pull/76)]
+- [#53] Frontend Module Refactoring [[#70](https://github.com/VMGWARE/ContainerEchoes/pull/70)]
 - Task/52 enhancements to websocketmanager for improved asynchronous communication and scalability [[#69](https://github.com/VMGWARE/ContainerEchoes/pull/69)]
 - Add support for arm64 [[#68](https://github.com/VMGWARE/ContainerEchoes/pull/68)]
 - docker: include push to harbor.vmgware.dev [[#67](https://github.com/VMGWARE/ContainerEchoes/pull/67)]
