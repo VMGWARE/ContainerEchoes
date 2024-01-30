@@ -263,7 +263,7 @@ async function getContainers(req, res) {
 	try {
 		const containers = await WebSocketManager.sendMessageAndWaitForResponse(
 			req.params.agentId,
-			"containerList",
+			WebSocketManager.events.CONTAINER_LIST,
 			{}
 		);
 

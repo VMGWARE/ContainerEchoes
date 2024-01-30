@@ -13,6 +13,15 @@ class WebSocketManager {
 	static instance;
 
 	/**
+	 * The events
+	 */
+	events = {
+		AGENT_INFO: "agentInfo",
+		AGENT_ID: "agentId",
+		CONTAINER_LIST: "containerList",
+	};
+
+	/**
 	 * The WebSocket server
 	 */
 	wss;
