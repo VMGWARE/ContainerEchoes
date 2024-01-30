@@ -81,7 +81,7 @@
 
 ### Misc
 
-- Bump vite from 5.0.11 to 5.0.12 in /frontend [[#19](https://github.com/VMGWARE/ContainerEchoes/pull/19)]
+- Bump vite from 5.0.11 to 5.0.12 in /web [[#19](https://github.com/VMGWARE/ContainerEchoes/pull/19)]
 - Update Git user and email [[#18](https://github.com/VMGWARE/ContainerEchoes/pull/18)]
 - Buggy [[#10](https://github.com/VMGWARE/ContainerEchoes/pull/10)]
 - Update Docker image version and add additional commands for deployment [[#6](https://github.com/VMGWARE/ContainerEchoes/pull/6)]

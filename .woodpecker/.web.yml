@@ -9,16 +9,16 @@ variables:
   - &when
     path:
       # related config files
-      - '.woodpecker/.frontend.yml'
+      - '.woodpecker/.web.yml'
       # web source code
-      - 'frontend/**'
+      - 'web/**'
       # server source code
       - 'server/**'
 
 steps:
   install-dependencies:
     image: *node_image
-    directory: frontend/
+    directory: web/
     commands:
       - npm install --frozen-lockfile
     when: *when
@@ -27,7 +27,7 @@ steps:
     depends_on:
       - install-dependencies
     image: *node_image
-    directory: frontend/
+    directory: web/
     commands:
       - npm run lint
     when: *when

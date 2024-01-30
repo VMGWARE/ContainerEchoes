@@ -2,7 +2,7 @@
  * @swagger
  * tags:
  *   name: General
- *   description: General API endpoints for the frontend
+ *   description: General API endpoints for the web
  */
 
 // Helpers/utilities

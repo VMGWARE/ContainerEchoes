@@ -12,9 +12,9 @@ variables:
   - &xgo_version "go-1.21.2"
 
 steps:
-  build-frontend:
+  build-web:
     image: *node_image
-    directory: frontend/
+    directory: web/
     commands:
       - corepack enable
       - npm install --frozen-lockfile

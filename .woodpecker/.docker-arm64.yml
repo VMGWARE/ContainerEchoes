@@ -25,7 +25,7 @@ variables:
           from_secret: harbor_password
   - &publish_repos_server "vmgware/echoes-server,harbor.vmgware.dev/echoes/server"
   - path: &when_path # web source code
-      - "frontend/**"
+      - "web/**"
       # api source code
       - "server/**"
       # go source code

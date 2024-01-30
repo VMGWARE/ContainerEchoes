@@ -172,9 +172,9 @@ const server = http.createServer(app);
 	app.use(Sentry.Handlers.tracingHandler());
 
 	// Allow CORS
-	log.info("server", "Allowing CORS for " + config.app.frontendUrl);
+	log.info("server", "Allowing CORS for " + config.app.webUrl);
 	app.use(function (req, res, next) {
-		res.header("Access-Control-Allow-Origin", config.app.frontendUrl);
+		res.header("Access-Control-Allow-Origin", config.app.webUrl);
 		res.header(
 			"Access-Control-Allow-Headers",
 			"Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Forwarded-For"

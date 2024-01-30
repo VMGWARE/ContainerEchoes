@@ -15,7 +15,7 @@ Environment variables in Container Echoes are used to configure various aspects 
 - `APP_PORT`: The port number for the application server.
 - `APP_ENV`: The environment in which the app is running, e.g., 'development', 'production'.
 - `APP_URL`: The base URL of the application.
-- `FRONTEND_URL`: The base URL of the frontend application.
+- `FRONTEND_URL`: The base URL of the web application.
 - `AUTO_ADD_AGENTS`: Automatically integrate new agents with the system.
 
 ### Database Variables
