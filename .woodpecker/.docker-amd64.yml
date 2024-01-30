@@ -60,27 +60,13 @@ steps:
   # S e r v e r #
   ###############
 
-  # publish-server-preview:
-  #   image: *buildx_plugin
-  #   settings:
-  #     repo: *publish_repos_server
-  #     dockerfile: docker/Dockerfile.server
-  #     platforms: *platforms_preview
-  #     tag: pull_${CI_COMMIT_PULL_REQUEST}
-  #     build_args: *build_args
-  #     logins: *publish_logins
-  #   when:
-  #     evaluate: 'CI_COMMIT_PULL_REQUEST_LABELS contains "build_pr_images"'
-  #     event: pull_request
-
-  # TODO: If this works, then we can remove this before merging
-  publish-server-preview-arm64:
+  publish-server-preview:
     image: *buildx_plugin
     settings:
       repo: *publish_repos_server
-      dockerfile: docker/Dockerfile.server.arm64
-      platforms: "linux/arm64/v8"
-      tag: pull_${CI_COMMIT_PULL_REQUEST}-arm64
+      dockerfile: docker/Dockerfile.server
+      platforms: *platforms_preview
+      tag: pull_${CI_COMMIT_PULL_REQUEST}
       build_args: *build_args
       logins: *publish_logins
     when:
@@ -101,20 +87,6 @@ steps:
       event: push
       path: *when_path
 
-  publish-next-server-arm64:
-    image: *buildx_plugin
-    settings:
-      repo: *publish_repos_server
-      dockerfile: docker/Dockerfile.server.arm64
-      platforms: "linux/arm64/v8"
-      tag: [next-arm64, "next-arm64-${CI_COMMIT_SHA:0:10}"]
-      logins: *publish_logins
-      build_args: *build_args
-    when:
-      branch: ${CI_REPO_DEFAULT_BRANCH}
-      event: push
-      path: *when_path
-
   release-server:
     image: *buildx_plugin
     settings:
@@ -123,19 +95,6 @@ steps:
       platforms: *platforms_server
       # remove 'latest' on older version branches to avoid accidental downgrade
       tag: [latest, "${CI_COMMIT_TAG}"]
-      logins: *publish_logins
-      build_args: *build_args
-    when:
-      event: tag
-
-  release-server-arm64:
-    image: *buildx_plugin
-    settings:
-      repo: *publish_repos_server
-      dockerfile: docker/Dockerfile.server.arm64
-      platforms: "linux/arm64/v8"
-      # remove 'latest' on older version branches to avoid accidental downgrade
-      tag: [latest-arm64, "${CI_COMMIT_TAG}-arm64"]
       logins: *publish_logins
       build_args: *build_args
     when:
