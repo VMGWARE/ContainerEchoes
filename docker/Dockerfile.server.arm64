@@ -26,6 +26,8 @@ COPY frontend/package-lock.json ./
 COPY frontend/ ./
 RUN npm install
 RUN npm run build:icons
+# Fix error with @rollup/rollup-linux-arm64-gnu
+RUN npm install --save-dev @rollup/rollup-linux-arm64-gnu
 RUN npm run build
 
 # Use Apache to serve the frontend and proxy to the server
