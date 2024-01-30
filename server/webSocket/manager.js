@@ -13,6 +13,16 @@ class WebSocketManager {
 	static instance;
 
 	/**
+	 * The events
+	 */
+	events = {
+		HANDSHAKE: "handshake",
+		AGENT_INFO: "agentInfo",
+		AGENT_ID: "agentId",
+		CONTAINER_LIST: "containerList",
+	};
+
+	/**
 	 * The WebSocket server
 	 */
 	wss;
@@ -25,7 +35,15 @@ class WebSocketManager {
 		privateKey: "",
 	};
 
+	/**
+	 * The connected agents
+	 */
 	agents = [];
+
+	/**
+	 * The message resolvers
+	 */
+	messageResolvers = new Map();
 
 	/**
 	 * New WebSocketManager
@@ -123,6 +141,7 @@ class WebSocketManager {
 	 * @param {*} data - The data to send
 	 * @param {boolean} encrypted - Whether or not the message should be encrypted
 	 * @param {string} publicKey - The public key to encrypt the message with
+	 * @param {string} messageId - The id of the message
 	 * @returns {string} The message to send
 	 */
 	buildMessage(
@@ -130,13 +149,18 @@ class WebSocketManager {
 		event,
 		data = {},
 		encrypted = true,
-		publicKey = ""
+		publicKey = "",
+		messageId = ""
 	) {
 		let message = {
 			status: status,
 			event: event,
 			data: data,
 		};
+
+		if (messageId) {
+			message.messageId = messageId;
+		}
 
 		if (encrypted && publicKey) {
 			message.data = rsa.encrypt(JSON.stringify(message.data), publicKey);
@@ -145,56 +169,26 @@ class WebSocketManager {
 		return JSON.stringify(message);
 	}
 
-	// FIXME: These don't work
-	// /**
-	//  * Sends a message to all connected clients
-	//  * @param {*} type - The type of message
-	//  * @param {*} data - The data to send
-	//  * @returns {void}
-	//  */
-	// broadcastMessage(type, data) {
-	// 	this.wss.clients.forEach((client) => {
-	// 		if (client.readyState === WebSocket.OPEN) {
-	// 			this.sendMessage(client, this.buildMessage(type, data));
-	// 		}
-	// 	});
+	/**
+	 * Sends a message to a specific client
+	 * @param {*} id - The id of the client to send the message to
+	 * @param {*} type - The type of message
+	 * @param {*} data - The data to send
+	 * @returns {void}
+	 */
+	sendMessageToClient(id, type, data) {
+		const agent = this.agents[id];
+		if (agent && agent.readyState === WebSocket.OPEN) {
+			this.sendMessage(
+				agent,
+				this.buildMessage("ok", type, data, true, agent.publicKey)
+			);
 
-	// 	log.debug("WebSocketManager", "Sent message to all clients");
-	// }
-
-	// /**
-	//  * Sends a message to a specific client
-	//  * @param {*} id - The id of the client to send the message to
-	//  * @param {*} type - The type of message
-	//  * @param {*} data - The data to send
-	//  * @returns {void}
-	//  */
-	// sendMessageToClient(id, type, data) {
-	// 	this.wss.clients.forEach((client) => {
-	// 		if (client.id === id && client.readyState === WebSocket.OPEN) {
-	// 			this.sendMessage(client, this.buildMessage(type, data));
-	// 		}
-	// 	});
-
-	// 	log.debug("WebSocketManager", "Sent message to client " + id);
-	// }
-
-	// /**
-	//  * Sends a message to all clients except the one specified
-	//  * @param {*} id - The id of the client to exclude
-	//  * @param {*} type - The type of message
-	//  * @param {*} data - The data to send
-	//  * @returns {void}
-	//  */
-	// broadcastMessageExcept(id, type, data) {
-	// 	this.wss.clients.forEach((client) => {
-	// 		if (client.id !== id && client.readyState === WebSocket.OPEN) {
-	// 			this.sendMessage(client, this.buildMessage(type, data));
-	// 		}
-	// 	});
-
-	// 	log.debug("WebSocketManager", "Sent message to all clients except " + id);
-	// }
+			log.debug("WebSocketManager", "Sent message to client " + id);
+		} else {
+			log.error("WebSocketManager", "Agent not found or not connected");
+		}
+	}
 
 	/**
 	 * Sends a message to a specific client and waits for a response
@@ -204,20 +198,59 @@ class WebSocketManager {
 	 * @returns {Promise<string>} The response from the client
 	 */
 	async sendMessageAndWaitForResponse(id, type, data) {
-		return new Promise((resolve) => {
-			this.agents.forEach((client) => {
-				if (client.id == id && client.readyState === WebSocket.OPEN) {
-					this.sendMessage(
-						client,
-						this.buildMessage("ok", type, data, true, client.publicKey)
-					);
+		return new Promise((resolve, reject) => {
+			const messageId = this.generateUniqueId();
+			this.messageResolvers.set(messageId, resolve);
 
-					client.on("message", (message) => {
-						resolve(message);
-					});
-				}
-			});
+			const agent = this.agents[id];
+			if (agent && agent.readyState === WebSocket.OPEN) {
+				// Modify your message structure to include messageId
+				const message = this.buildMessage(
+					"ok",
+					type,
+					data,
+					true,
+					agent.publicKey,
+					messageId
+				);
+
+				this.sendMessage(agent, message);
+			} else {
+				reject(new Error("Agent not found or not connected"));
+			}
 		});
+	}
+
+	/**
+	 * Generates a unique id
+	 * @returns {string} The unique id
+	 */
+	generateUniqueId() {
+		return this.wss.getUniqueID();
+	}
+
+	/**
+	 * Call this method in your message handler when a response is received
+	 */
+	handleMessageResponse(messageId, messageObj) {
+		const resolve = this.messageResolvers.get(messageId);
+		if (resolve) {
+			// Check if the data needs to be decrypted, if it is a hex string
+			if (messageObj.data && messageObj.data.match(/^[0-9a-fA-F]+$/)) {
+				log.debug("WebSocketManager", "Auto decrypting message data");
+				messageObj.data = JSON.parse(
+					rsa.decrypt(messageObj.data, this.server.privateKey)
+				);
+			}
+
+			resolve(messageObj); // Assuming messageObj contains the response data
+			this.messageResolvers.delete(messageId);
+		} else {
+			log.error(
+				"WebSocketManager",
+				"No resolver found for message id " + messageId
+			);
+		}
 	}
 
 	/**

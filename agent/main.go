@@ -23,9 +23,10 @@ import (
 )
 
 type response struct {
-	Status string      `json:"status"`
-	Event  string      `json:"event"`
-	Data   interface{} `json:"data"`
+	Status    string      `json:"status"`
+	Event     string      `json:"event"`
+	Data      interface{} `json:"data"`
+	MessageId string      `json:"messageId"`
 }
 
 // Create a custom struct for PublicKey and Token
@@ -270,10 +271,30 @@ func handleServerCommunication(agent *Agent, log Logger) {
 
 			list := agent.GetContainers()
 
+			// Convert to JSON so that it can be encrypted
+			listJSON, err := json.Marshal(list)
+			if err != nil {
+				log.Error("agent", "json.Marshal error:"+err.Error())
+				return
+			}
+
+			// Encrypt the list using trsa.Encrypt with the server's public key
+			encryptedData, err := trsa.Encrypt([]byte(listJSON), agent.ServerPublicKey)
+			if err != nil {
+				log.Error("agent", "Encryption error: "+err.Error())
+				return
+			}
+
 			// Build container list message
 			containerList := response{
-				Event: "containerList",
-				Data:  list,
+				Status: "ok",
+				Event:  "containerList",
+				Data:   hex.EncodeToString(encryptedData),
+			}
+
+			// If a message ID is present, add it to the response
+			if resp.MessageId != "" {
+				containerList.MessageId = resp.MessageId
 			}
 
 			// Convert the containerList struct to a JSON string
