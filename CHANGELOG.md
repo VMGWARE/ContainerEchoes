@@ -4,7 +4,7 @@
 
 ### ❤️ Thanks to all contributors! ❤️
 
-@Codycody31, @dependabot[bot]
+@dependabot[bot], @Codycody31
 
 ### ✨ Features
 
@@ -28,6 +28,11 @@
 
 ### Misc
 
+- fix(deps): bump @types/node from 20.10.1 to 20.11.10 in /server [[#62](https://github.com/VMGWARE/ContainerEchoes/pull/62)]
+- fix(deps): bump @floating-ui/dom from 1.5.3 to 1.6.1 in /frontend [[#64](https://github.com/VMGWARE/ContainerEchoes/pull/64)]
+- fix(deps): bump supertest from 6.3.3 to 6.3.4 in /server [[#59](https://github.com/VMGWARE/ContainerEchoes/pull/59)]
+- fix(deps): bump moment-timezone from 0.5.43 to 0.5.44 in /server [[#61](https://github.com/VMGWARE/ContainerEchoes/pull/61)]
+- chore(deps-dev): bump eslint from 8.54.0 to 8.56.0 in /server [[#60](https://github.com/VMGWARE/ContainerEchoes/pull/60)]
 - fix(deps): bump mysql2 from 3.9.0 to 3.9.1 in /core [[#63](https://github.com/VMGWARE/ContainerEchoes/pull/63)]
 - fix(deps): bump apexcharts from 3.37.0 to 3.45.2 in /frontend [[#56](https://github.com/VMGWARE/ContainerEchoes/pull/56)]
 - Bump vuetify from 3.4.9 to 3.5.1 in /frontend [[#47](https://github.com/VMGWARE/ContainerEchoes/pull/47)]
