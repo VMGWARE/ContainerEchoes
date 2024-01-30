@@ -235,6 +235,14 @@ class WebSocketManager {
 	handleMessageResponse(messageId, messageObj) {
 		const resolve = this.messageResolvers.get(messageId);
 		if (resolve) {
+			// Check if the data needs to be decrypted, if it is a hex string
+			if (messageObj.data && messageObj.data.match(/^[0-9a-fA-F]+$/)) {
+				log.debug("WebSocketManager", "Auto decrypting message data");
+				messageObj.data = JSON.parse(
+					rsa.decrypt(messageObj.data, this.server.privateKey)
+				);
+			}
+
 			resolve(messageObj); // Assuming messageObj contains the response data
 			this.messageResolvers.delete(messageId);
 		} else {
