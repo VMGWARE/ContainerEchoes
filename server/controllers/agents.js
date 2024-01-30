@@ -84,6 +84,12 @@ const knex = require("@container-echoes/core/database");
  *                   type: null
  *                   example: null
  */
+/**
+ * Get all agents
+ * @param {Object} req The request object.
+ * @param {Object} res The response object.
+ * @returns {Object} A response object.
+ */
 async function getAll(req, res) {
 	try {
 		const agents = await knex("agent").select(
@@ -169,6 +175,12 @@ async function getAll(req, res) {
  *                   type: null
  *                   example: null
  */
+/**
+ * Get an agent
+ * @param {Object} req The request object.
+ * @param {Object} res The response object.
+ * @returns {Object} A response object.
+ */
 async function getOne(req, res) {
 	try {
 		const agent = await knex("agent")
@@ -241,6 +253,12 @@ async function getOne(req, res) {
  *                   type: null
  *                   example: null
  */
+/**
+ * Get containers for an agent
+ * @param {Object} req The request object.
+ * @param {Object} res The response object.
+ * @returns {Object} A response object.
+ */
 async function getContainers(req, res) {
 	try {
 		const containers = await WebSocketManager.sendMessageAndWaitForResponse(
@@ -249,12 +267,10 @@ async function getContainers(req, res) {
 			{}
 		);
 
-		console.log(containers);
-
 		return standardResponse(
 			res,
 			"Successfully retrieved containers for agent",
-			containers
+			containers.data
 		);
 	} catch (err) {
 		log.error("agents", "Error getting containers: " + err);
