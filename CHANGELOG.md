@@ -4,7 +4,7 @@
 
 ### ❤️ Thanks to all contributors! ❤️
 
-@dependabot[bot], @Codycody31
+@Codycody31, @dependabot[bot]
 
 ### ✨ Features
 
@@ -13,6 +13,7 @@
 
 ### 📈 Enhancement
 
+- Task/52 enhancements to websocketmanager for improved asynchronous communication and scalability [[#69](https://github.com/VMGWARE/ContainerEchoes/pull/69)]
 - Add support for arm64 [[#68](https://github.com/VMGWARE/ContainerEchoes/pull/68)]
 - docker: include push to harbor.vmgware.dev [[#67](https://github.com/VMGWARE/ContainerEchoes/pull/67)]
 - Enhancements in Security, Configuration, and UI Components [[#39](https://github.com/VMGWARE/ContainerEchoes/pull/39)]
