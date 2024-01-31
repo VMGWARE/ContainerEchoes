@@ -58,6 +58,9 @@ const knex = require("@container-echoes/core/database");
  *                       agentName:
  *                         type: string
  *                         example: "Agent 1"
+ *                       hostname:
+ *                         type: string
+ *                         example: "agent1"
  *                       createdAt:
  *                         type: string
  *                         example: "2020-01-01 00:00:00"
@@ -95,6 +98,7 @@ async function getAll(req, res) {
 		const agents = await knex("agent").select(
 			"agentId",
 			"agentName",
+			"hostname",
 			"createdAt",
 			"updatedAt"
 		);
@@ -149,6 +153,9 @@ async function getAll(req, res) {
  *                     agentName:
  *                       type: string
  *                       example: "Agent 1"
+ *                     hostname:
+ *                       type: string
+ *                       example: "agent1"
  *                     createdAt:
  *                       type: string
  *                       example: "2020-01-01 00:00:00"
@@ -184,7 +191,7 @@ async function getAll(req, res) {
 async function getOne(req, res) {
 	try {
 		const agent = await knex("agent")
-			.select("agentId", "agentName", "createdAt", "updatedAt")
+			.select("agentId", "agentName", "hostname", "createdAt", "updatedAt")
 			.where("agentId", req.params.agentId)
 			.first();
 
