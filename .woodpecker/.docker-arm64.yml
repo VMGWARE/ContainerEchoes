@@ -34,7 +34,8 @@ variables:
       # Dockerfile changes
       - "docker/**"
       # pipeline config changes
-      - ".woodpecker/.docker.yml"
+      - ".woodpecker/.docker-amd64.yml"
+      - ".woodpecker/.docker-arm64.yml"
 
 steps:
   ###############
