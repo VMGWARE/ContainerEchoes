@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.3.0) - 2024-01-31
+
+### ❤️ Thanks to all contributors! ❤️
+
+@Codycody31
+
+### 📈 Enhancement
+
+- chore(.binaries.yml): remove unnecessary build-web step [[#85](https://github.com/VMGWARE/ContainerEchoes/pull/85)]
+
 ## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-31
 
 ### ❤️ Thanks to all contributors! ❤️
