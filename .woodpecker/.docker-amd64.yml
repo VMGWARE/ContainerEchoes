@@ -73,6 +73,22 @@ steps:
       evaluate: 'CI_COMMIT_PULL_REQUEST_LABELS contains "build_pr_images"'
       event: pull_request
 
+  build-server-dryrun:
+    image: *buildx_plugin
+    settings:
+      dry_run: true
+      repo: *publish_repos_server
+      dockerfile: docker/Dockerfile.server
+      platforms: *platforms_preview
+      tag: pull_${CI_COMMIT_PULL_REQUEST}
+      build_args: *build_args
+    when:
+      - evaluate: 'not (CI_COMMIT_PULL_REQUEST_LABELS contains "build_pr_images")'
+        event: pull_request
+        path: *when_path
+      - event: push
+        path: *when_path
+
   publish-next-server:
     image: *buildx_plugin
     settings:
@@ -119,7 +135,7 @@ steps:
       evaluate: 'CI_COMMIT_PULL_REQUEST_LABELS contains "build_pr_images"'
       event: pull_request
 
-  build-agent:
+  build-agent-dryrun:
     depends_on:
       - vendor
     image: *buildx_plugin
@@ -131,9 +147,11 @@ steps:
       tag: pull_${CI_COMMIT_PULL_REQUEST}
       build_args: *build_args
     when:
-      evaluate: 'not (CI_COMMIT_PULL_REQUEST_LABELS contains "build_pr_images")'
-      event: pull_request
-      path: *when_path
+      - evaluate: 'not (CI_COMMIT_PULL_REQUEST_LABELS contains "build_pr_images")'
+        event: pull_request
+        path: *when_path
+      - event: push
+        path: *when_path
 
   publish-next-agent:
     depends_on:
