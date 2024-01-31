@@ -4,12 +4,17 @@
 
 ### ❤️ Thanks to all contributors! ❤️
 
-@Codycody31, @dependabot[bot]
+@Codycody31
 
 ### ✨ Features
 
 - Feature: event driven ws handling [[#26](https://github.com/VMGWARE/ContainerEchoes/pull/26)]
 - Enable encryption of data between server and agent [[#24](https://github.com/VMGWARE/ContainerEchoes/pull/24)]
+
+### 🐛 Bug Fixes
+
+- Fix GenerateKeypair error handling and use os.ReadFile [[#81](https://github.com/VMGWARE/ContainerEchoes/pull/81)]
+- Remove dependencies and update Docker configuration in CI workflows [[#25](https://github.com/VMGWARE/ContainerEchoes/pull/25)]
 
 ### 📈 Enhancement
 
@@ -25,12 +30,9 @@
 - Switch to vuetify UI [[#28](https://github.com/VMGWARE/ContainerEchoes/pull/28)]
 - Update agent to use CLI flags along with new version of the logger [[#22](https://github.com/VMGWARE/ContainerEchoes/pull/22)]
 
-### 🐛 Bug Fixes
-
-- Remove dependencies and update Docker configuration in CI workflows [[#25](https://github.com/VMGWARE/ContainerEchoes/pull/25)]
-
 ### Misc
 
+- Update release-helper image version and enable pull [[#80](https://github.com/VMGWARE/ContainerEchoes/pull/80)]
 - chore: prepare for testing of shared libraries [[#79](https://github.com/VMGWARE/ContainerEchoes/pull/79)]
 - fix(deps): bump @types/node from 20.10.1 to 20.11.10 in /server [[#62](https://github.com/VMGWARE/ContainerEchoes/pull/62)]
 - fix(deps): bump @floating-ui/dom from 1.5.3 to 1.6.1 in /frontend [[#64](https://github.com/VMGWARE/ContainerEchoes/pull/64)]
