@@ -13,6 +13,7 @@
 
 ### 📈 Enhancement
 
+- Fix agent and server dry run issues [[#84](https://github.com/VMGWARE/ContainerEchoes/pull/84)]
 - Update package.json versions via release helper [[#83](https://github.com/VMGWARE/ContainerEchoes/pull/83)]
 - [#54] Remove CI secuity scanning [[#76](https://github.com/VMGWARE/ContainerEchoes/pull/76)]
 - [#53] Frontend Module Refactoring [[#70](https://github.com/VMGWARE/ContainerEchoes/pull/70)]
