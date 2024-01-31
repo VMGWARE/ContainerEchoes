@@ -1,11 +1,13 @@
 variables:
-  - &node_image "docker.io/node:18-alpine"
+  - &node_image "docker.io/node:21-alpine"
   - path: &when_path
       - "docs/**"
       - ".woodpecker/.docs.yml"
+      # api docs
       - "server/**"
   - path: &docker_path # web source code
       - "web/**"
+      # api source code
       - "server/**"
       # go source code
       - "**/*.go"
@@ -22,8 +24,6 @@ when:
       - <<: *docker_path
     branch:
       - ${CI_REPO_DEFAULT_BRANCH}
-  - event: pull_request_closed
-    path: *when_path
   - event: manual
     evaluate: 'TASK == "docs"'
 
@@ -35,7 +35,9 @@ steps:
       - npm install --frozen-lockfile
       - npm run build
     when:
-      - path: *when_path
+      - path:
+          - <<: *when_path
+          - <<: *docker_path
         event: [tag, pull_request, push]
       - event: manual
 
