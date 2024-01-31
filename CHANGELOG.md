@@ -11,13 +11,9 @@
 - Feature: event driven ws handling [[#26](https://github.com/VMGWARE/ContainerEchoes/pull/26)]
 - Enable encryption of data between server and agent [[#24](https://github.com/VMGWARE/ContainerEchoes/pull/24)]
 
-### 🐛 Bug Fixes
-
-- Fix GenerateKeypair error handling and use os.ReadFile [[#81](https://github.com/VMGWARE/ContainerEchoes/pull/81)]
-- Remove dependencies and update Docker configuration in CI workflows [[#25](https://github.com/VMGWARE/ContainerEchoes/pull/25)]
-
 ### 📈 Enhancement
 
+- Update package.json versions via release helper [[#83](https://github.com/VMGWARE/ContainerEchoes/pull/83)]
 - [#54] Remove CI secuity scanning [[#76](https://github.com/VMGWARE/ContainerEchoes/pull/76)]
 - [#53] Frontend Module Refactoring [[#70](https://github.com/VMGWARE/ContainerEchoes/pull/70)]
 - Task/52 enhancements to websocketmanager for improved asynchronous communication and scalability [[#69](https://github.com/VMGWARE/ContainerEchoes/pull/69)]
@@ -30,8 +26,18 @@
 - Switch to vuetify UI [[#28](https://github.com/VMGWARE/ContainerEchoes/pull/28)]
 - Update agent to use CLI flags along with new version of the logger [[#22](https://github.com/VMGWARE/ContainerEchoes/pull/22)]
 
+### 🐛 Bug Fixes
+
+- Fix GenerateKeypair error handling and use os.ReadFile [[#81](https://github.com/VMGWARE/ContainerEchoes/pull/81)]
+- Remove dependencies and update Docker configuration in CI workflows [[#25](https://github.com/VMGWARE/ContainerEchoes/pull/25)]
+
 ### Misc
 
+- fix(deps): bump @scalar/express-api-reference from 0.2.31 to 0.2.36 in /server [[#82](https://github.com/VMGWARE/ContainerEchoes/pull/82)]
+- chore(deps-dev): bump eslint-plugin-vue from 9.20.1 to 9.21.0 in /web [[#73](https://github.com/VMGWARE/ContainerEchoes/pull/73)]
+- chore(deps-dev): bump @vitejs/plugin-vue from 4.6.2 to 5.0.3 in /web [[#77](https://github.com/VMGWARE/ContainerEchoes/pull/77)]
+- fix(deps): bump @sentry/node from 7.98.0 to 7.99.0 in /server [[#71](https://github.com/VMGWARE/ContainerEchoes/pull/71)]
+- chore(deps-dev): bump vite-plugin-vue-layouts from 0.10.0 to 0.11.0 in /web [[#72](https://github.com/VMGWARE/ContainerEchoes/pull/72)]
 - Update release-helper image version and enable pull [[#80](https://github.com/VMGWARE/ContainerEchoes/pull/80)]
 - chore: prepare for testing of shared libraries [[#79](https://github.com/VMGWARE/ContainerEchoes/pull/79)]
 - fix(deps): bump @types/node from 20.10.1 to 20.11.10 in /server [[#62](https://github.com/VMGWARE/ContainerEchoes/pull/62)]
