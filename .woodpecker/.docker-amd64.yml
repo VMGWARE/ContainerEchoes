@@ -87,8 +87,6 @@ steps:
       - evaluate: 'not (CI_COMMIT_PULL_REQUEST_LABELS contains "build_pr_images")'
         event: pull_request
         path: *when_path
-      - event: push
-        path: *when_path
 
   publish-next-server:
     image: *buildx_plugin
@@ -150,8 +148,6 @@ steps:
     when:
       - evaluate: 'not (CI_COMMIT_PULL_REQUEST_LABELS contains "build_pr_images")'
         event: pull_request
-        path: *when_path
-      - event: push
         path: *when_path
 
   publish-next-agent:
