@@ -3,13 +3,16 @@ package trsa
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"testing"
 )
 
 func TestCreateKeys(t *testing.T) {
-	GenerateKeypair(1024)
-	_, _, err := GenerateKeys(2048)
+	_, err := GenerateKeypair(1024)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	_, _, err = GenerateKeys(2048)
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -24,11 +27,11 @@ func TestNewKeypair(t *testing.T) {
 }
 
 func loadKey() (*Keypair, error) {
-	publicKey, err := ioutil.ReadFile("./testData/publicKey")
+	publicKey, err := os.ReadFile("./testData/publicKey")
 	if err != nil {
 		return nil, err
 	}
-	privateKey, err := ioutil.ReadFile("./testData/privateKey")
+	privateKey, err := os.ReadFile("./testData/privateKey")
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +65,7 @@ func TestEncryptDecrypt(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	if bytes.Compare(decrypted, data) != 0 {
+	if !bytes.Equal(decrypted, data) {
 		t.Fatal(fmt.Sprint("unequal ", string(decrypted), "--", string(data)))
 	}
 }
