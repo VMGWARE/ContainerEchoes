@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-30
+## [0.2.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.0) - 2024-01-31
 
 ### ❤️ Thanks to all contributors! ❤️
 
@@ -31,6 +31,7 @@
 
 ### Misc
 
+- chore: prepare for testing of shared libraries [[#79](https://github.com/VMGWARE/ContainerEchoes/pull/79)]
 - fix(deps): bump @types/node from 20.10.1 to 20.11.10 in /server [[#62](https://github.com/VMGWARE/ContainerEchoes/pull/62)]
 - fix(deps): bump @floating-ui/dom from 1.5.3 to 1.6.1 in /frontend [[#64](https://github.com/VMGWARE/ContainerEchoes/pull/64)]
 - fix(deps): bump supertest from 6.3.3 to 6.3.4 in /server [[#59](https://github.com/VMGWARE/ContainerEchoes/pull/59)]
