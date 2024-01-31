@@ -12,14 +12,6 @@ variables:
   - &xgo_version "go-1.21.2"
 
 steps:
-  build-web:
-    image: *node_image
-    directory: web/
-    commands:
-      - corepack enable
-      - npm install --frozen-lockfile
-      - npm build
-
   vendor:
     image: *golang_image
     commands:
