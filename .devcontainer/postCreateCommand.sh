@@ -4,8 +4,8 @@
 cd server
 npm install
 
-# Install frontend dependencies
-cd ../frontend
+# Install web dependencies
+cd ../web
 npm install
 
 # Install agent dependencies

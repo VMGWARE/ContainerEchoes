@@ -15,6 +15,7 @@ const {
 } = require("../utils/responses");
 // const AuditLog = require("@container-echoes/core/helpers/auditLog");
 // const config = require("@container-echoes/core/config").getInstance();
+const WebSocketManager = require("../webSocket/manager").getInstance();
 
 // Database
 const knex = require("@container-echoes/core/database");
@@ -57,6 +58,9 @@ const knex = require("@container-echoes/core/database");
  *                       agentName:
  *                         type: string
  *                         example: "Agent 1"
+ *                       hostname:
+ *                         type: string
+ *                         example: "agent1"
  *                       createdAt:
  *                         type: string
  *                         example: "2020-01-01 00:00:00"
@@ -83,11 +87,18 @@ const knex = require("@container-echoes/core/database");
  *                   type: null
  *                   example: null
  */
+/**
+ * Get all agents
+ * @param {Object} req The request object.
+ * @param {Object} res The response object.
+ * @returns {Object} A response object.
+ */
 async function getAll(req, res) {
 	try {
 		const agents = await knex("agent").select(
 			"agentId",
 			"agentName",
+			"hostname",
 			"createdAt",
 			"updatedAt"
 		);
@@ -142,6 +153,9 @@ async function getAll(req, res) {
  *                     agentName:
  *                       type: string
  *                       example: "Agent 1"
+ *                     hostname:
+ *                       type: string
+ *                       example: "agent1"
  *                     createdAt:
  *                       type: string
  *                       example: "2020-01-01 00:00:00"
@@ -168,11 +182,18 @@ async function getAll(req, res) {
  *                   type: null
  *                   example: null
  */
+/**
+ * Get an agent
+ * @param {Object} req The request object.
+ * @param {Object} res The response object.
+ * @returns {Object} A response object.
+ */
 async function getOne(req, res) {
 	try {
 		const agent = await knex("agent")
-			.select("agentId", "agentName", "createdAt", "updatedAt")
-			.where("agentId", req.params.agentId).first();
+			.select("agentId", "agentName", "hostname", "createdAt", "updatedAt")
+			.where("agentId", req.params.agentId)
+			.first();
 
 		return standardResponse(res, "Successfully retrieved agent", agent);
 	} catch (err) {
@@ -181,7 +202,91 @@ async function getOne(req, res) {
 	}
 }
 
+/**
+ * @swagger
+ * /agents/{agentId}/containers:
+ *   get:
+ *     tags:
+ *       - Agents
+ *     summary: Get containers for an agent
+ *     description: Get containers for an agent
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: agentId
+ *         description: The id of the agent
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: number
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved containers for agent
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: number
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully retrieved containers for agent
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       500:
+ *         description: Something went wrong. But it's probably not your fault.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: number
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Something went wrong. But it's probably not your fault.
+ *                 data:
+ *                   type: null
+ *                   example: null
+ */
+/**
+ * Get containers for an agent
+ * @param {Object} req The request object.
+ * @param {Object} res The response object.
+ * @returns {Object} A response object.
+ */
+async function getContainers(req, res) {
+	try {
+		const containers = await WebSocketManager.sendMessageAndWaitForResponse(
+			req.params.agentId,
+			WebSocketManager.events.CONTAINER_LIST,
+			{}
+		);
+
+		return standardResponse(
+			res,
+			"Successfully retrieved containers for agent",
+			containers.data
+		);
+	} catch (err) {
+		log.error("agents", "Error getting containers: " + err);
+		genericInternalServerError(res, err, "agents");
+	}
+}
+
 module.exports = {
 	getAll,
 	getOne,
+	getContainers,
 };

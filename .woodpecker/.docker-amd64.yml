@@ -29,7 +29,7 @@ variables:
   - &publish_repos_agent "vmgware/echoes-agent,harbor.vmgware.dev/echoes/agent"
   - &publish_repos_server "vmgware/echoes-server,harbor.vmgware.dev/echoes/server"
   - path: &when_path # web source code
-      - "frontend/**"
+      - "web/**"
       # api source code
       - "server/**"
       # go source code
