@@ -220,12 +220,16 @@ const server = http.createServer(app);
 	log.debug("server", "Loading Swagger documentation");
 	const options = require("./configs/swagger");
 	const specs = swaggerJsdoc(options);
+	app.get("/swagger.json", (req, res) => {
+		res.setHeader("Content-Type", "application/json");
+		res.send(specs);
+	});
 	app.use(
 		"/reference",
 		apiReference({
 			theme: "purple",
 			spec: {
-				content: specs,
+				url: "/swagger.json",
 			},
 		})
 	);
