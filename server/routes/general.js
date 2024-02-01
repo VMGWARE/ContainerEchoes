@@ -5,6 +5,9 @@ const router = express.Router();
 // Controller
 const GeneralController = require("../controllers/general");
 
+// Middleware
+const { auth } = require("../middleware/auth");
+
 /**
  * @swagger
  * /healthcheck:
@@ -43,9 +46,9 @@ router.get("/general/healthcheck", (req, res) => {
 	});
 });
 
-// TODO: Only allow this route to be accessed in development mode or by superusers
 router.get(
 	"/general/system-information",
+	auth,
 	GeneralController.getSystemInformation
 );
 

@@ -5,8 +5,11 @@ const router = express.Router();
 // Controller
 const AdminSettingsController = require("../controllers/admin/settings");
 
+// Middleware
+const { auth } = require("../middleware/auth");
+
 // Routes
-router.get("/admin/settings", AdminSettingsController.getAll);
-router.put("/admin/settings", AdminSettingsController.updateAll);
+router.get("/admin/settings", auth, AdminSettingsController.getAll);
+router.put("/admin/settings", auth, AdminSettingsController.updateAll);
 
 module.exports = router;
