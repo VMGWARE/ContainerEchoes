@@ -338,11 +338,19 @@ gracefulShutdown(app, {
 });
 
 // Catch unhandled rejections
-process.on("unhandledRejection", (err) => {
+process.on("unhandledRejection", async (err) => {
+	if (config.exceptionless.apiKey && config.exceptionless.serverUrl) {
+		await Exceptionless.submitException(err);
+	}
+
 	log.error("server", "Unhandled rejection: " + err);
 	console.error(err);
 });
-process.on("uncaughtException", (err) => {
+process.on("uncaughtException", async (err) => {
+	if (config.exceptionless.apiKey && config.exceptionless.serverUrl) {
+		await Exceptionless.submitException(err);
+	}
+
 	log.error("server", "Uncaught exception: " + err);
 	console.error(err);
 });
