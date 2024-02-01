@@ -54,8 +54,8 @@ COPY --from=builder /app/web/dist/ /usr/local/apache2/htdocs/
 # Copy the core, server, and other configuration files
 COPY --from=builder /app/core/ /usr/local/core/
 COPY --from=builder /app/server/ /usr/local/server/
-COPY ./docker/.htaccess /usr/local/apache2/htdocs/
-COPY ./docker/my-httpd.conf /usr/local/apache2/conf/
+COPY ./docker/.htaccess /usr/local/apache2/htdocs/.htaccess
+COPY ./docker/my-httpd.conf /usr/local/apache2/conf/httpd.conf
 
 # Setup s6 services
 COPY ./docker/apache-run /etc/services.d/apache/run
