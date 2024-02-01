@@ -236,7 +236,7 @@ const server = http.createServer(app);
 		apiReference({
 			theme: "purple",
 			spec: {
-				url: "/swagger.json",
+				content: specs,
 			},
 		})
 	);
