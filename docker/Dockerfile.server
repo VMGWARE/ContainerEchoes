@@ -8,15 +8,20 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get autoremove -y
 
+# Build the core
+WORKDIR /app/core
+COPY core/package*.json ./
+RUN npm install
+COPY core/ ./
+
 # Build the server
 WORKDIR /app/server
 COPY server/package*.json ./
 RUN npm ci --omit=dev
-COPY core /app/core
 COPY server/ ./
 RUN npm install /app/core
 
-# Build the web
+# Build the web, including the fix for @rollup/rollup-linux-arm64-gnu
 WORKDIR /app/web
 COPY web/package*.json ./
 COPY web/ ./

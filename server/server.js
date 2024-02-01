@@ -86,32 +86,39 @@ const server = http.createServer(app);
 	}
 
 	// Check connection to Elasticsearch
-	log.info("server", "Checking Elasticsearch connection...");
-	const client = new Client({
-		node: config.elasticsearch.url,
-		auth: {
-			apiKey: config.elasticsearch.apiKey,
-		},
-		tls: {
-			// ca: config.elasticsearch.ca,
-			ca: Buffer.from(config.elasticsearch.ca, "base64").toString("ascii"),
-			rejectUnauthorized: false,
-		},
-	});
+	if (config.elasticsearch.url && config.elasticsearch.apiKey) {
+		log.info("server", "Checking Elasticsearch connection...");
+		const client = new Client({
+			node: config.elasticsearch.url,
+			auth: {
+				apiKey: config.elasticsearch.apiKey,
+			},
+			tls: {
+				// ca: config.elasticsearch.ca,
+				ca: Buffer.from(config.elasticsearch.ca, "base64").toString("ascii"),
+				rejectUnauthorized: false,
+			},
+		});
 
-	try {
-		// API Key should have cluster monitor rights.
-		const resp = await client.info();
-		log.info(
-			"server",
-			"Elasticsearch connection successful, version: " + resp.version.number
-		);
-	} catch (err) {
-		if (config.exceptionless.apiKey && config.exceptionless.serverUrl) {
-			await Exceptionless.submitException(err);
+		try {
+			// API Key should have cluster monitor rights.
+			const resp = await client.info();
+			log.info(
+				"server",
+				"Elasticsearch connection successful, version: " + resp.version.number
+			);
+		} catch (err) {
+			if (config.exceptionless.apiKey && config.exceptionless.serverUrl) {
+				await Exceptionless.submitException(err);
+			}
+			log.error("server", "Error connecting to Elasticsearch: " + err);
+			process.exit(1);
 		}
-		log.error("server", "Error connecting to Elasticsearch: " + err);
-		process.exit(1);
+	} else {
+		log.warn(
+			"server",
+			"Elasticsearch URL or API key not set. Elasticsearch will be disabled."
+		);
 	}
 
 	// Check if we have RSA keys stored in the database, if not, generate them
