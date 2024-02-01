@@ -35,16 +35,16 @@
           {{ agent.createdAt }}
         </td>
 
-        <td>
+        <td class="text-center">
           <VBtn
-            variant="outline-primary"
-            size="sm"
+            color="primary"
+            class="mr-2"
           >
             Edit
           </VBtn>
           <VBtn
-            variant="outline-danger"
-            size="sm"
+            color="secondary"
+            class="mr-2"
           >
             Delete
           </VBtn>

@@ -6,6 +6,13 @@ import { useUserStore } from '@/store/user'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+  scrollBehavior: to => {
+    if (to.hash) {
+      return { selector: to.hash }
+    } else {
+      return { x: 0, y: 0 }
+    }
+  },
 })
 
 const handleAuthRedirection = (to, from, next) => {
@@ -15,7 +22,7 @@ const handleAuthRedirection = (to, from, next) => {
 
   if (!isLoggedIn && !publicPaths.includes(to.path)) {
     console.log('Redirecting to login')
-    
+
     return next({
       path: '/login',
       query: { redirect: to.fullPath },
@@ -24,7 +31,7 @@ const handleAuthRedirection = (to, from, next) => {
 
   if (isLoggedIn && publicPaths.includes(to.path)) {
     console.log('Redirecting to home')
-    
+
     return next({ path: '/' })
   }
 
