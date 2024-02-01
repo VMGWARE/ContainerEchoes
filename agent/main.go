@@ -93,7 +93,21 @@ func runAgent(context *cli.Context) error {
 	if strings.HasPrefix(healthcheckAddress, ":") {
 		healthcheckAddress = "localhost" + healthcheckAddress
 	}
-	if !checkServerHealth("http://" + healthcheckAddress + "/general/healthcheck") {
+
+	// Build the protocol
+	protocol := "http"
+	if context.Bool("ssl") {
+		protocol = "https"
+	}
+
+	// Build the healthcheck URL
+	if context.Bool("dev-mode") {
+		healthcheckAddress = protocol + "://" + healthcheckAddress + "/general/healthcheck"
+	} else {
+		healthcheckAddress = protocol + "://" + healthcheckAddress + "/api/general/healthcheck"
+	}
+
+	if !checkServerHealth(healthcheckAddress) {
 		log.Error("agent", "Server is not healthy")
 		return nil
 	}

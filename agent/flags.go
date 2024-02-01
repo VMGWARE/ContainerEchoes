@@ -28,6 +28,12 @@ var flags = []cli.Flag{
 		Usage:   "server address",
 		Value:   "localhost:5000",
 	},
+	&cli.BoolFlag{
+		EnvVars: []string{"ECHOES_SSL"},
+		Name:    "ssl",
+		Usage:   "enable ssl",
+		Value:   false,
+	},
 	&cli.StringFlag{
 		EnvVars:  []string{"ECHOES_AGENT_SECRET"},
 		Name:     "secret",
@@ -50,5 +56,11 @@ var flags = []cli.Flag{
 		Name:    "healthcheck-addr",
 		Usage:   "healthcheck endpoint address",
 		Value:   ":5000",
+	},
+	&cli.BoolFlag{
+		EnvVars: []string{"ECHOES_DEV_MODE"},
+		Name:    "dev-mode",
+		Usage:   "enable dev mode",
+		Value:   false,
 	},
 }
