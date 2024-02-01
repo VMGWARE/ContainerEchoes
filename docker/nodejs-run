@@ -1,7 +1,3 @@
 #!/usr/bin/with-contenv sh
-
-# Change to the application directory
-cd /usr/local/server || exit;
-
 # Start the Node.js application
-exec node server.js
+exec node /usr/local/server/server.js
