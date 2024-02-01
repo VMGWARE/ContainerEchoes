@@ -573,6 +573,7 @@ async function login(req, res) {
 		const token = jwt.sign(
 			{
 				sub: user.id,
+				superuser: user.superuser,
 			},
 			config.jwt.secret,
 			{
