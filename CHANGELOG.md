@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.3.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.3.0) - 2024-01-31
+## [0.2.1](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.1) - 2024-01-31
 
 ### ❤️ Thanks to all contributors! ❤️
 
