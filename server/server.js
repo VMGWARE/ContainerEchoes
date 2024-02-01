@@ -55,7 +55,9 @@ const server = http.createServer(app);
 	await new Promise((resolve, reject) => {
 		knex.migrate.latest().then(resolve).catch(reject);
 	}).catch(async (err) => {
-		await Exceptionless.submitException(err);
+		if (config.exceptionless.apiKey && config.exceptionless.serverUrl) {
+			await Exceptionless.submitException(err);
+		}
 		log.error("server", "Error migrating database: " + err);
 		process.exit(1);
 	});
