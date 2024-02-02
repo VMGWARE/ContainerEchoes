@@ -138,6 +138,12 @@ func runAgent(context *cli.Context) error {
 func connectToServer(agent *Agent, log Logger, context *cli.Context) bool {
 	u := url.URL{Scheme: "ws", Host: context.String("server"), Path: "/ws"}
 
+	// If we are not in dev mode, we need to use the api/ws endpoint
+	if !context.Bool("dev-mode") {
+		// Create a new URL struct
+		u = url.URL{Scheme: "wss", Host: context.String("server"), Path: "/api/ws"}
+	}
+
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
 		log.Error("agent", "dial: "+err.Error())

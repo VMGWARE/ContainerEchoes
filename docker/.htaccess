@@ -3,6 +3,10 @@ RewriteEngine On
 # Proxy requests to /api to the Node.js server without the /api prefix
 RewriteRule ^api/(.*) http://localhost:5000/$1 [P,L]
 
+# Enable WebSocket proxy
+ProxyPass "/api/ws" "ws://localhost:5000/ws"
+ProxyPassReverse "/api/ws" "ws://localhost:5000/ws"
+
 # If the request is not for a real file or directory, serve index.html
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
