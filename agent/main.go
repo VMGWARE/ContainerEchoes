@@ -107,6 +107,8 @@ func runAgent(context *cli.Context) error {
 		healthcheckAddress = protocol + "://" + healthcheckAddress + "/api/general/healthcheck"
 	}
 
+	fmt.Println("Healthcheck address: " + healthcheckAddress)
+
 	if !checkServerHealth(healthcheckAddress) {
 		log.Error("agent", "Server is not healthy")
 		return nil
@@ -143,6 +145,8 @@ func connectToServer(agent *Agent, log Logger, context *cli.Context) bool {
 		// Create a new URL struct
 		u = url.URL{Scheme: "wss", Host: context.String("server"), Path: "/api/ws"}
 	}
+
+	fmt.Println("Connecting to server: " + u.String())
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
