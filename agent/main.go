@@ -369,6 +369,7 @@ func handleServerCommunication(agent *Agent, log Logger) {
 func checkServerHealth(url string) bool {
 	resp, err := http.Get(url)
 	if err != nil {
+		fmt.Println("Error checking server health: " + err.Error())
 		return false // return false if unhealthy
 	}
 	defer resp.Body.Close()

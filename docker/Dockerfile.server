@@ -30,7 +30,7 @@ RUN npm install && \
     npm run build
 
 # Use Apache to serve the web and proxy to the server
-FROM httpd:2.4
+FROM httpd:2.4.58
 ARG S6_OVERLAY_VERSION=3.1.6.2
 
 # Install Node.js, curl, and git in the Apache stage
