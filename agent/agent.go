@@ -139,6 +139,9 @@ func (a *Agent) GetContainers() []types.Container {
 		panic(err)
 	}
 
+	// Negotiate the API version
+	cli.NegotiateAPIVersion(context.Background())
+
 	// List containers
 	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
 	if err != nil {
@@ -161,6 +164,9 @@ func (a *Agent) GetContainerLog(containerId string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	// Negotiate the API version
+	cli.NegotiateAPIVersion(context.Background())
 
 	// Get the container logs
 	out, err := cli.ContainerLogs(context.Background(), containerId, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true})
