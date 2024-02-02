@@ -146,6 +146,15 @@ func connectToServer(agent *Agent, log Logger, context *cli.Context) bool {
 		u = url.URL{Scheme: "wss", Host: context.String("server"), Path: "/api/ws"}
 	}
 
+	// Schema for the server if SSL is enabled
+	if context.Bool("ssl") {
+		u.Scheme = "wss"
+	} else {
+		u.Scheme = "ws"
+	}
+
+	fmt.Println("Scheme: " + u.Scheme)
+
 	fmt.Println("Connecting to server: " + u.String())
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
