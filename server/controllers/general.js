@@ -114,8 +114,8 @@ async function getSystemInformation(req, res) {
 			data: systemInformation,
 		});
 	} catch (error) {
-		log.error(error);
-		genericInternalServerError(res);
+		log.error("general.getSystemInformation", error);
+		genericInternalServerError(res, error, "general.getSystemInformation");
 	}
 }
 
