@@ -27,7 +27,7 @@ if (process.env.APP_LOG_LEVEL) {
 
 // Initialize Exceptionless
 let Exceptionless;
-const initializeExceptionless = require("@container-echoes/core/services/exceptionlessConfig");
+const exceptionlessManager = require("@container-echoes/core/services/exceptionless");
 
 log.info("server", "Container Echoes server service starting");
 
@@ -81,10 +81,11 @@ const server = http.createServer(app);
 			"Exceptionless API key or server URL not set. Exceptionless will be disabled."
 		);
 	} else {
-		Exceptionless = await initializeExceptionless(
+		await exceptionlessManager.initialize(
 			config.exceptionless.apiKey,
 			config.exceptionless.serverUrl
 		);
+		Exceptionless = exceptionlessManager.getInstance();
 		log.debug("server", "Exceptionless initialized");
 	}
 

@@ -1,5 +1,6 @@
 const log = require("@vmgware/js-logger").getInstance();
 const config = require("@container-echoes/core/config").getInstance();
+const exceptionlessManager = require("@container-echoes/core/services/exceptionless");
 
 /**
  * Sends a generic error response with a 500 status code.
@@ -17,6 +18,15 @@ function genericInternalServerError(res, error, moduleName = "unknown") {
 	// Log error to console
 	if (error) {
 		log.error(moduleName, error);
+	}
+
+	if (
+		config.exceptionless.apiKey &&
+		config.exceptionless.serverUrl &&
+		exceptionlessManager.getInstance()
+	) {
+		// Log error to Exceptionless
+		exceptionlessManager.getInstance().submitException(error);
 	}
 
 	// Send response
