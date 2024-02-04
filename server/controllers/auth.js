@@ -1073,8 +1073,7 @@ async function generateOtp(req, res) {
 				userId: req.user,
 				enabled: false,
 				tempSecret: secret.base32,
-				// TODO: Rename from tempQrCode to something else
-				tempQrCode: secret.otpauth_url,
+				otpauth: secret.otpauth_url,
 			});
 		} else {
 			// Update the user's secret
@@ -1085,7 +1084,7 @@ async function generateOtp(req, res) {
 				.update({
 					enabled: false,
 					tempSecret: secret.base32,
-					tempQrCode: secret.otpauth_url,
+					otpauth: secret.otpauth_url,
 				});
 		}
 
@@ -1234,7 +1233,7 @@ async function verifyOtp(req, res) {
 				enabled: true,
 				secret: user.tempSecret,
 				tempSecret: null,
-				tempQrCode: null,
+				otpauth: null,
 			});
 
 		// Return a success response
@@ -1375,7 +1374,7 @@ async function disableOtp(req, res) {
 				enabled: false,
 				secret: null,
 				tempSecret: null,
-				tempQrCode: null,
+				otpauth: null,
 			});
 
 		// Return a success response
