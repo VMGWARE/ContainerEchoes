@@ -81,7 +81,10 @@ const server = http.createServer(app);
 			"Exceptionless API key or server URL not set. Exceptionless will be disabled."
 		);
 	} else {
-		Exceptionless = await initializeExceptionless();
+		Exceptionless = await initializeExceptionless(
+			config.exceptionless.apiKey,
+			config.exceptionless.serverUrl
+		);
 		log.debug("server", "Exceptionless initialized");
 	}
 
