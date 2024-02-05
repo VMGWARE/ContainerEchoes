@@ -41,6 +41,15 @@ const config: Config = {
           // Remove this to remove the "edit this page" links.
           editUrl:
             "https://github.com/VMGWARE/ContainerEchoes/tree/master/docs/",
+          includeCurrentVersion: true,
+          lastVersion: "current",
+          versions: {
+            current: {
+              label: "Next",
+              // banner: "unreleased",
+              banner: "none",
+            },
+          },
         },
         theme: {
           customCss: "./src/css/custom.css",
@@ -92,6 +101,10 @@ const config: Config = {
           sidebarId: "docsSidebar",
           position: "left",
           label: "Documentation",
+        },
+        {
+          type: "docsVersionDropdown",
+          position: "right",
         },
         {
           href: "https://github.com/VMGWARE/ContainerEchoes",
