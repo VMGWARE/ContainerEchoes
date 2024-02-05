@@ -49,9 +49,37 @@ const config: Config = {
     ],
   ],
 
+  plugins: [
+    () => ({
+      name: "docusaurus-plugin-favicon",
+      injectHtmlTags() {
+        return {
+          headTags: [
+            {
+              tagName: "link",
+              attributes: {
+                rel: "icon",
+                href: "/img/favicon.ico",
+                sizes: "any",
+              },
+            },
+            {
+              tagName: "link",
+              attributes: {
+                rel: "icon",
+                href: "/img/favicon.svg",
+                type: "image/svg+xml",
+              },
+            },
+          ],
+        };
+      },
+    }),
+  ],
+
   themeConfig: {
     // Replace with your project's social card
-    image: "img/docusaurus-social-card.jpg",
+    image: "img/social-card.png",
     navbar: {
       title: "Container Echoes",
       logo: {
@@ -63,7 +91,7 @@ const config: Config = {
           type: "docSidebar",
           sidebarId: "docsSidebar",
           position: "left",
-          label: "Docs",
+          label: "Documentation",
         },
         {
           href: "https://github.com/VMGWARE/ContainerEchoes",
@@ -108,6 +136,18 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+    },
+    markdown: {
+      format: "detect",
+    },
+    tableOfContents: {
+      minHeadingLevel: 2,
+      maxHeadingLevel: 4,
+    },
+    colorMode: {
+      defaultMode: "dark",
+      disableSwitch: true,
+      // respectPrefersColorScheme: true,
     },
   } satisfies Preset.ThemeConfig,
 };
