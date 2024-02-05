@@ -39,3 +39,11 @@ GIT_USER=<Your GitHub username> npm deploy
 ```
 
 If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+
+## Versioning
+
+``` bash
+npm run docusaurus docs:version <patch|minor|major>
+```
+
+This command will create a new version of the documentation. Make sure to update the `docusaurus.config.ts` file with the new version number under the `presets` section. You can learn more about versioning [here](https://docusaurus.io/docs/versioning).
