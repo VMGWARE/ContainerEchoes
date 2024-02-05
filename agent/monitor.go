@@ -20,6 +20,11 @@ type Monitor struct {
 	OnNewLog     LogCallback // Callback function to be invoked when new logs are received
 }
 
+type Container struct {
+	ID      string
+	Pattern string
+}
+
 // NewMonitor creates a new log monitor with the given regex pattern for container names and a log callback function
 func NewMonitor(pattern string, onNewLog LogCallback) (*Monitor, error) {
 	regex, err := regexp.Compile(pattern)
@@ -46,6 +51,7 @@ func (m *Monitor) StartMonitoring(ctx context.Context, wg *sync.WaitGroup) {
 
 		for _, container := range containers {
 			if m.RegexPattern.MatchString(container.Names[0]) {
+				fmt.Printf("Monitoring logs for container %s\n", container.Names[0])
 				wg.Add(1)
 				go m.monitorContainerLogs(ctx, container.ID, container.Names[0], wg)
 			}

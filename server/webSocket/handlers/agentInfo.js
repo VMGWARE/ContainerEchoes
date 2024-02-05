@@ -86,6 +86,48 @@ class HandleHandshake extends MessageHandlerBase {
 				ws.publicKey
 			)
 		);
+
+		await this.dispatchMonitorList(ws, agent.agentId);
+	}
+
+	/**
+	 * Dispatches a list of containers to monitor to the agent.
+	 * @param {WebSocket} ws - The WebSocket connection instance.
+	 * @param {number} agentId - The agent's id.
+	 * @returns {Promise<void>} A Promise that resolves when the handling is complete.
+	 */
+	async dispatchMonitorList(ws, agentId) {
+		// TODO: Then trigger another function to send a list of the containers we want to monitor to the agent
+		let containers = await knex("container")
+			.where({
+				agent: agentId,
+			})
+			.select("id", "pattern");
+
+		// TODO: Get the last timestamp of the last log entry for each container and send it to the agent
+		// So that we don't get a huge amount of logs when we first connect
+
+		let monitorList = [];
+
+		for (let container of containers) {
+			monitorList.push({
+				id: container.id,
+				pattern: container.pattern,
+			});
+		}
+
+		this.webSocketManager.sendMessage(
+			ws,
+			this.webSocketManager.buildMessage(
+				"ok",
+				"monitor",
+				{
+					monitor: monitorList,
+				},
+				true,
+				ws.publicKey
+			)
+		);
 	}
 }
 

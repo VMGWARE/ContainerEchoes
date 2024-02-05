@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -9,12 +10,14 @@ import (
 	"os"
 	"os/signal"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
 	"echoes/shared/trsa"
 	"echoes/version"
 
+	"github.com/docker/docker/client"
 	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 
@@ -367,6 +370,78 @@ func handleServerCommunication(agent *Agent, log Logger) {
 
 			agentId := int(agentIdFloat)
 			agent.Id = agentId
+		case "monitor":
+			log.Info("agent", "Server requesting monitor")
+
+			// Decrypt the message
+			decryptedJSON, err := decryptAndUnmarshal([]byte(resp.Data.(string)), agent.PrivateKey)
+			if err != nil {
+				log.Error("agent", "Error decrypting message: "+err.Error())
+				return
+			}
+
+			// Access and process the monitor message
+			monitorList, ok := decryptedJSON["monitor"]
+
+			if !ok {
+				log.Error("agent", "Invalid monitor message format")
+				return
+			}
+
+			// Define a callback function that will be called with new logs.
+			onNewLog := func(containerName, logMessage string) {
+				// TODO: Needs to take the container id given by the server, the log message, and the ws, and send a message to the server
+				// fmt.Printf("New log from %s: %s\n", containerName, logMessage)
+				// Here you can add the logic to send the log over a WebSocket or any other desired action.
+			}
+
+			// Initialize the Docker client.
+			cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+			if err != nil {
+				fmt.Printf("Error creating Docker client: %v\n", err)
+				return
+			}
+
+			// If their are no containers to monitor, we should stop monitoring
+			if len(monitorList.([]interface{})) == 0 {
+				fmt.Println("No containers to monitor")
+				return
+			}
+
+			// monitorList is an array of json objects with an id, and container name pattern
+
+			// Start monitoring
+			for _, monitorItem := range monitorList.([]interface{}) {
+				monitorMap := monitorItem.(map[string]interface{})
+				// monitorId := int(monitorMap["id"].(float64))
+				monitorPattern := monitorMap["pattern"].(string)
+				// lastTimestamp := time.Now().Add(-1 * time.Hour) // TODO: We should get it from the server, if we don't we need to support not passing it
+
+				// Create a new Monitor instance.
+				fmt.Println("Creating monitor for pattern: " + monitorPattern)
+				monitor, err := NewMonitor(monitorPattern, onNewLog)
+				if err != nil {
+					fmt.Printf("Error creating monitor: %v\n", err)
+					return
+				}
+
+				// Adjust the Monitor struct to hold the Docker client.
+				monitor.Client = cli
+
+				// Prepare a context and a WaitGroup for managing the lifecycle of the goroutines.
+				ctx := context.Background()
+				var wg sync.WaitGroup
+
+				// Start monitoring in a non-blocking way. Now `StartMonitoring` needs to accept `lastTimestamp`.
+				wg.Add(1) // Increment the WaitGroup counter before starting the goroutine.
+				go func() {
+					defer wg.Done() // Decrement the WaitGroup counter when the goroutine completes.
+					monitor.StartMonitoring(ctx, &wg)
+				}()
+
+				// Wait for the monitoring process to complete or be stopped.
+				wg.Wait()
+			}
 		default:
 			log.Warn("agent", "Unknown message event: "+resp.Event)
 		}
