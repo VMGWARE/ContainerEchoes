@@ -47,7 +47,3 @@ Ensure these environment variables are set:
 
 - Check the agent's logs for error messages.
 - Common issues: network connectivity, configuration errors, resource constraints.
-
-## Next Steps
-
-With the agent configured, focus on managing the Container Echoes Server and exploring its features as detailed in [Managing the Container Echoes Server](server-management).

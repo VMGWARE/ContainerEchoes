@@ -72,7 +72,3 @@ export DB_HOST=localhost
 ```
 
 Remember to replace `localhost` with your actual database host.
-
-## Next Steps
-
-With your environment variables configured, you can proceed to [Configuring the Container Echoes Agent](agent-configuration).

@@ -32,7 +32,3 @@ Before installing Container Echoes, ensure you have the following:
 
 - Set environment variables as per your setup requirements (see [Environment Variables](30-env-vars.md)).
 - Configure log paths and retention policies through the web interface.
-
-## Next Steps
-
-With Container Echoes installed, the next step is to configure your environment variables as detailed in [Environment Variables](env-vars).

@@ -19,7 +19,3 @@ Container Echoes is a sophisticated log management system designed to simplify t
 ## Target Audience
 
 This tool is primarily aimed at developers and system administrators who manage and maintain Dockerized applications, offering them a streamlined approach to log management.
-
-## Next Steps
-
-To get started with Container Echoes, proceed to the [Setup Guide](setup).
