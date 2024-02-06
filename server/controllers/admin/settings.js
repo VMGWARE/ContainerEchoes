@@ -14,6 +14,7 @@ const {
 	standardResponse,
 } = require("../../utils/responses");
 // const AuditLog = require("@container-echoes/core/helpers/auditLog");
+const exceptionlessManager = require("@container-echoes/core/services/exceptionless");
 const config = require("@container-echoes/core/config").getInstance();
 
 // Database
@@ -155,6 +156,17 @@ async function updateAll(req, res) {
 
 		// Update the configuration
 		await config.refreshConfig();
+
+		// If Exceptionless is was updated, update the client
+		if (
+			keys.includes("exceptionless.apiKey") ||
+			keys.includes("exceptionless.serverUrl")
+		) {
+			await exceptionlessManager.updateClient(
+				keys["exceptionless.apiKey"],
+				keys["exceptionless.serverUrl"]
+			);
+		}
 
 		return standardResponse(res, "Successfully updated settings");
 	} catch (error) {
