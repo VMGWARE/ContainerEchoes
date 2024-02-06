@@ -3,17 +3,17 @@ module echoes
 go 1.21
 
 require (
+	github.com/6543/logfile-open v1.2.1
 	github.com/docker/docker v24.0.7+incompatible
 	github.com/gorilla/websocket v1.5.1
 	github.com/joho/godotenv v1.5.1
+	github.com/rs/zerolog v1.32.0
 	github.com/urfave/cli/v2 v2.27.1
 )
 
 require (
-	github.com/6543/logfile-open v1.2.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
-	github.com/rs/zerolog v1.32.0 // indirect
 )
 
 require (
