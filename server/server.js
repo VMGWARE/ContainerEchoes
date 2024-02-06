@@ -83,7 +83,8 @@ const server = http.createServer(app);
 	} else {
 		await exceptionlessManager.initialize(
 			config.exceptionless.apiKey,
-			config.exceptionless.serverUrl
+			config.exceptionless.serverUrl,
+			getVersion() || ""
 		);
 		Exceptionless = exceptionlessManager.getInstance();
 		log.debug("server", "Exceptionless initialized");
