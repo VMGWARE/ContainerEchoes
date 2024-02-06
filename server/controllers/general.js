@@ -119,7 +119,46 @@ async function getSystemInformation(req, res) {
 	}
 }
 
+/**
+ * @swagger
+ * /healthcheck:
+ *  get:
+ *    summary: Health check for the API
+ *    description: Health check for the API
+ *    tags:
+ *      - Health Check
+ *    responses:
+ *      200:
+ *        description: The API is healthy.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                status:
+ *                  type: string
+ *                  example: success
+ *                code:
+ *                  type: number
+ *                  example: 200
+ *                message:
+ *                  type: string
+ *                  example: The API is healthy.
+ *                data:
+ *                  type: null
+ *                  example: null
+ */
+async function healthcheck(req, res) {
+	res.status(200).json({
+		status: "success",
+		code: 200,
+		message: "The API is healthy.",
+		data: null,
+	});
+}
+
 // Export the functions
 module.exports = {
 	getSystemInformation,
+	healthcheck,
 };
