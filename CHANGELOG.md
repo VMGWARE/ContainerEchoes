@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.2.2](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.2) - 2024-02-06
+
+### ❤️ Thanks to all contributors! ❤️
+
+
+
+### Misc
+
+- fix(deps): bump @mdi/font from 7.0.96 to 7.4.47 in /web [[#91](https://github.com/VMGWARE/ContainerEchoes/pull/91)]
+- chore(deps-dev): bump eslint-plugin-vue from 9.21.0 to 9.21.1 in /web [[#95](https://github.com/VMGWARE/ContainerEchoes/pull/95)]
+- chore(deps-dev): bump @iconify/utils from 2.1.20 to 2.1.22 in /web [[#94](https://github.com/VMGWARE/ContainerEchoes/pull/94)]
+- fix(deps): bump moment-timezone from 0.5.44 to 0.5.45 in /server [[#96](https://github.com/VMGWARE/ContainerEchoes/pull/96)]
+- fix(deps): bump @elastic/elasticsearch from 8.11.0 to 8.12.1 in /server [[#101](https://github.com/VMGWARE/ContainerEchoes/pull/101)]
+- fix(deps): bump @types/node from 20.11.10 to 20.11.16 in /server [[#98](https://github.com/VMGWARE/ContainerEchoes/pull/98)]
+- chore(deps-dev): bump prettier from 3.2.4 to 3.2.5 in /server [[#99](https://github.com/VMGWARE/ContainerEchoes/pull/99)]
+- fix(deps): bump @scalar/express-api-reference from 0.2.36 to 0.2.39 in /server [[#100](https://github.com/VMGWARE/ContainerEchoes/pull/100)]
+- fix(deps): bump vuetify from 3.5.1 to 3.5.2 in /web [[#92](https://github.com/VMGWARE/ContainerEchoes/pull/92)]
+
 ## [0.2.1](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.1) - 2024-01-31
 
 ### ❤️ Thanks to all contributors! ❤️
