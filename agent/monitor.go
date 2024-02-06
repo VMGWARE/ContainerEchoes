@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"regexp"
 	"sync"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"github.com/rs/zerolog/log"
 )
 
 // LogCallback defines the signature for the callback function to be invoked with new log messages
@@ -45,13 +45,14 @@ func (m *Monitor) StartMonitoring(ctx context.Context, wg *sync.WaitGroup) {
 
 		containers, err := m.Client.ContainerList(ctx, types.ContainerListOptions{})
 		if err != nil {
-			fmt.Printf("Error fetching container list: %v\n", err)
+			// fmt.Printf("Error fetching container list: %v\n", err)
+			log.Error().Err(err).Msg("Error fetching container list")
 			return
 		}
 
 		for _, container := range containers {
 			if m.RegexPattern.MatchString(container.Names[0]) {
-				fmt.Printf("Monitoring logs for container %s\n", container.Names[0])
+				log.Info().Str("container", container.Names[0]).Msg("Monitoring logs for container")
 				wg.Add(1)
 				go m.monitorContainerLogs(ctx, container.ID, container.Names[0], wg)
 			}
@@ -66,7 +67,7 @@ func (m *Monitor) monitorContainerLogs(ctx context.Context, containerID, contain
 	options := types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true, Follow: true, Tail: "all"}
 	logStream, err := m.Client.ContainerLogs(ctx, containerID, options)
 	if err != nil {
-		fmt.Printf("Error getting logs for container %s: %v\n", containerName, err)
+		log.Error().Str("container", containerName).Err(err).Msg("Error getting logs for container")
 		return
 	}
 	defer logStream.Close()
@@ -75,7 +76,7 @@ func (m *Monitor) monitorContainerLogs(ctx context.Context, containerID, contain
 	for {
 		n, err := logStream.Read(buffer)
 		if err != nil {
-			fmt.Printf("Error reading log for container %s: %v\n", containerName, err)
+			log.Error().Str("container", containerName).Err(err).Msg("Error reading log for container")
 			break
 		}
 

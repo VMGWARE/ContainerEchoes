@@ -22,6 +22,7 @@ import (
 	"github.com/joho/godotenv"
 
 	// _ "github.com/joho/godotenv/autoload"
+	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
 )
 
@@ -45,11 +46,8 @@ const (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		fmt.Println("Error loading .env file: " + err.Error())
+		log.Error().Err(err).Msg("Error loading .env file")
 	}
-
-	// create a logger
-	log := Logger{}
 
 	app := cli.NewApp()
 	app.Name = "echoes-agent"
@@ -71,24 +69,20 @@ func main() {
 	app.Flags = flags
 
 	if err := app.Run(os.Args); err != nil {
-		log.Error("agent", err.Error())
-		return
+		log.Fatal().Err(err).Msg("error running agent")
 	}
 }
 
 func runAgent(context *cli.Context) error {
 	startTime := time.Now()
 
-	// create a logger
-	log := Logger{}
-
 	// log the agent starting
-	log.Info("agent", "Container Echoes Agent starting")
+	log.Info().Msg("Starting agent")
 
 	// load environment variables from .env file
 	err := godotenv.Load()
 	if err != nil {
-		log.Error("agent", "Error loading .env file: "+err.Error())
+		log.Error().Err(err).Msg("Error loading .env file")
 	}
 
 	// perform check to ensure the server is healthy and ready to accept connections
@@ -110,10 +104,10 @@ func runAgent(context *cli.Context) error {
 		healthcheckAddress = protocol + "://" + healthcheckAddress + "/api/general/healthcheck"
 	}
 
-	fmt.Println("Healthcheck address: " + healthcheckAddress)
+	log.Debug().Msg("Healthcheck address: " + healthcheckAddress)
 
 	if !checkServerHealth(healthcheckAddress) {
-		log.Error("agent", "Server is not healthy")
+		log.Error().Msg("Server is not healthy")
 		return nil
 	}
 
@@ -124,12 +118,12 @@ func runAgent(context *cli.Context) error {
 	// Infinite loop replaced with loop that runs for retryDuration
 	for {
 		if time.Since(startTime) > retryDuration {
-			log.Error("agent", "Connection retry time exceeded")
+			log.Error().Msg("Connection retry time exceeded")
 			break
 		}
 
-		if connectToServer(&agent, log, context) {
-			handleServerCommunication(&agent, log)
+		if connectToServer(&agent, context) {
+			handleServerCommunication(&agent)
 		}
 
 		// Sleep before retrying
@@ -140,7 +134,7 @@ func runAgent(context *cli.Context) error {
 }
 
 // Connect to the server
-func connectToServer(agent *Agent, log Logger, context *cli.Context) bool {
+func connectToServer(agent *Agent, context *cli.Context) bool {
 	u := url.URL{Scheme: "ws", Host: context.String("server"), Path: "/ws"}
 
 	// If we are not in dev mode, we need to use the api/ws endpoint
@@ -156,23 +150,23 @@ func connectToServer(agent *Agent, log Logger, context *cli.Context) bool {
 		u.Scheme = "ws"
 	}
 
-	fmt.Println("Scheme: " + u.Scheme)
+	log.Debug().Msg("Scheme: " + u.Scheme)
 
-	fmt.Println("Connecting to server: " + u.String())
+	log.Debug().Msg("Connecting to server: " + u.String())
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
-		log.Error("agent", "dial: "+err.Error())
+		log.Error().Err(err).Msg("Error connecting to server")
 		return false
 	}
 
 	agent.Connection = c // Assuming you store the connection in the Agent struct
-	log.Info("agent", "WebSocket connected")
+	log.Info().Msg("Connected to server")
 	return true
 }
 
 // Handle communication with the server
-func handleServerCommunication(agent *Agent, log Logger) {
+func handleServerCommunication(agent *Agent) {
 	c := agent.Connection // Assuming you store the connection in the Agent struct
 
 	defer c.Close()
@@ -188,9 +182,9 @@ func handleServerCommunication(agent *Agent, log Logger) {
 		// Perform cleanup actions here, such as closing the WebSocket connection
 		// Close the WebSocket connection gracefully
 		if err := c.Close(); err != nil {
-			log.Error("agent", "Error closing WebSocket connection")
+			log.Error().Err(err).Msg("Error closing WebSocket connection")
 		} else {
-			log.Info("agent", "WebSocket connection closed")
+			log.Info().Msg("WebSocket connection closed")
 		}
 
 		// Exit the program
@@ -202,7 +196,7 @@ func handleServerCommunication(agent *Agent, log Logger) {
 		// Receive message
 		_, message, err := c.ReadMessage()
 		if err != nil {
-			log.Error("agent", "read:"+err.Error())
+			log.Error().Err(err).Msg("Error reading message")
 			return
 		}
 
@@ -211,25 +205,29 @@ func handleServerCommunication(agent *Agent, log Logger) {
 		// Parse message
 		err = json.Unmarshal(message, &resp)
 		if err != nil {
-			log.Error("agent", "Error unmarshaling JSON: "+err.Error())
+			// log.Error("agent", "Error unmarshaling JSON: "+err.Error())
+			log.Error().Err(err).Msg("Error unmarshaling JSON")
 		}
 
 		// Handle message
 		switch resp.Event {
 		case "handshake":
-			log.Info("agent", "Server performing handshake")
+			// log.Info("agent", "Server performing handshake")
+			log.Info().Msg("Server performing handshake")
 
 			// Check if resp.Data is a map and contains "publicKey" key
 			data, ok := resp.Data.(map[string]interface{})
 			if !ok {
-				log.Error("agent", "Invalid handshake message format")
+				// log.Error("agent", "Invalid handshake message format")
+				log.Error().Msg("Invalid handshake message format")
 				// Handle the error appropriately, e.g., return or log
 				return
 			}
 
 			publicKeyValue, ok := data["publicKey"].(string)
 			if !ok {
-				log.Error("agent", "Invalid publicKey format")
+				// log.Error("agent", "Invalid publicKey format")
+				log.Error().Msg("Invalid publicKey format")
 				// Handle the error appropriately, e.g., return or log
 				return
 			}
@@ -253,17 +251,20 @@ func handleServerCommunication(agent *Agent, log Logger) {
 			// Convert the handshakeData struct to a JSON string
 			jsonData, err := json.Marshal(handshakeData)
 			if err != nil {
-				log.Error("agent", "json.Marshal error:"+err.Error())
+				// log.Error("agent", "json.Marshal error:"+err.Error())
+				log.Error().Err(err).Msg("json.Marshal error")
 				return
 			}
 
 			// Send the JSON string as a byte slice
 			err = c.WriteMessage(websocket.TextMessage, jsonData)
 			if err != nil {
-				log.Error("agent", "write:"+err.Error())
+				// log.Error("agent", "write:"+err.Error())
+				log.Error().Err(err).Msg("Error writing message")
 			}
 		case "agentInfo":
-			log.Info("agent", "Server interrogating for agent info")
+			// log.Info("agent", "Server interrogating for agent info")
+			log.Info().Msg("Server interrogating for agent info")
 
 			agentData := AgentInfo{
 				Token:    agent.Token,
@@ -273,14 +274,16 @@ func handleServerCommunication(agent *Agent, log Logger) {
 			// Convert to JSON so that it can be encrypted
 			agentDataJSON, err := json.Marshal(agentData)
 			if err != nil {
-				log.Error("agent", "json.Marshal error:"+err.Error())
+				// log.Error("agent", "json.Marshal error:"+err.Error())
+				log.Error().Err(err).Msg("json.Marshal error")
 				return
 			}
 
 			// Encrypt the agentData using trsa.Encrypt with the server's public key
 			encryptedData, err := trsa.Encrypt([]byte(agentDataJSON), agent.ServerPublicKey)
 			if err != nil {
-				log.Error("agent", "Encryption error: "+err.Error())
+				// log.Error("agent", "Encryption error: "+err.Error())
+				log.Error().Err(err).Msg("Encryption error")
 				return
 			}
 
@@ -293,31 +296,36 @@ func handleServerCommunication(agent *Agent, log Logger) {
 			// Convert the agentInfo struct to a JSON string
 			jsonData, err := json.Marshal(agentInfo)
 			if err != nil {
-				log.Error("agent", "json.Marshal error:"+err.Error())
+				// log.Error("agent", "json.Marshal error:"+err.Error())
+				log.Error().Err(err).Msg("json.Marshal error")
 				return
 			}
 
 			// Send the JSON string as a byte slice
 			err = c.WriteMessage(websocket.TextMessage, jsonData)
 			if err != nil {
-				log.Error("agent", "write:"+err.Error())
+				// log.Error("agent", "write:"+err.Error())
+				log.Error().Err(err).Msg("Error writing message")
 			}
 		case "containerList":
-			log.Info("agent", "Server interrogating for container list")
+			// log.Info("agent", "Server interrogating for container list")
+			log.Info().Msg("Server interrogating for container list")
 
 			list := agent.GetContainers()
 
 			// Convert to JSON so that it can be encrypted
 			listJSON, err := json.Marshal(list)
 			if err != nil {
-				log.Error("agent", "json.Marshal error:"+err.Error())
+				// log.Error("agent", "json.Marshal error:"+err.Error())
+				log.Error().Err(err).Msg("json.Marshal error")
 				return
 			}
 
 			// Encrypt the list using trsa.Encrypt with the server's public key
 			encryptedData, err := trsa.Encrypt([]byte(listJSON), agent.ServerPublicKey)
 			if err != nil {
-				log.Error("agent", "Encryption error: "+err.Error())
+				// log.Error("agent", "Encryption error: "+err.Error())
+				log.Error().Err(err).Msg("Encryption error")
 				return
 			}
 
@@ -336,47 +344,55 @@ func handleServerCommunication(agent *Agent, log Logger) {
 			// Convert the containerList struct to a JSON string
 			jsonData, err := json.Marshal(containerList)
 			if err != nil {
-				log.Error("agent", "json.Marshal error:"+err.Error())
+				// log.Error("agent", "json.Marshal error:"+err.Error())
+				log.Error().Err(err).Msg("json.Marshal error")
 				return
 			}
 
 			// Send the JSON string as a byte slice
 			err = c.WriteMessage(websocket.TextMessage, jsonData)
 			if err != nil {
-				log.Error("agent", "write:"+err.Error())
+				// log.Error("agent", "write:"+err.Error())
+				log.Error().Err(err).Msg("Error writing message")
 			}
 		case "agentId":
-			log.Info("agent", "Server sending agent id")
+			// log.Info("agent", "Server sending agent id")
+			log.Info().Msg("Server sending agent id")
 
 			decryptedJSON, err := decryptAndUnmarshal([]byte(resp.Data.(string)), agent.PrivateKey)
 			if err != nil {
-				log.Error("agent", "Error decrypting message: "+err.Error())
+				// log.Error("agent", "Error decrypting message: "+err.Error())
+				log.Error().Err(err).Msg("Error decrypting message")
 				return
 			}
 
 			// Access and process the agentId
 			agentIdValue, ok := decryptedJSON["agentId"]
 			if !ok {
-				log.Error("agent", "Invalid agentId message format")
+				// log.Error("agent", "Invalid agentId message format")
+				log.Error().Msg("Invalid agentId message format")
 				return
 			}
 
 			// Convert the agentIdValue to int
 			agentIdFloat, ok := agentIdValue.(float64) // JSON numbers are float64 by default
 			if !ok {
-				log.Error("agent", "Invalid agentId format")
+				// log.Error("agent", "Invalid agentId format")
+				log.Error().Msg("Invalid agentId format")
 				return
 			}
 
 			agentId := int(agentIdFloat)
 			agent.Id = agentId
 		case "monitor":
-			log.Info("agent", "Server requesting monitor")
+			// log.Info("agent", "Server requesting monitor")
+			log.Info().Msg("Server requesting monitor")
 
 			// Decrypt the message
 			decryptedJSON, err := decryptAndUnmarshal([]byte(resp.Data.(string)), agent.PrivateKey)
 			if err != nil {
-				log.Error("agent", "Error decrypting message: "+err.Error())
+				// log.Error("agent", "Error decrypting message: "+err.Error())
+				log.Error().Err(err).Msg("Error decrypting message")
 				return
 			}
 
@@ -384,7 +400,8 @@ func handleServerCommunication(agent *Agent, log Logger) {
 			monitorList, ok := decryptedJSON["monitor"]
 
 			if !ok {
-				log.Error("agent", "Invalid monitor message format")
+				// log.Error("agent", "Invalid monitor message format")
+				log.Error().Msg("Invalid monitor message format")
 				return
 			}
 
@@ -398,13 +415,13 @@ func handleServerCommunication(agent *Agent, log Logger) {
 			// Initialize the Docker client.
 			cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 			if err != nil {
-				fmt.Printf("Error creating Docker client: %v\n", err)
+				log.Error().Err(err).Msg("Error creating Docker client")
 				return
 			}
 
 			// If their are no containers to monitor, we should stop monitoring
 			if len(monitorList.([]interface{})) == 0 {
-				fmt.Println("No containers to monitor")
+				log.Debug().Msg("No containers to monitor")
 				return
 			}
 
@@ -418,10 +435,10 @@ func handleServerCommunication(agent *Agent, log Logger) {
 				// lastTimestamp := time.Now().Add(-1 * time.Hour) // TODO: We should get it from the server, if we don't we need to support not passing it
 
 				// Create a new Monitor instance.
-				fmt.Println("Creating monitor for pattern: " + monitorPattern)
+				log.Debug().Msg("Creating monitor for pattern: " + monitorPattern)
 				monitor, err := NewMonitor(monitorPattern, onNewLog)
 				if err != nil {
-					fmt.Printf("Error creating monitor: %v\n", err)
+					log.Error().Err(err).Msg("Error creating monitor")
 					return
 				}
 
@@ -443,7 +460,8 @@ func handleServerCommunication(agent *Agent, log Logger) {
 				wg.Wait()
 			}
 		default:
-			log.Warn("agent", "Unknown message event: "+resp.Event)
+			// log.Warn("agent", "Unknown message event: "+resp.Event)
+			log.Warn().Msg("Unknown message event")
 		}
 
 	}
@@ -453,7 +471,7 @@ func handleServerCommunication(agent *Agent, log Logger) {
 func checkServerHealth(url string) bool {
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Error checking server health: " + err.Error())
+		log.Error().Err(err).Msg("Error checking server health")
 		return false // return false if unhealthy
 	}
 	defer resp.Body.Close()
@@ -479,10 +497,10 @@ func healthchecker(context *cli.Context) error {
 		healthcheckAddress = "localhost" + healthcheckAddress
 	}
 	if !checkServerHealth("http://" + healthcheckAddress + "/general/healthcheck") {
-		fmt.Println("Server is not healthy")
+		log.Error().Msg("Server is not healthy")
 		return nil
 	} else {
-		fmt.Println("Server is healthy")
+		log.Info().Msg("Server is healthy")
 	}
 
 	return nil
