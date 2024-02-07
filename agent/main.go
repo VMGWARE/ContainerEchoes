@@ -406,11 +406,12 @@ func handleServerCommunication(agent *Agent) {
 			}
 
 			// Define a callback function that will be called with new logs.
-			onNewLog := func(containerName, logMessage string) {
+			onNewLog := func(containerId int, containerName, logMessage string) {
 				// TODO: We need to give the containerId received from the server not the containerName from the host
 				logData := map[string]interface{}{
-					"containerName": containerName,
-					"logMessage":    logMessage,
+					"id":      containerId,
+					"name":    containerName,
+					"message": logMessage,
 				}
 
 				// Convert to JSON so that it can be encrypted
@@ -473,13 +474,13 @@ func handleServerCommunication(agent *Agent) {
 			// Start monitoring
 			for _, monitorItem := range monitorList.([]interface{}) {
 				monitorMap := monitorItem.(map[string]interface{})
-				// monitorId := int(monitorMap["id"].(float64))
+				monitorId := int(monitorMap["id"].(float64))
 				monitorPattern := monitorMap["pattern"].(string)
 				// lastTimestamp := time.Now().Add(-1 * time.Hour) // TODO: We should get it from the server, if we don't we need to support not passing it
 
 				// Create a new Monitor instance.
 				log.Debug().Msg("Creating monitor for pattern: " + monitorPattern)
-				monitor, err := NewMonitor(monitorPattern, onNewLog)
+				monitor, err := NewMonitor(monitorId, monitorPattern, onNewLog)
 				if err != nil {
 					log.Error().Err(err).Msg("Error creating monitor")
 					return

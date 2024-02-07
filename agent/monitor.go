@@ -12,10 +12,11 @@ import (
 )
 
 // LogCallback defines the signature for the callback function to be invoked with new log messages
-type LogCallback func(containerName, logMessage string)
+type LogCallback func(containerId int, containerName, logMessage string)
 
 // Monitor holds data for monitoring container logs
 type Monitor struct {
+	ID           int
 	RegexPattern *regexp.Regexp
 	Client       *client.Client
 	OnNewLog     LogCallback // Callback function to be invoked when new logs are received
@@ -27,7 +28,7 @@ type Container struct {
 }
 
 // NewMonitor creates a new log monitor with the given regex pattern for container names and a log callback function
-func NewMonitor(pattern string, onNewLog LogCallback) (*Monitor, error) {
+func NewMonitor(id int, pattern string, onNewLog LogCallback) (*Monitor, error) {
 	regex, err := regexp.Compile(pattern)
 	if err != nil {
 		return nil, err
@@ -36,7 +37,7 @@ func NewMonitor(pattern string, onNewLog LogCallback) (*Monitor, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Monitor{RegexPattern: regex, Client: cli, OnNewLog: onNewLog}, nil
+	return &Monitor{ID: id, RegexPattern: regex, Client: cli, OnNewLog: onNewLog}, nil
 }
 
 // StartMonitoring starts log monitoring for all containers matching the regex pattern in a non-blocking way
@@ -81,7 +82,7 @@ func (m *Monitor) monitorContainerLogs(ctx context.Context, containerID, contain
 
 		// Call the provided callback function with the new log message
 		if m.OnNewLog != nil {
-			m.OnNewLog(containerName, logLine)
+			m.OnNewLog(m.ID, containerName, logLine)
 		}
 	}
 
