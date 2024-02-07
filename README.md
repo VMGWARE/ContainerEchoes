@@ -11,6 +11,9 @@
 <a href="https://opensource.org/licenses/Apache-2.0" title="License: Apache-2.0">
    <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License: Apache-2.0">
 </a>
+<a href="https://results.pre-commit.ci/latest/github/VMGWARE/ContainerEchoes/master" title="pre-commit.ci results">
+   <img src="https://results.pre-commit.ci/badge/github/VMGWARE/ContainerEchoes/master.svg" alt="pre-commit.ci results">
+</a>
 </p>
 
 ## Description
