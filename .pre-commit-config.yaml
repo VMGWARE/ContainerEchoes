@@ -3,7 +3,6 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
-      - id: check-yaml
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: check-merge-conflict
@@ -25,6 +24,4 @@ ci:
   autoupdate_branch: ""
   autoupdate_commit_msg: "[pre-commit.ci] pre-commit autoupdate"
   autoupdate_schedule: monthly
-  # NB: hadolint not included in pre-commit.ci
-  skip: [check-hooks-apply, check-useless-excludes, hadolint, prettier]
   submodules: false
