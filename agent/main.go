@@ -450,6 +450,9 @@ func handleServerCommunication(agent *Agent) {
 					// log.Error("agent", "write:"+err.Error())
 					log.Error().Err(err).Msg("Error writing message")
 				}
+
+				// TODO: After successful send, we need to bump the lastTimestamp for the monitor to the current of the log
+				// This will help us to avoid sending the same log again
 			}
 
 			// Initialize the Docker client.
