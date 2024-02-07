@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"regexp"
 	"sync"
@@ -74,17 +75,17 @@ func (m *Monitor) monitorContainerLogs(ctx context.Context, containerID, contain
 	}
 	defer logStream.Close()
 
-	buffer := make([]byte, 1024)
-	for {
-		n, err := logStream.Read(buffer)
-		if err != nil {
-			log.Error().Str("container", containerName).Err(err).Msg("Error reading log for container")
-			break
-		}
+	scanner := bufio.NewScanner(logStream)
+	for scanner.Scan() {
+		logLine := scanner.Text()
 
 		// Call the provided callback function with the new log message
 		if m.OnNewLog != nil {
-			m.OnNewLog(containerName, string(buffer[:n]))
+			m.OnNewLog(containerName, logLine)
 		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Error().Str("container", containerName).Err(err).Msg("Error scanning log stream")
 	}
 }
