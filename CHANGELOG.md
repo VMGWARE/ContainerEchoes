@@ -1,13 +1,20 @@
 # Changelog
 
-## [0.2.2](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.2.2) - 2024-02-06
+## [0.3.0](https://github.com/VMGWARE/ContainerEchoes/releases/tag/0.3.0) - 2024-02-07
 
 ### ❤️ Thanks to all contributors! ❤️
 
+@Codycody31
 
+### 📈 Enhancement
+
+- Add pre commit CI [[#103](https://github.com/VMGWARE/ContainerEchoes/pull/103)]
 
 ### Misc
 
+- fix(deps): bump @sentry/node from 7.99.0 to 7.100.0 in /server [[#104](https://github.com/VMGWARE/ContainerEchoes/pull/104)]
+- chore(deps-dev): bump eslint-plugin-unicorn from 50.0.1 to 51.0.1 in /web [[#105](https://github.com/VMGWARE/ContainerEchoes/pull/105)]
+- fix(deps): bump @scalar/express-api-reference from 0.2.39 to 0.2.41 in /server [[#106](https://github.com/VMGWARE/ContainerEchoes/pull/106)]
 - fix(deps): bump @mdi/font from 7.0.96 to 7.4.47 in /web [[#91](https://github.com/VMGWARE/ContainerEchoes/pull/91)]
 - chore(deps-dev): bump eslint-plugin-vue from 9.21.0 to 9.21.1 in /web [[#95](https://github.com/VMGWARE/ContainerEchoes/pull/95)]
 - chore(deps-dev): bump @iconify/utils from 2.1.20 to 2.1.22 in /web [[#94](https://github.com/VMGWARE/ContainerEchoes/pull/94)]
