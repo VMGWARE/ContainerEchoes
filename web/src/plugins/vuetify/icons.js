@@ -57,7 +57,7 @@ export const iconify = {
       if (iconComponent)
         return h(iconComponent)
     }
-    
+
     return h(props.tag, {
       ...props,
 

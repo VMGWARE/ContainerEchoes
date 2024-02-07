@@ -11,6 +11,9 @@
 <a href="https://opensource.org/licenses/Apache-2.0" title="License: Apache-2.0">
    <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License: Apache-2.0">
 </a>
+<a href="https://results.pre-commit.ci/latest/github/VMGWARE/ContainerEchoes/master" title="pre-commit.ci results">
+   <img src="https://results.pre-commit.ci/badge/github/VMGWARE/ContainerEchoes/master.svg" alt="pre-commit.ci results">
+</a>
 </p>
 
 ## Description
@@ -24,7 +27,7 @@ ContainerEchoes is an open-source tool designed for efficient real-time Docker l
 - **Web Interface and API**: Manage, query, and display logs through a user-friendly web interface and a robust API.
 - **Flexible Log Retention**: Automatic log deletion after 48 hours, with options for longer retention.
 - **Secure and Scalable**: Implements TLS/SSL for secure data transfer and is designed for scalability.
-  
+
 ## Docker Image Support
 
 ContainerEchoes provides Docker images for both its agent and server components, ensuring wide compatibility across different systems:

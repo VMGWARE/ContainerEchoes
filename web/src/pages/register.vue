@@ -78,7 +78,7 @@
                 >privacy policy & terms</a
                 >
                 </VLabel>
-                </div> 
+                </div>
               -->
             </VCol>
 
