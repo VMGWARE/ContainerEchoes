@@ -68,7 +68,7 @@ const tabs = [
       <!--
         <VWindowItem value="notification">
         <AccountSettingsNotification />
-        </VWindowItem> 
+        </VWindowItem>
       -->
     </VWindow>
   </div>
