@@ -101,7 +101,7 @@
       > :first-child {
         @extend %vertical-nav-item;
         @extend %vertical-nav-item-interactive;
-        
+
         // ℹ️ Update the margin-inline-end when vertical nav is in mini state. We done same for section title.
         @at-root {
           .layout-nav-type-vertical.layout-vertical-nav-collapsed .layout-vertical-nav:not(.hovered) .nav-link > :first-child, .layout-nav-type-vertical .layout-vertical-nav .nav-group > :first-child {

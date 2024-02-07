@@ -24,7 +24,7 @@ ContainerEchoes is an open-source tool designed for efficient real-time Docker l
 - **Web Interface and API**: Manage, query, and display logs through a user-friendly web interface and a robust API.
 - **Flexible Log Retention**: Automatic log deletion after 48 hours, with options for longer retention.
 - **Secure and Scalable**: Implements TLS/SSL for secure data transfer and is designed for scalability.
-  
+
 ## Docker Image Support
 
 ContainerEchoes provides Docker images for both its agent and server components, ensuring wide compatibility across different systems:

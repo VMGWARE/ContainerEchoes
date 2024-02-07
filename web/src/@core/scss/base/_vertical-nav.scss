@@ -187,7 +187,7 @@
       // Nav group label
       > :first-child {
         // Adds before psudo element to style hover state
-        @include mixins.before-pseudo;     
+        @include mixins.before-pseudo;
       }
 
       &:not(.active,.open) > :first-child {

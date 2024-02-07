@@ -63,7 +63,7 @@ body {
       &.v-alert--variant-elevated {
         .v-alert__prepend {
           background-color: #fff;
-      
+
           @include mixins.elevation(2);
         }
       }
@@ -289,7 +289,7 @@ body {
       padding-block: 0;
       padding-inline: 10px;
     }
-  
+
     &--size-small {
       --v-btn-height: 34px;
       --v-btn-size: 13px;
@@ -306,11 +306,11 @@ body {
         --v-icon-size-multiplier: 0.718;
       }
     }
-  
+
     &--size-large {
       --v-btn-height: 42px;
       --v-btn-size: 17px;
-  
+
       &:not(.v-btn--icon){
         border-radius: 0.5rem;
       }
@@ -319,7 +319,7 @@ body {
       padding-block: 0;
       padding-inline: 22px;
     }
-  
+
     &--size-x-large{
       --v-btn-height: 48px;
       --v-btn-size: 19px;
@@ -383,9 +383,9 @@ body {
         &.v-btn-group--density-comfortable{
           block-size: 58px;
         }
-      
+
       }
-  
+
     }
   }
 
@@ -438,7 +438,7 @@ body {
     &:not(.v-chip--variant-elevated){
       color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
     }
-  
+
     .v-chip__close{
       margin-inline: 4px -8px !important;
 
@@ -576,7 +576,7 @@ body {
     &.v-selection-control--dirty {
       .v-selection-control__input {
         .custom-radio-checked {
-          filter: drop-shadow(rgba(var(--v-shadow-key-umbra-color), 16%) 0 2px 4px); 
+          filter: drop-shadow(rgba(var(--v-shadow-key-umbra-color), 16%) 0 2px 4px);
         }
       }
     }
@@ -592,13 +592,13 @@ body {
         color: rgba(var(--v-theme-on-background), var(--v-high-emphasis-opacity))
       }
     }
-  
+
     &:not(.v-selection-control--dirty) {
       .v-selection-control__input > .v-icon {
         color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
         opacity: 1;
       }
-    } 
+    }
   }
 
   .v-radio-group.v-input > .v-input__control > .v-label {
@@ -638,7 +638,7 @@ body {
             inline-size: 1.25rem;
           }
         }
-    
+
         &:hover{
           .v-expansion-panel-title__overlay{
             opacity: 0 !important;
@@ -695,19 +695,19 @@ body {
     }
   }
 
-  .v-field.v-field--focused .v-field__outline, 
+  .v-field.v-field--focused .v-field__outline,
   .v-input.v-input--error .v-field__outline{
     --v-field-border-opacity: 1 !important;
   }
 
-  // hover state outline color 
+  // hover state outline color
   @media (hover: hover) {
     .v-field:not(.v-field--focused):hover .v-field__outline {
       --v-field-border-opacity: 0.6 !important;
     }
   }
 
-  .v-field__prepend-inner, 
+  .v-field__prepend-inner,
   .v-field__append-inner,
   .v-field__clearable,
   .v-input__prepend,
@@ -801,7 +801,7 @@ body {
       .v-selection-control__input {
         transform: translateX(5px);
 
-   
+
       }
     }
   }
@@ -879,7 +879,7 @@ body {
               &:hover{
                 .v-btn__content{
                   color: rgb(var(--v-theme-#{$color-name}));
-                } 
+                }
               }
             }
           }
@@ -910,7 +910,7 @@ body {
           .v-btn__underlay{
             opacity: 0;
           }
-      
+
           &:hover{
             .v-btn__overlay{
               --v-hover-opacity:0.24;
@@ -941,12 +941,12 @@ body {
 
           .v-btn__overlay{
             --v-hover-opacity:0.16;
-          
+
             background: rgb(var(--v-theme-primary));
             opacity: var(--v-hover-opacity);
           }
 
-        
+
         }
       }
     }
@@ -1004,7 +1004,7 @@ body {
               color: rgb(var(--v-theme-primary));
 
               .v-btn__overlay{
-                --v-hover-opacity: 0; 
+                --v-hover-opacity: 0;
               }
 
               .v-btn__content{
@@ -1065,7 +1065,7 @@ body {
     .v-timeline-item{
       .timeline-chip{
         border-radius: 6px;
-        background: rgba(var(--v-theme-on-surface), var(--v-hover-opacity)); 
+        background: rgba(var(--v-theme-on-surface), var(--v-hover-opacity));
         padding-block: 5px;
         padding-inline: 10px
       }
@@ -1097,7 +1097,7 @@ body {
     table{
       tbody{
         tr{
-          &.v-data-table-group-header-row{ 
+          &.v-data-table-group-header-row{
             td {
               background:none;
             }
@@ -1126,7 +1126,7 @@ body {
               text-transform: uppercase;
             }
           }
-          
+
         }
       }
     }
