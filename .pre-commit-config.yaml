@@ -11,10 +11,10 @@ repos:
     rev: 1.0.0
     hooks:
       - id: woodpecker-lint
-      - repo: https://github.com/mrtazz/checkmake
-        rev: 0.2.2
-        hooks:
-          - id: checkmake
+  - repo: https://github.com/mrtazz/checkmake
+    rev: 0.2.2
+    hooks:
+      - id: checkmake
 
 ci:
   autofix_commit_msg: |
