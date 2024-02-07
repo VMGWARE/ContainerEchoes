@@ -407,6 +407,7 @@ func handleServerCommunication(agent *Agent) {
 
 			// Define a callback function that will be called with new logs.
 			onNewLog := func(containerName, logMessage string) {
+				// TODO: We need to give the containerId received from the server not the containerName from the host
 				logData := map[string]interface{}{
 					"containerName": containerName,
 					"logMessage":    logMessage,

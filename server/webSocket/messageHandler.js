@@ -90,7 +90,7 @@ class WebSocketMessageHandler {
 	 * @param {string} message - The raw message received from the WebSocket connection.
 	 */
 	async handleMessage(ws, message) {
-		log.debug("ws.handleMessage", "Received message and delegating to handler");
+		// log.debug("ws.handleMessage", "Received message and delegating to handler"); // It's just way too much, so I'm commenting it out
 		const messageObj = JSON.parse(message);
 
 		// Check if the message is a response to a previous request
@@ -106,6 +106,14 @@ class WebSocketMessageHandler {
 			// Check if the handler only needs the ws instance
 			if (this.handlers[messageObj.event].length === 1) {
 				await this.handlers[messageObj.event].handle(ws);
+				return;
+			}
+
+			// If a preprocess method is defined, call it
+			if (this.handlers[messageObj.event].preprocess) {
+				let processedMessageObj =
+					await this.handlers[messageObj.event].preprocess(messageObj);
+				await this.handlers[messageObj.event].handle(ws, processedMessageObj);
 				return;
 			}
 
