@@ -55,6 +55,8 @@ func (m *Monitor) StartMonitoring(ctx context.Context, wg *sync.WaitGroup) {
 				log.Info().Str("container", container.Names[0]).Msg("Monitoring logs for container")
 				wg.Add(1)
 				go m.monitorContainerLogs(ctx, container.ID, container.Names[0], wg)
+			} else {
+				log.Debug().Str("container", container.Names[0]).Msg("Skipping container")
 			}
 		}
 	}()

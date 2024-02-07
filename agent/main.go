@@ -407,9 +407,48 @@ func handleServerCommunication(agent *Agent) {
 
 			// Define a callback function that will be called with new logs.
 			onNewLog := func(containerName, logMessage string) {
-				// TODO: Needs to take the container id given by the server, the log message, and the ws, and send a message to the server
-				// fmt.Printf("New log from %s: %s\n", containerName, logMessage)
-				// Here you can add the logic to send the log over a WebSocket or any other desired action.
+				logData := map[string]interface{}{
+					"containerName": containerName,
+					"logMessage":    logMessage,
+				}
+
+				// Convert to JSON so that it can be encrypted
+				logDataJSON, err := json.Marshal(logData)
+				if err != nil {
+					// log.Error("agent", "json.Marshal error:"+err.Error())
+					log.Error().Err(err).Msg("json.Marshal error")
+					return
+				}
+
+				// Encrypt the list using trsa.Encrypt with the server's public key
+				encryptedData, err := trsa.Encrypt([]byte(logDataJSON), agent.ServerPublicKey)
+				if err != nil {
+					// log.Error("agent", "Encryption error: "+err.Error())
+					log.Error().Err(err).Msg("Encryption error")
+					return
+				}
+
+				// Build log message
+				logMessageData := response{
+					Status: "ok",
+					Event:  "log",
+					Data:   hex.EncodeToString(encryptedData),
+				}
+
+				// Convert the logMessageData struct to a JSON string
+				jsonData, err := json.Marshal(logMessageData)
+				if err != nil {
+					// log.Error("agent", "json.Marshal error:"+err.Error())
+					log.Error().Err(err).Msg("json.Marshal error")
+					return
+				}
+
+				// Send the JSON string as a byte slice
+				err = c.WriteMessage(websocket.TextMessage, jsonData)
+				if err != nil {
+					// log.Error("agent", "write:"+err.Error())
+					log.Error().Err(err).Msg("Error writing message")
+				}
 			}
 
 			// Initialize the Docker client.

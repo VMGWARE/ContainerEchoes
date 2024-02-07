@@ -44,7 +44,7 @@ class WebSocketMessageHandler {
 
 					const handlerInstance = new HandlerClass(this.webSocketManager);
 					const eventType = handlerInstance.getEventType();
-					this.handlers[eventType] = handlerInstance.handle.bind(handlerInstance);
+					this.handlers[eventType] = handlerInstance;
 				} catch (err) {
 					if (err.code === "MODULE_NOT_FOUND") {
 						log.error("ws.loadHandlers", `Could not find handler file ${file}`);
@@ -105,11 +105,11 @@ class WebSocketMessageHandler {
 		if (this.handlers[messageObj.event]) {
 			// Check if the handler only needs the ws instance
 			if (this.handlers[messageObj.event].length === 1) {
-				await this.handlers[messageObj.event](ws);
+				await this.handlers[messageObj.event].handle(ws);
 				return;
 			}
 
-			await this.handlers[messageObj.event](ws, messageObj);
+			await this.handlers[messageObj.event].handle(ws, messageObj);
 		} else {
 			log.warn(
 				"ws.handleMessage",
