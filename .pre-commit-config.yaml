@@ -1,15 +1,23 @@
 # cSpell:ignore checkmake hadolint autofix autoupdate
 repos:
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+      - id: check-useless-excludes
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
-      - id: check-merge-conflict
-  - repo: https://git.schmidl.dev/schtobia/woodpecker-lint
-    rev: 1.0.0
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v1.55.2
     hooks:
-      - id: woodpecker-lint
+      - id: golangci-lint
+  # FIXME: Executable `docker` not found
+  # - repo: https://git.schmidl.dev/schtobia/woodpecker-lint
+  #   rev: 1.0.0
+  #   hooks:
+  #     - id: woodpecker-lint
   - repo: https://github.com/mrtazz/checkmake
     rev: 0.2.2
     hooks:
