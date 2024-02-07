@@ -11,7 +11,7 @@ const options = computed(() => {
   const variableTheme = ref(vuetifyTheme.current.value.variables)
   const disabledColor = `rgba(${ hexToRgb(currentTheme.value['on-surface']) },${ variableTheme.value['disabled-opacity'] })`
   const borderColor = `rgba(${ hexToRgb(String(variableTheme.value['border-color'])) },${ variableTheme.value['border-opacity'] })`
-  
+
   return {
     chart: {
       offsetY: -10,

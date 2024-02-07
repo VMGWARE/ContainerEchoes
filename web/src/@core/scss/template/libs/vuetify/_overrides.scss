@@ -31,7 +31,7 @@ body {
 
 // 👉 Input placeholder alignment
 .v-input--density-compact{
-  input::placeholder { 
+  input::placeholder {
     position: relative;
     inset-block-start: 1px;
   }

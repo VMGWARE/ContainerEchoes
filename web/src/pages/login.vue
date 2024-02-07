@@ -54,7 +54,7 @@ export default {
 
       // Replace the encoded / with a slash
       readableRedirect = readableRedirect ? readableRedirect.replace(/%2F/g, '/') : null
-      
+
       return sanitizedRedirect
         ? `You will be redirected to <a href="${sanitizedRedirect}">${readableRedirect}</a> upon successful login.`
         : ''
@@ -206,7 +206,7 @@ export default {
                 >
                 Forgot Password?
                 </a>
-                </div> 
+                </div>
               -->
 
               <!-- login button -->

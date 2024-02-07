@@ -33,7 +33,7 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
           <span class="me-3">Search</span>
           <span class="meta-key">&#8984;K</span>
           </span>
-          </div> 
+          </div>
         -->
 
         <VSpacer />
@@ -46,10 +46,10 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
         >
           <VIcon icon="ri-github-fill" />
         </IconBtn>
-        <!-- 
+        <!--
           <IconBtn class="me-2">
           <VIcon icon="ri-notification-line" />
-          </IconBtn> 
+          </IconBtn>
         -->
 
         <NavbarThemeSwitcher class="me-2" />

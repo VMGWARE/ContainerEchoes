@@ -20,7 +20,7 @@ const series = [{
 const chartOptions = computed(() => {
   const currentTheme = vuetifyTheme.current.value.colors
   const variableTheme = vuetifyTheme.current.value.variables
-  
+
   return {
     chart: {
       parentHeightOffset: 0,

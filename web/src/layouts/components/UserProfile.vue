@@ -11,7 +11,7 @@ const user = userStore.user
 // Generate the gravatar URL from the user's email
 const gravatar = email => {
   const hash = md5(email.trim().toLowerCase())
-  
+
   return `https://www.gravatar.com/avatar/${hash}`
 }
 

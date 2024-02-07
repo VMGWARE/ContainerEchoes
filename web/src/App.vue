@@ -53,7 +53,7 @@ export default {
         if (useAppStore().publicRoutes.includes(redirect)) {
           console.log('Not redirecting to login page')
           this.isLoading = false
-          
+
           return
         }
 
@@ -66,7 +66,7 @@ export default {
 
         // Redirect to login page
         this.$router.push(redirect)
-        
+
         return
       }
       let exp
@@ -78,7 +78,7 @@ export default {
         console.log('Invalid token')
         this.isLoading = false
         this.logout()
-        
+
         return
       }
       console.log('Your JWT is', exp - Date.now() / 1000, 'seconds to expiry')
@@ -87,7 +87,7 @@ export default {
         clearTimeout(this.tokenRefreshTimer)
         this.isLoading = false
         this.logout()
-        
+
         return
       }
       if (exp - Date.now() / 1000 < 600 && exp - Date.now() / 1000 > 0) {
