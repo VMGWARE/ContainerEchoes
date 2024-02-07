@@ -115,6 +115,7 @@ web-dependencies: ## Install web dependencies
 server-dependencies: ## Install server dependencies
 	(cd server/; npm install --frozen-lockfile)
 
+.PHONY: dependencies
 dependencies: web-dependencies server-dependencies ## Install all dependencies
 
 ##@ Test
