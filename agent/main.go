@@ -406,12 +406,12 @@ func handleServerCommunication(agent *Agent) {
 			}
 
 			// Define a callback function that will be called with new logs.
-			onNewLog := func(containerId int, containerName, logMessage string) {
-				// TODO: We need to give the containerId received from the server not the containerName from the host
+			onNewLog := func(containerId int, containerName string, logLines []string) {
+				fmt.Println("New log received for container:", containerName)
 				logData := map[string]interface{}{
-					"id":      containerId,
-					"name":    containerName,
-					"message": logMessage,
+					"id":   containerId,
+					"name": containerName,
+					"logs": logLines,
 				}
 
 				// Convert to JSON so that it can be encrypted

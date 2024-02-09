@@ -12,7 +12,7 @@ import (
 )
 
 // LogCallback defines the signature for the callback function to be invoked with new log messages
-type LogCallback func(containerId int, containerName, logMessage string)
+type LogCallback func(containerId int, containerName string, logLines []string)
 
 // Monitor holds data for monitoring container logs
 type Monitor struct {
@@ -76,14 +76,26 @@ func (m *Monitor) monitorContainerLogs(ctx context.Context, containerID, contain
 	}
 	defer logStream.Close()
 
+	const chunkSize = 500
+	logLines := make([]string, 0, chunkSize)
+
 	scanner := bufio.NewScanner(logStream)
 	for scanner.Scan() {
 		logLine := scanner.Text()
+		logLines = append(logLines, logLine)
 
-		// Call the provided callback function with the new log message
-		if m.OnNewLog != nil {
-			m.OnNewLog(m.ID, containerName, logLine)
+		// When we've collected chunkSize logs, call the callback with the chunk
+		if len(logLines) >= chunkSize {
+			if m.OnNewLog != nil {
+				m.OnNewLog(m.ID, containerName, logLines)
+			}
+			logLines = make([]string, 0, chunkSize) // Reset the slice
 		}
+	}
+
+	// Call the callback with any remaining logs if there are any
+	if len(logLines) > 0 && m.OnNewLog != nil {
+		m.OnNewLog(m.ID, containerName, logLines)
 	}
 
 	if err := scanner.Err(); err != nil {
