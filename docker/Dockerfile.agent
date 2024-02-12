@@ -13,7 +13,7 @@
 # */
 
 
-FROM --platform=$BUILDPLATFORM docker.io/golang:1.21 AS build
+FROM --platform=$BUILDPLATFORM docker.io/golang:1.22 AS build
 
 WORKDIR /src
 COPY . .
