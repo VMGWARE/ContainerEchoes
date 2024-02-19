@@ -22,7 +22,7 @@
 		"@vmgware/js-validator": "^1.6.0",
 		"axios": "^1.6.7",
 		"bcrypt": "^5.1.0",
-		"dotenv": "^16.4.1",
+		"dotenv": "^16.4.4",
 		"express": "^4.18.2",
 		"express-rate-limit": "^7.0.2",
 		"helmet": "^7.0.0",
