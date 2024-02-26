@@ -15,7 +15,7 @@
 		"@elastic/elasticsearch": "^8.12.1",
 		"@exceptionless/node": "^3.0.5",
 		"@rschedule/standard-date-adapter": "1.5.0",
-		"@scalar/express-api-reference": "^0.2.41",
+		"@scalar/express-api-reference": "^0.2.57",
 		"@sentry/node": "^7.100.0",
 		"@types/node": "^20.11.16",
 		"@vmgware/js-logger": "^1.2.0",
