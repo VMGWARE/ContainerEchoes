@@ -1,5 +1,5 @@
 # Use node as the base image for building both server and backend
-FROM node:18.17 AS builder
+FROM node:21.7 AS builder
 
 # Install dumb-init to avoid zombie processes and ensure minimal installation
 RUN apt-get update && \
