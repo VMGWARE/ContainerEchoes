@@ -14,6 +14,10 @@ export const routes = [
         component: () => import('@/pages/agents.vue'),
       },
       {
+        path: 'logs',
+        component: () => import('@/pages/logs.vue'),
+      },
+      {
         path: 'my-account',
         component: () => import('@/pages/my-account.vue'),
       },

@@ -76,7 +76,7 @@ func (m *Monitor) monitorContainerLogs(ctx context.Context, containerID, contain
 	}
 	defer logStream.Close()
 
-	const chunkSize = 500
+	const chunkSize = 1500
 	logLines := make([]string, 0, chunkSize)
 
 	scanner := bufio.NewScanner(logStream)
