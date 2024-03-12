@@ -3,10 +3,8 @@ package main
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 
 	"echoes/shared/trsa"
@@ -14,6 +12,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"github.com/gorilla/websocket"
+	"github.com/rs/zerolog/log"
 )
 
 // Agent represents the client that will communicate with the server
@@ -52,7 +51,7 @@ func (a *Agent) Initialize(token string) {
 			return
 		}
 
-		Logger.Info(Logger{}, "agent", "Generated RSA keys")
+		log.Info().Msg("Generated RSA keys")
 
 		// Store the RSA keys in /etc/echoes/agent
 		err = os.MkdirAll(agentDir, os.ModePerm)
@@ -68,7 +67,7 @@ func (a *Agent) Initialize(token string) {
 			panic(err) // Handle error
 		}
 
-		Logger.Info(Logger{}, "agent", "Stored RSA keys in "+agentDir)
+		log.Info().Msg("Stored RSA keys in " + agentDir)
 
 		// Set the agent's public and private keys
 		a.PrivateKey = privateKey
@@ -87,47 +86,11 @@ func (a *Agent) Initialize(token string) {
 			panic(err) // Handle error
 		}
 
-		Logger.Info(Logger{}, "agent", "Loaded RSA keys from disk")
+		log.Info().Msg("Loaded RSA keys from disk")
 	}
 
 	// Set the agent token
 	a.Token = token
-}
-
-// PerformHandshake performs the E2E encryption handshake with the server
-func (a *Agent) PerformHandshake(url string) error {
-	Logger.Info(Logger{}, "agent", "Performing handshake with server...")
-
-	// Send agent token and public key to the server as JSON
-	jsonData := map[string]string{
-		"agent_token": string(a.Token),
-		"public_key":  string(a.PublicKey),
-	}
-	jsonValue, _ := json.Marshal(jsonData)
-
-	response, err := http.Post(url, "application/json", bytes.NewBuffer(jsonValue))
-	if err != nil {
-		return err // In production, handle this error properly
-	}
-	defer response.Body.Close()
-
-	// Check if the server responded with an error
-	if response.StatusCode != 200 {
-		return fmt.Errorf("Handshake with server failed: %s", response.Status)
-	}
-
-	// Read the server's public key
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		return err // Handle error
-	}
-
-	// Here you might store the server's public key for further communication
-	// For now, we'll just print it to the console
-	Logger.Info(Logger{}, "agent", "Handshake with server successful")
-	Logger.Info(Logger{}, "agent", "Server's Public Key: "+string(body))
-
-	return nil
 }
 
 // TODO: This would then be sent to the server, to display the possible containers that can be monitored (to help with regex pattern making)
@@ -138,6 +101,9 @@ func (a *Agent) GetContainers() []types.Container {
 	if err != nil {
 		panic(err)
 	}
+
+	// Negotiate the API version
+	cli.NegotiateAPIVersion(context.Background())
 
 	// List containers
 	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
@@ -161,6 +127,9 @@ func (a *Agent) GetContainerLog(containerId string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	// Negotiate the API version
+	cli.NegotiateAPIVersion(context.Background())
 
 	// Get the container logs
 	out, err := cli.ContainerLogs(context.Background(), containerId, types.ContainerLogsOptions{ShowStdout: true, ShowStderr: true})

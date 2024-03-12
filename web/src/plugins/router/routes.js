@@ -4,6 +4,7 @@ export const routes = [
     path: '/',
     component: () => import('@/layouts/default.vue'),
     children: [
+      // Default routes
       {
         path: 'dashboard',
         component: () => import('@/pages/dashboard.vue'),
@@ -13,29 +14,14 @@ export const routes = [
         component: () => import('@/pages/agents.vue'),
       },
       {
+        path: 'logs',
+        component: () => import('@/pages/logs.vue'),
+      },
+      {
         path: 'my-account',
         component: () => import('@/pages/my-account.vue'),
       },
-      {
-        path: 'typography',
-        component: () => import('@/pages/typography.vue'),
-      },
-      {
-        path: 'icons',
-        component: () => import('@/pages/icons.vue'),
-      },
-      {
-        path: 'cards',
-        component: () => import('@/pages/cards.vue'),
-      },
-      {
-        path: 'tables',
-        component: () => import('@/pages/tables.vue'),
-      },
-      {
-        path: 'form-layouts',
-        component: () => import('@/pages/form-layouts.vue'),
-      },
+      // Admin routes
       {
         path: 'admin/settings',
         component: () => import('@/pages/admin/settings.vue'),

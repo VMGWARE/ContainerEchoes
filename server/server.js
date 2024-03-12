@@ -27,7 +27,7 @@ if (process.env.APP_LOG_LEVEL) {
 
 // Initialize Exceptionless
 let Exceptionless;
-const initializeExceptionless = require("@container-echoes/core/services/exceptionlessConfig");
+const exceptionlessManager = require("@container-echoes/core/services/exceptionless");
 
 log.info("server", "Container Echoes server service starting");
 
@@ -55,7 +55,9 @@ const server = http.createServer(app);
 	await new Promise((resolve, reject) => {
 		knex.migrate.latest().then(resolve).catch(reject);
 	}).catch(async (err) => {
-		await Exceptionless.submitException(err);
+		if (config.exceptionless.apiKey && config.exceptionless.serverUrl) {
+			await Exceptionless.submitException(err);
+		}
 		log.error("server", "Error migrating database: " + err);
 		process.exit(1);
 	});
@@ -79,37 +81,49 @@ const server = http.createServer(app);
 			"Exceptionless API key or server URL not set. Exceptionless will be disabled."
 		);
 	} else {
-		Exceptionless = await initializeExceptionless();
+		await exceptionlessManager.initialize(
+			config.exceptionless.apiKey,
+			config.exceptionless.serverUrl,
+			getVersion() || ""
+		);
+		Exceptionless = exceptionlessManager.getInstance();
 		log.debug("server", "Exceptionless initialized");
 	}
 
 	// Check connection to Elasticsearch
-	log.info("server", "Checking Elasticsearch connection...");
-	const client = new Client({
-		node: config.elasticsearch.url,
-		auth: {
-			apiKey: config.elasticsearch.apiKey,
-		},
-		tls: {
-			// ca: config.elasticsearch.ca,
-			ca: Buffer.from(config.elasticsearch.ca, "base64").toString("ascii"),
-			rejectUnauthorized: false,
-		},
-	});
+	if (config.elasticsearch.url && config.elasticsearch.apiKey) {
+		log.info("server", "Checking Elasticsearch connection...");
+		const client = new Client({
+			node: config.elasticsearch.url,
+			auth: {
+				apiKey: config.elasticsearch.apiKey,
+			},
+			tls: {
+				// ca: config.elasticsearch.ca,
+				ca: Buffer.from(config.elasticsearch.ca, "base64").toString("ascii"),
+				rejectUnauthorized: false,
+			},
+		});
 
-	try {
-		// API Key should have cluster monitor rights.
-		const resp = await client.info();
-		log.info(
-			"server",
-			"Elasticsearch connection successful, version: " + resp.version.number
-		);
-	} catch (err) {
-		if (config.exceptionless.apiKey && config.exceptionless.serverUrl) {
-			await Exceptionless.submitException(err);
+		try {
+			// API Key should have cluster monitor rights.
+			const resp = await client.info();
+			log.info(
+				"server",
+				"Elasticsearch connection successful, version: " + resp.version.number
+			);
+		} catch (err) {
+			if (config.exceptionless.apiKey && config.exceptionless.serverUrl) {
+				await Exceptionless.submitException(err);
+			}
+			log.error("server", "Error connecting to Elasticsearch: " + err);
+			process.exit(1);
 		}
-		log.error("server", "Error connecting to Elasticsearch: " + err);
-		process.exit(1);
+	} else {
+		log.warn(
+			"server",
+			"Elasticsearch URL or API key not set. Elasticsearch will be disabled."
+		);
 	}
 
 	// Check if we have RSA keys stored in the database, if not, generate them
@@ -218,6 +232,10 @@ const server = http.createServer(app);
 	log.debug("server", "Loading Swagger documentation");
 	const options = require("./configs/swagger");
 	const specs = swaggerJsdoc(options);
+	app.get("/swagger.json", (req, res) => {
+		res.setHeader("Content-Type", "application/json");
+		res.send(specs);
+	});
 	app.use(
 		"/reference",
 		apiReference({
@@ -325,11 +343,19 @@ gracefulShutdown(app, {
 });
 
 // Catch unhandled rejections
-process.on("unhandledRejection", (err) => {
+process.on("unhandledRejection", async (err) => {
+	if (config.exceptionless.apiKey && config.exceptionless.serverUrl) {
+		await Exceptionless.submitException(err);
+	}
+
 	log.error("server", "Unhandled rejection: " + err);
 	console.error(err);
 });
-process.on("uncaughtException", (err) => {
+process.on("uncaughtException", async (err) => {
+	if (config.exceptionless.apiKey && config.exceptionless.serverUrl) {
+		await Exceptionless.submitException(err);
+	}
+
 	log.error("server", "Uncaught exception: " + err);
 	console.error(err);
 });

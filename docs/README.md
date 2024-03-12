@@ -2,40 +2,48 @@
 
 This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
 
-### Installation
+## Installation
 
-```
-$ yarn
+``` bash
+npm install
 ```
 
-### Local Development
+## Local Development
 
-```
-$ yarn start
+``` bash
+npm start
 ```
 
 This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
 
-### Build
+## Build
 
-```
-$ yarn build
+``` bash
+npm build
 ```
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
 
-### Deployment
+## Deployment
 
 Using SSH:
 
-```
-$ USE_SSH=true yarn deploy
+``` bash
+USE_SSH=true npm deploy
 ```
 
 Not using SSH:
 
-```
-$ GIT_USER=<Your GitHub username> yarn deploy
+``` bash
+GIT_USER=<Your GitHub username> npm deploy
 ```
 
 If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+
+## Versioning
+
+``` bash
+npm run docusaurus docs:version <patch|minor|major>
+```
+
+This command will create a new version of the documentation. Make sure to update the `docusaurus.config.ts` file with the new version number under the `presets` section. You can learn more about versioning [here](https://docusaurus.io/docs/versioning).

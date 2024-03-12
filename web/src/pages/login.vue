@@ -154,15 +154,6 @@ export default {
         </VCardTitle>
       </VCardItem>
 
-      <VCardText class="pt-2">
-        <h5 class="text-h5 font-weight-semibold mb-1">
-          Welcome to Container Echoes! 👋🏻
-        </h5>
-        <p class="mb-0">
-          Please sign-in to your account and start the adventure
-        </p>
-      </VCardText>
-
       <VCardText>
         <VForm
           v-model="valid"

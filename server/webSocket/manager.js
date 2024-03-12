@@ -91,6 +91,11 @@ class WebSocketManager {
 			ws.on("message", async (message) => {
 				await this.messageHandler.handleMessage(ws, message);
 			});
+
+			ws.on("close", async () => {
+				log.debug("WebSocketManager", "WebSocket connection closed");
+				await this.cleanup();
+			});
 		});
 
 		this.wss.on("error", (error) => {
@@ -250,6 +255,31 @@ class WebSocketManager {
 				"WebSocketManager",
 				"No resolver found for message id " + messageId
 			);
+		}
+	}
+
+	async cleanup() {
+		// Check if a agent has disconnected
+		const disconnectedAgents = this.agents.filter((agent) => {
+			return agent.readyState === WebSocket.CLOSED;
+		});
+
+		if (disconnectedAgents.length > 0) {
+			log.debug(
+				"WebSocketManager.cleaner",
+				"Cleaning up " + disconnectedAgents.length + " disconnected agents"
+			);
+
+			// Remove the disconnected agents
+			disconnectedAgents.forEach((agent) => {
+				const index = this.agents.indexOf(agent);
+				if (index > -1) {
+					// Remove the agent from the list
+					this.agents.splice(index, 1);
+				}
+			});
+		} else {
+			log.debug("WebSocketManager.cleaner", "No agents to clean up");
 		}
 	}
 

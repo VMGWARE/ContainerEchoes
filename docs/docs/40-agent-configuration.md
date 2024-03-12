@@ -12,7 +12,16 @@ The Container Echoes Agent is a critical component of the log management system,
 
 ### Setting Up the Agent
 
-1. **Installation**: Deploy the agent as a Docker container on each host using the provided Docker image.
+```bash
+docker run -d \
+-e ECHOES_SERVER='http://<server-ip>:<server-port>' \
+-e ECHOES_ECHOES_AGENT_SECRET='<agent-secret>' \
+-e ECHOES_HOSTNAME='<agent-hostname>' \
+-e ECHOES_LOG_LEVEL='debug' \
+-v /var/run/docker.sock:/var/run/docker.sock \
+--name='container-echoes-agent' \
+harbor.vmgware.dev/echoes/agent:latest
+```
 
 ### Environment-Specific Settings
 
@@ -22,14 +31,8 @@ Customize settings like network configurations, proxy settings, or Docker socket
 
 Ensure these environment variables are set:
 
-- `AGENT_SERVER_URL`: The URL of the Container Echoes Server.
-- `AGENT_SECRET`: A secret key for secure communication with the server.
-
-## Best Practices
-
-- **Resource Allocation**: Allocate sufficient resources (CPU and memory) to the agent.
-- **Security**: Ensure encrypted and authenticated traffic if the agent communicates over the network.
-- **Log Rotation**: Implement log rotation to prevent disk space issues.
+- `ECHOES_SERVER`: The URL of the Container Echoes Server.
+- `ECHOES_AGENT_SECRET`: A secret key for secure communication with the server.
 
 ## Agent Initialization and Communication
 
@@ -38,16 +41,3 @@ Ensure these environment variables are set:
 3. **Message Handling**: The agent handles various message types, including `handshake`, `agentInfo`, and `containerList`.
 4. **Agent Identification**: The server sends an `agentId` for identification purposes.
 5. **Termination Handling**: The agent listens for termination signals and gracefully closes the WebSocket connection.
-
-## Testing and Verification
-
-- Run a test container to generate logs and verify their appearance in the Container Echoes Server interface.
-
-## Troubleshooting
-
-- Check the agent's logs for error messages.
-- Common issues: network connectivity, configuration errors, resource constraints.
-
-## Next Steps
-
-With the agent configured, focus on managing the Container Echoes Server and exploring its features as detailed in [Managing the Container Echoes Server](server-management).

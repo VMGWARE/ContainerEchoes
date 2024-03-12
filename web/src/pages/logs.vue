@@ -1,3 +1,3 @@
 <template>
-  <h1>Dashboard</h1>
+  <h1>Global Logs</h1>
 </template>

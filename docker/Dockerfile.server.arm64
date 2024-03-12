@@ -8,11 +8,16 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get autoremove -y
 
+# Build the core
+WORKDIR /app/core
+COPY core/package*.json ./
+RUN npm install
+COPY core/ ./
+
 # Build the server
 WORKDIR /app/server
 COPY server/package*.json ./
 RUN npm ci --omit=dev
-COPY core /app/core
 COPY server/ ./
 RUN npm install /app/core
 
@@ -26,7 +31,7 @@ RUN npm install && \
     npm run build
 
 # Use Apache to serve the web and proxy to the server
-FROM httpd:2.4
+FROM httpd:2.4.58
 ARG S6_OVERLAY_VERSION=3.1.6.2
 
 # Install Node.js, curl, and git in the Apache stage

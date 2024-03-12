@@ -1,3 +1,5 @@
-const environment = require("../config/index.js").getInstance().app.env;
-const config = require("../knexfile.js")[environment];
+const config =
+  require("../knexfile.js")[
+    require("../config/index.js").getInstance().app.env
+  ];
 module.exports = require("knex")(config);

@@ -4,6 +4,7 @@
   <VTable fixed-header>
     <thead>
       <tr>
+        <th class="text-uppercase">Online</th>
         <th class="text-uppercase">Id</th>
         <th class="text-uppercase">Name</th>
         <th class="text-uppercase">Host Name</th>
@@ -20,6 +21,18 @@
         :data-id="agent.agentId"
       >
         <td>
+          <VIcon
+            v-if="agent.online"
+            icon="ri-check-line"
+            style="color: green"
+          />
+          <VIcon
+            v-else
+            icon="ri-close-line"
+            style="color: red"
+          />
+        </td>
+        <td>
           {{ agent.agentId }}
         </td>
         <td>
@@ -29,22 +42,22 @@
           {{ agent.hostname }}
         </td>
         <td>
-          {{ agent.updatedAt }}
+          {{ new Date(agent.updatedAt).toLocaleString() }}
         </td>
         <td>
-          {{ agent.createdAt }}
+          {{ new Date(agent.createdAt).toLocaleString() }}
         </td>
 
-        <td>
+        <td class="text-center">
           <VBtn
-            variant="outline-primary"
-            size="sm"
+            color="primary"
+            class="ma-2"
           >
             Edit
           </VBtn>
           <VBtn
-            variant="outline-danger"
-            size="sm"
+            color="secondary"
+            class="ma-2"
           >
             Delete
           </VBtn>

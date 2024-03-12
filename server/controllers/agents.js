@@ -103,6 +103,11 @@ async function getAll(req, res) {
 			"updatedAt"
 		);
 
+		// Check if the agent id shows up in the web socket manager
+		for (let i = 0; i < agents.length; i++) {
+			agents[i].online = WebSocketManager.agents[agents[i].agentId] ? true : false;
+		}
+
 		return standardResponse(res, "Successfully retrieved all agents", agents);
 	} catch (err) {
 		log.error("agents", "Error getting all agents: " + err);

@@ -115,6 +115,9 @@ web-dependencies: ## Install web dependencies
 server-dependencies: ## Install server dependencies
 	(cd server/; npm install --frozen-lockfile)
 
+.PHONY: dependencies
+dependencies: web-dependencies server-dependencies ## Install all dependencies
+
 ##@ Test
 
 .PHONY: lint
@@ -133,6 +136,14 @@ test-server: server-dependencies ## Test server code
 
 .PHONY: test
 test: test-web test-server ## Run all tests
+
+##@ Development
+
+run-web: web-dependencies ## Run web development server
+	(cd web/; npm run dev)
+
+run-server: server-dependencies ## Run server development server
+	(cd server/; npm run start)
 
 ##@ Build
 
